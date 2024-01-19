@@ -16,8 +16,8 @@ class CreativeLoginApp:
         img_path = os.path.join(script_dir, "HR_background.png")
 
         # Load and set background image
-        original_image = Image.open(img_path)
-        self.img = ImageTk.PhotoImage(original_image)
+        self.original_image = Image.open(img_path)
+        self.img = ImageTk.PhotoImage(self.original_image)
 
         # Create and place a label with the background image
         self.background_label = tk.Label(root, image=self.img, bg='white')
@@ -59,11 +59,15 @@ class CreativeLoginApp:
         new_width = event.width
         new_height = event.height
 
-        # Resize the image dynamically
-        resized_image = self.img._copy()
-        resized_image = resized_image.subsample(int(resized_image.width() / new_width), int(resized_image.height() / new_height))
-        self.background_label.config(image=resized_image)
-        self.background_label.image = resized_image  # Keep a reference to avoid garbage collection
+        # Resize the original image
+        resized_image = self.original_image.resize((new_width, new_height))
+
+        # Create a new PhotoImage object
+        self.img = ImageTk.PhotoImage(resized_image)
+
+        # Update the label
+        self.background_label.config(image=self.img)
+        self.background_label.image = self.img  # Keep a reference to avoid garbage collection
 
     def login(self):
         username = self.username_entry.get()
