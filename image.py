@@ -21,17 +21,16 @@ class CreativeLoginApp:
         # Construct the full path to the image file
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
-         # Load and set background image
+        # Load and set the background image
         self.original_image = Image.open(img_path)
         self.img = ImageTk.PhotoImage(self.original_image)
-        
+
         # Create and place a label with the background image
         self.background_label = tk.Label(root, image=self.img, bg='white')
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         # Bind the window resize event
         root.bind("<Configure>", self.resize_image)
-    
 
         # Label for Username
         username_label = tk.Label(root, text="Username", font=("Helvetica", 12, "bold"), bg='white')
@@ -89,27 +88,28 @@ class CreativeLoginApp:
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
+        admins=db.reference('admins')
+            
 
-        if not username or not password:
-            messagebox.showerror("Login Failed", "Please enter both username and password.")
-            return
+        # if admins.child(username).child('password').get()==password:
+        #     messagebox.showerror("Login Failed", "Please enter both username and password.")
+        #     return
 
-        if username in self.credentials and 'password' in self.credentials[username]:
-            if self.credentials[username]['password'] == password:
-                role = self.credentials[username].get('role', 'User')  # Fetch role, default to 'User' if not found
-                messagebox.showinfo("Login Successful", f"Welcome, {username}! \n You are logged in as a {role}.")
-                
-                match role:
-                    case 'admin':
-                        self.open_admin_window()
-                    case 'HR':
-                        self.open_hr_window()
-                    case 'boss':
-                        self.open_boss_window()
-                    case 'employee':
-                        self.open_employee_window()
-                    case _:
-                        messagebox.showerror("Login Failed", "Invalid role. Please try again.")
+        if admins.child(username).child('password').get()==password:
+            role = admins.child(username).child('role').get()  # Fetch role, default to 'User' if not found
+            messagebox.showinfo("Login Successful", f"Welcome, {username}! \n You are logged in as a {role}.")
+            
+            match role:
+                case 'admin':
+                    self.open_admin_window()
+                case 'HR':
+                    self.open_hr_window()
+                case 'boss':
+                    self.open_boss_window()
+                case 'employee':
+                    self.open_employee_window()
+                case _:
+                    messagebox.showerror("Login Failed", "Invalid role. Please try again.")
 
         else:
             messagebox.show.showerror("Login Failed", "Invalid username or password. Please try again.")
@@ -123,65 +123,44 @@ class CreativeLoginApp:
         # Background image for the admin window
         admin_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
         admin_original_image = Image.open(admin_img_path)
-        self.admin_img = ImageTk.PhotoImage(admin_original_image)
+        admin_img = ImageTk.PhotoImage(admin_original_image)
 
-        admin_background_label = tk.Label(admin_window, image=self.admin_img, bg='white')
+        admin_background_label = tk.Label(admin_window, image=admin_img, bg='white')
         admin_background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         # Welcome message for the admin
         welcome_label = tk.Label(admin_window, text="Welcome Admin!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
-        # Buttons for Admin window
-        create_remove_hr_button = tk.Button(admin_window, text="Create/Remove HR Login", command=self.create_remove_hr, font=("Helvetica", 14))
-        create_remove_hr_button.pack(pady=10)
-
         # Bind the window resize event for the admin window
-        admin_window.bind("<Configure>", lambda event, img=self.admin_img, label=admin_background_label: self.resize_image(event, img, label))
+        admin_window.bind("<Configure>", lambda event, img=admin_img, label=admin_background_label: self.resize_image(event, img, label))
 
         # Run the main loop for the admin window
         admin_window.mainloop()
 
     def open_hr_window(self):
-     self.root.destroy()  # Close the main login window
-     hr_window = tk.Tk()  # Use Tk() to create a new window
-     hr_window.geometry("800x600")  # Set the window size
-     hr_window.title("HR Window")
+        self.root.destroy()  # Close the main login window
+        hr_window = tk.Tk()  # Use Tk() to create a new window
+        hr_window.geometry("800x600")  # Set the window size
+        hr_window.title("HR Window")
 
-     # Background image for the HR window
-     hr_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-     hr_original_image = Image.open(hr_img_path)
-     self.hr_img = ImageTk.PhotoImage(hr_original_image)
+        # Background image for the HR window
+        hr_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+        hr_original_image = Image.open(hr_img_path)
+        self.hr_img = ImageTk.PhotoImage(hr_original_image)
 
-     hr_background_label = tk.Label(hr_window, image=self.hr_img, bg='white')
-     hr_background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        hr_background_label = tk.Label(hr_window, image=self.hr_img, bg='white')
+        hr_background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-     # Welcome message for the HR
-     welcome_label = tk.Label(hr_window, text="Welcome HR!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
-     welcome_label.pack(pady=20)
+        # Welcome message for the HR
+        welcome_label = tk.Label(hr_window, text="Welcome HR!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
+        welcome_label.pack(pady=20)
 
-     # Buttons for HR window
-     hr_buttons_frame = tk.Frame(hr_window, bg='white')
-     hr_buttons_frame.pack(pady=20)
+        # Bind the window resize event for the HR window
+        hr_window.bind("<Configure>", lambda event, img=self.hr_img, label=hr_background_label: self.resize_image(event, img, label))
 
-     buttons_info = [
-        ("Salary Management", self.salary_management),
-        ("Employee Add/Remove", self.employee_add_remove),
-        ("Approve Bonus", self.approve_bonus),
-        ("Approve Resignation", self.approve_resignation),
-        ("Check Employee Hours", self.check_hours_attended),
-        ("Survey/Feedback", self.survey_feedback)
-     ]
-
-     for i, (button_text, button_command) in enumerate(buttons_info):
-        button = tk.Button(hr_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14), width=20, height=2)
-        button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
-
-     # Bind the window resize event for the HR window
-     hr_window.bind("<Configure>", lambda event, img=self.hr_img, label=hr_background_label: self.resize_image(event, img, label))
-     # Run the main loop for the HR window
-     hr_window.mainloop()
-
+        # Run the main loop for the HR window
+        hr_window.mainloop()
 
     def open_employee_window(self):
         self.root.destroy()  # Close the main login window
@@ -208,86 +187,28 @@ class CreativeLoginApp:
         employee_window.mainloop()
 
     def open_boss_window(self):
-     self.root.destroy()  # Close the main login window
-     boss_window = tk.Tk()  # Use Tk() to create a new window
-     boss_window.geometry("800x600")  # Set the window size
-     boss_window.title("Boss Window")
+        self.root.destroy()  # Close the main login window
+        boss_window = tk.Tk()  # Use Tk() to create a new window
+        boss_window.geometry("800x600")  # Set the window size
+        boss_window.title("Boss Window")
 
-     # Background image for the boss window
-     boss_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-     boss_original_image = Image.open(boss_img_path)
-     self.boss_img = ImageTk.PhotoImage(boss_original_image)
+        # Background image for the boss window
+        boss_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+        self.boss_original_image = Image.open(boss_img_path)
+        self.boss_img = ImageTk.PhotoImage(self.boss_original_image)
 
-     boss_background_label = tk.Label(boss_window, image=self.boss_img, bg='white')
-     boss_background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        boss_background_label = tk.Label(boss_window, image=self.boss_img, bg='white')
+        boss_background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-     # Welcome message for the boss
-     welcome_label = tk.Label(boss_window, text="Welcome Boss!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
-     welcome_label.pack(pady=20)
+        # Welcome message for the boss
+        welcome_label = tk.Label(boss_window, text="Welcome Boss!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
+        welcome_label.pack(pady=20)
 
-     # Buttons for Boss window
-     boss_buttons_frame = tk.Frame(boss_window, bg='white')
-     boss_buttons_frame.pack(pady=20)
+        # Bind the window resize event for the boss window
+        boss_window.bind("<Configure>", lambda event, img=self.boss_img, label=boss_background_label: self.resize_image(event, img, label))
 
-     buttons_info = [
-        ("Performance Review Approval", self.perform_review_approval),
-        ("Approve Vacations and Sick Leaves", self.approve_vacations_sick_leaves),
-        ("Progress on Task", self.progress_on_task),
-        ("Approve Promotion", self.approve_promotion),
-        ("Approve Resignation", self.approve_resignation),
-        ("Request for Bonus", self.request_bonus)
-     ]
-
-     for i, (button_text, button_command) in enumerate(buttons_info):
-        button = tk.Button(boss_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14))
-        button.grid(row=i // 3, column=i % 3, padx=10, pady=10)
-
-     # Bind the window resize event for the boss window
-     boss_window.bind("<Configure>", lambda event, img=self.boss_img, label=boss_background_label: self.resize_image(event, img, label))
-
-     # Run the main loop for the boss window
-     boss_window.mainloop()
-
-
-    def salary_management(self):
-        messagebox.showinfo("HR Window", "Salary Management Button Pressed")
-
-    def employee_add_remove(self):
-        messagebox.showinfo("HR Window", "Employee Add/Remove Button Pressed")
-
-    def approve_bonus(self):
-        messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
-
-    def approve_resignation(self):
-        messagebox.showinfo("HR Window", "Approve Resignation Button Pressed")
-
-    def check_hours_attended(self):
-        messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
-
-    def survey_feedback(self):
-        messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
-
-    def create_remove_hr(self):
-        messagebox.showinfo("Admin Window", "Create/Remove HR Login Button Pressed")
-   
-    def perform_review_approval(self):
-        messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
-
-    def approve_vacations_sick_leaves(self):
-        messagebox.showinfo("Boss Window", "Approve Vacations and Sick Leaves Button Pressed")
-
-    def progress_on_task(self):
-        messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
-
-    def approve_promotion(self):
-        messagebox.showinfo("Boss Window", "Approve Promotion Button Pressed")
-
-    def approve_resignation(self):
-        messagebox.showinfo("Boss Window", "Approve Resignation Button Pressed")
-
-    def request_bonus(self):
-        messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
-
+        # Run the main loop for the boss window
+        boss_window.mainloop()
 
 
 def main():
