@@ -71,7 +71,7 @@ class CreativeLoginApp:
         # Create a new PhotoImage object
         self.img = ImageTk.PhotoImage(resized_image)
 
-        #for future purposes, if we break something remove comment and activate this
+        #for future purposes, if we break something remove comment and activate this(DO NOT DELETE, DELETE IF YOU GAY)
         # try:
         #     if self.root.winfo_exists():  # Check if the main window still exists
         #         # Update the label only if the main window exists
@@ -81,28 +81,11 @@ class CreativeLoginApp:
         #     pass  # Ignore TclError if the main window has been destroyed
 
 
-    
-    
-
-    # def load_credentials_from_database(self):
-    #     try:
-    #         admins_ref = db.reference('/admins')
-    #         admins_data = admins_ref.get()
-    #         print("Loaded credentials:", admins_data)  # Debug print
-    #         return admins_data
-    #     except Exception as e:
-    #         print("Error loading credentials from the database:", e)
-    #         return {}
-
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
         admins=db.reference('admins')
             
-
-        # if admins.child(username).child('password').get()==password:
-        #     messagebox.showerror("Login Failed", "Please enter both username and password.")
-        #     return
 
         if admins.child(username).child('password').get()==password:
             role = admins.child(username).child('role').get()  # Fetch role, default to 'User' if not found
