@@ -77,7 +77,7 @@ class CreativeLoginApp:
 
     def load_credentials_from_database(self):
      try:
-        admins_ref = db.reference('admins')
+        admins_ref = db.reference('/admins')
         admins_data = admins_ref.get()
         print("Loaded credentials:", admins_data)  # Debug print
         return admins_data
