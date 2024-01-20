@@ -21,16 +21,17 @@ class CreativeLoginApp:
         # Construct the full path to the image file
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
-        # Load and set the background image
+         # Load and set background image
         self.original_image = Image.open(img_path)
         self.img = ImageTk.PhotoImage(self.original_image)
-
+        
         # Create and place a label with the background image
         self.background_label = tk.Label(root, image=self.img, bg='white')
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         # Bind the window resize event
         root.bind("<Configure>", self.resize_image)
+    
 
         # Label for Username
         username_label = tk.Label(root, text="Username", font=("Helvetica", 12, "bold"), bg='white')
@@ -155,9 +156,27 @@ class CreativeLoginApp:
         welcome_label = tk.Label(hr_window, text="Welcome HR!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
+        # Buttons for HR window
+        salary_management_button = tk.Button(hr_window, text="Salary Management", command=self.salary_management, font=("Helvetica", 14))
+        salary_management_button.pack(pady=10)
+
+        employee_add_remove_button = tk.Button(hr_window, text="Employee Add/Remove", command=self.employee_add_remove, font=("Helvetica", 14))
+        employee_add_remove_button.pack(pady=10)
+
+        approve_bonus_button = tk.Button(hr_window, text="Approve Bonus", command=self.approve_bonus, font=("Helvetica", 14))
+        approve_bonus_button.pack(pady=10)
+
+        approve_resignation_button = tk.Button(hr_window, text="Approve Resignation", command=self.approve_resignation, font=("Helvetica", 14))
+        approve_resignation_button.pack(pady=10)
+
+        check_hours_attended_button = tk.Button(hr_window, text="Check Employee Hours Attended", command=self.check_hours_attended, font=("Helvetica", 14))
+        check_hours_attended_button.pack(pady=10)
+
+        survey_feedback_button = tk.Button(hr_window, text="Survey/Feedback", command=self.survey_feedback, font=("Helvetica", 14))
+        survey_feedback_button.pack(pady=10)
+
         # Bind the window resize event for the HR window
         hr_window.bind("<Configure>", lambda event, img=self.hr_img, label=hr_background_label: self.resize_image(event, img, label))
-
         # Run the main loop for the HR window
         hr_window.mainloop()
 
@@ -208,6 +227,24 @@ class CreativeLoginApp:
 
         # Run the main loop for the boss window
         boss_window.mainloop()
+
+    def salary_management(self):
+        messagebox.showinfo("HR Window", "Salary Management Button Pressed")
+
+    def employee_add_remove(self):
+        messagebox.showinfo("HR Window", "Employee Add/Remove Button Pressed")
+
+    def approve_bonus(self):
+        messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
+
+    def approve_resignation(self):
+        messagebox.showinfo("HR Window", "Approve Resignation Button Pressed")
+
+    def check_hours_attended(self):
+        messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
+
+    def survey_feedback(self):
+        messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
 
 
 def main():
