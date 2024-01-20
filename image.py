@@ -84,13 +84,18 @@ class CreativeLoginApp:
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
-        admins=db.reference('admins')
-            
 
-        if admins.child(username).child('password').get()==password:
+        # Check if username or password is empty
+        if not username or not password:
+            messagebox.showerror("Login Failed", "Username and password are required. Please enter both.")
+            return
+
+        admins = db.reference('admins')
+
+        if admins.child(username).child('password').get() == password:
             role = admins.child(username).child('role').get()  # Fetch role, default to 'User' if not found
-            messagebox.showinfo("Login Successful", f"Welcome, {username}! \n You are logged in as a {role}.")
-            
+            messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
+
             match role:
                 case 'admin':
                     self.open_admin_window()
@@ -100,10 +105,8 @@ class CreativeLoginApp:
                     self.open_boss_window()
                 case 'employee':
                     self.open_employee_window()
-               
-
         else:
-         messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
+            messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
 
     def open_admin_window(self):
         self.root.destroy()  # Close the main login window
