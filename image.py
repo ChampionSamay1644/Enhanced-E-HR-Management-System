@@ -1,13 +1,13 @@
-import tkinter as tk
-from tkinter import messagebox
+import tkinter as tk # Python 3
+from tkinter import messagebox 
 from PIL import Image, ImageTk
 import os
 import firebase_admin
 from firebase_admin import db, credentials
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("credentials.json")
-firebase_admin.initialize_app(cred, {'databaseURL': 'https://hr-management-system-f7c9f-default-rtdb.asia-southeast1.firebasedatabase.app/'})
+cred = credentials.Certificate("credentials.json") # Path: credentials.json
+firebase_admin.initialize_app(cred, {'databaseURL': 'https://hr-management-system-f7c9f-default-rtdb.asia-southeast1.firebasedatabase.app/'}) # Replace with your database URL
 
 class CreativeLoginApp:
     def __init__(self, root):
