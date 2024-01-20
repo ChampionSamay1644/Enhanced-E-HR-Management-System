@@ -58,8 +58,8 @@ class CreativeLoginApp:
         self.exit_button = tk.Button(root, text="Exit", command=root.destroy, font=("Helvetica", 14))
         self.exit_button.place(relx=0.5, rely=0.75, anchor="center")
 
-        # Load credentials from the database
-        self.credentials = self.load_credentials_from_database()
+        # # Load credentials from the database
+        # self.credentials = self.load_credentials_from_database()
 
     def resize_image(self, event):
         new_width = event.width
@@ -75,15 +75,15 @@ class CreativeLoginApp:
         self.background_label.config(image=self.img)
         self.background_label.image = self.img  # Keep a reference to avoid garbage collection
 
-    def load_credentials_from_database(self):
-        try:
-            admins_ref = db.reference('/admins')
-            admins_data = admins_ref.get()
-            print("Loaded credentials:", admins_data)  # Debug print
-            return admins_data
-        except Exception as e:
-            print("Error loading credentials from the database:", e)
-            return {}
+    # def load_credentials_from_database(self):
+    #     try:
+    #         admins_ref = db.reference('/admins')
+    #         admins_data = admins_ref.get()
+    #         print("Loaded credentials:", admins_data)  # Debug print
+    #         return admins_data
+    #     except Exception as e:
+    #         print("Error loading credentials from the database:", e)
+    #         return {}
 
     def login(self):
         username = self.username_entry.get()
