@@ -339,7 +339,7 @@ class CreativeLoginApp:
         # You can customize the credits information as per your needs
         credits_text = (
             "HR Management System\n\n"
-            "Developed by: \n -Samay Pandey, \n-Armaan Nakhuda, \n-Sushant Navle\n\n"
+            "Developed by: \n -Samay Pandey, \n-Armaan Nakhuda, \n-Sushant Navle, \n-Peeyush Karnik\n\n"
             "Stage Completition: Stage 4 completed\n"
             "Date: 6th Feb 2024\n"
             "\nSpecial Thanks to:\n- Firebase\n- OpenAI\n- Yash Patil\n"
@@ -349,21 +349,24 @@ class CreativeLoginApp:
         credits_label = tk.Label(credits_dialog, text=credits_text, font=("Helvetica", 12))
         credits_label.pack(padx=20, pady=20)
 
-        # Center the credits dialog on the screen
+        # Center the credits dialog relative to the main application window
         credits_dialog.update_idletasks()
-        
-        width = credits_dialog.winfo_width()
-        height = credits_dialog.winfo_height()
 
-        screen_width = credits_dialog.winfo_screenwidth()
-        screen_height = credits_dialog.winfo_screenheight()
+        app_x = self.root.winfo_x()
+        app_y = self.root.winfo_y()
+        app_width = self.root.winfo_width()
+        app_height = self.root.winfo_height()
 
-        x = (screen_width - width) // 2
-        y = (screen_height - height) // 2
+        credits_width = credits_dialog.winfo_width()
+        credits_height = credits_dialog.winfo_height()
 
-        credits_dialog.geometry(f"{width}x{height}+{x}+{y}")
+        x = app_x + (app_width - credits_width) // 2
+        y = app_y + (app_height - credits_height) // 2
+
+        credits_dialog.geometry(f"{credits_width}x{credits_height}+{x}+{y}")
 
         credits_dialog.mainloop()
+
 
 
     def center_window(self):
