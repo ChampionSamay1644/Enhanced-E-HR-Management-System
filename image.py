@@ -76,13 +76,14 @@ class CreativeLoginApp:
         self.background_label.image = self.img  # Keep a reference to avoid garbage collection
 
     def load_credentials_from_database(self):
-        try:
-            admins_ref = db.reference('admins')
-            admins_data = admins_ref.get()
-            return admins_data
-        except Exception as e:
-            print("Error loading credentials from the database:", e)
-            return {}
+     try:
+        admins_ref = db.reference('admins')
+        admins_data = admins_ref.get()
+        print("Loaded credentials:", admins_data)  # Debug print
+        return admins_data
+     except Exception as e:
+        print("Error loading credentials from the database:", e)
+        return {}
 
     def login(self):
       username = self.username_entry.get()
