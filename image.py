@@ -13,6 +13,7 @@ class CreativeLoginApp:
     def __init__(self, root):
         self.root = root
         self.root.title("HR Management System")
+        self.center_window()
         self.employee_original_image = None
         self.employee_img = None
         self.boss_original_image = None
@@ -331,6 +332,7 @@ class CreativeLoginApp:
        messagebox.showinfo("Employee Window", "Submit Survey/Feedback/Complaint Button Pressed")
    
     def show_credits(self):
+        # Create a new Toplevel window for the credits
         credits_dialog = tk.Toplevel(self.root)
         credits_dialog.title("Credits")
 
@@ -343,12 +345,42 @@ class CreativeLoginApp:
             "\nSpecial Thanks to:\n- Firebase\n- OpenAI\n- Yash Patil\n"
         )
 
+        # Create a label for credits information
         credits_label = tk.Label(credits_dialog, text=credits_text, font=("Helvetica", 12))
         credits_label.pack(padx=20, pady=20)
 
+        # Center the credits dialog on the screen
+        credits_dialog.update_idletasks()
+        
+        width = credits_dialog.winfo_width()
+        height = credits_dialog.winfo_height()
+
+        screen_width = credits_dialog.winfo_screenwidth()
+        screen_height = credits_dialog.winfo_screenheight()
+
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+
+        credits_dialog.geometry(f"{width}x{height}+{x}+{y}")
+
+        credits_dialog.mainloop()
+
+
+    def center_window(self):
+        # Get the width and height of the screen
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+
+        # Calculate the x and y coordinates to center the main window
+        x = (screen_width / 2) - (800 / 2)
+        y = (screen_height / 2) - (600 / 2)
+
+        # Set the dimensions of the screen and where it is placed
+        self.root.geometry('%dx%d+%d+%d' % (800, 600, x, y))
+
 def main():
     root = tk.Tk()
-    root.geometry("800x600")  # Set the window size
+    root.geometry("900x700")  # Set the window size
     app = CreativeLoginApp(root)
     root.mainloop()
 
