@@ -33,6 +33,11 @@ class CreativeLoginApp:
         # Bind the window resize event
         root.bind("<Configure>", lambda event, img=self.img, label=self.background_label: self.resize_image(event, img, label))
 
+        # Add the company name at the top center
+        company_name_label = tk.Label(root, text="Den Dover Inc", font=("Helvetica", 38, "bold"), fg='white', bg='black')
+        company_name_label.place(relx=0.5, rely=0.1, anchor="center")
+
+
         # Label for Username
         username_label = tk.Label(root, text="Username", font=("Helvetica", 12, "bold"), bg='white')
         username_label.place(relx=0.5, rely=0.35, anchor="center")
