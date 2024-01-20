@@ -337,7 +337,7 @@ class CreativeLoginApp:
         # You can customize the credits information as per your needs
         credits_text = (
             "HR Management System\n\n"
-            "Developed by: \n Samay Pandey, Armaan Nakhuda, Sushant Navle\n"
+            "Developed by: \n Samay Pandey, Armaan Nakhuda, Sushant Navle\n\n"
             "Stage Completition: Stage 4 completed\n"
             "Date: 6th Feb 2024\n"
             "\nSpecial Thanks to:\n- OpenAI\n- Firebase\n- Yash Patil\n"
