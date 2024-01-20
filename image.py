@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import simpledialog, ttk
 from PIL import Image, ImageTk
 import os
 import firebase_admin
@@ -58,18 +59,18 @@ class CreativeLoginApp:
         self.password_entry = tk.Entry(root, show="*", font=("Helvetica", 12, "bold"))
         self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
         self.password_entry.insert(0, "")  # Default text
-
+       
         # Login button
         self.login_button = tk.Button(root, text="Login", command=self.login, font=("Helvetica", 14))
-        self.login_button.place(relx=0.5, rely=0.65, anchor="center")
+        self.login_button.place(relx=0.5, rely=0.65, anchor="center", width=100, height=30)
 
         # Exit button
         self.exit_button = tk.Button(root, text="Exit", command=root.destroy, font=("Helvetica", 14))
-        self.exit_button.place(relx=0.5, rely=0.75, anchor="center")
+        self.exit_button.place(relx=0.5, rely=0.75, anchor="center", width=100, height=30)
 
         # Credits button
         self.credits_button = tk.Button(root, text="Credits", command=self.show_credits, font=("Helvetica", 14))
-        self.credits_button.place(relx=0.5, rely=0.85, anchor="center")
+        self.credits_button.place(relx=0.5, rely=0.85, anchor="center", width=100, height=30)
 
          # Bind the Enter key to the login function
         root.bind("<Return>", lambda event: self.login())
@@ -127,6 +128,7 @@ class CreativeLoginApp:
         else:
             messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
 
+
     def open_admin_window(self):
         self.root.destroy()  # Close the main login window
         admin_window = tk.Tk()  # Use Tk() to create a new window
@@ -145,10 +147,11 @@ class CreativeLoginApp:
         welcome_label = tk.Label(admin_window, text="Welcome Admin!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
-        # Buttons for Admin window
+       # Buttons for Admin window
         buttons_info = [
-            ("Create/Remove HR Login", self.create_remove_hr)
-        ]
+        (("Create/Remove HR Login", self.create_remove_hr)), 
+         ]
+
 
         admin_buttons_frame = tk.Frame(admin_window, bg='black')  # Define admin_buttons_frame
         admin_buttons_frame.pack(pady=20)
@@ -165,8 +168,8 @@ class CreativeLoginApp:
 
         #focus on window
         admin_window.focus_force()
-     
-         # Bind the Escape key to the exit function
+
+        # Bind the Escape key to the exit function
         admin_window.bind("<Escape>", lambda event: admin_window.destroy())
 
         # Bind the window resize event for the admin window
@@ -175,6 +178,71 @@ class CreativeLoginApp:
         # Run the main loop for the admin window
         admin_window.mainloop()
 
+    def create_remove_hr(self):
+        print("Create/Remove HR Login button pressed")
+        # Ask the admin whether to add or remove a login
+        action = tk.simpledialog.askstring("Create/Remove HR Login", "Enter 'add' to add a login, 'remove' to remove a login:")
+        action = action.lower()
+        if action == "add":
+            # Gather information for the new login
+            username = tk.simpledialog.askstring("Add HR Login", "Enter the username:")
+            password = tk.simpledialog.askstring("Add HR Login", "Enter the password:")
+            role = tk.simpledialog.askstring("Add HR Login", "Enter the role (admin, HR, boss, employee):")
+
+            # Update the database with the new login
+            self.add_login_to_database(username, password, role)
+
+        elif action == "remove":
+            # Fetch all logins from the database
+            logins = self.fetch_all_logins_from_database()
+
+            if not logins:
+                messagebox.showinfo("Remove HR Login", "No logins found.")
+                return
+
+            # Ask the admin to select a login for removal
+            selected_login = tk.simpledialog.askstring("Remove HR Login", "Select a login to remove:")
+
+            # Update the database by removing the selected login
+            self.remove_login_from_database(selected_login)
+
+        else:
+            messagebox.showinfo("Create/Remove HR Login", "Invalid action. Please enter 'add' or 'remove'.")
+
+    def add_login_to_database(self, username, password, role):
+        admins_ref = db.reference('admins')
+
+        # Check if the username already exists
+        if admins_ref.child(username).get():
+            messagebox.showinfo("Add HR Login", "Username already exists. Choose a different username.")
+        else:
+            # Add the new login to the database
+            admins_ref.child(username).set({
+                'password': password,
+                'role': role
+            })
+            messagebox.showinfo("Add HR Login", "Login added successfully.")
+
+    def remove_login_from_database(self, username):
+        admins_ref = db.reference('admins')
+
+        # Check if the username exists
+        if admins_ref.child(username).get():
+            # Remove the login from the database
+            admins_ref.child(username).delete()
+            messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+        else:
+            messagebox.showinfo("Remove HR Login", "Username does not exist.")
+    
+    def fetch_all_logins_from_database(self):
+        admins_ref = db.reference('admins')
+        admins = admins_ref.get()
+
+        if admins:
+            return list(admins.keys())
+        else:
+            return None
+        
 
     def open_hr_window(self):
      self.root.destroy()  # Close the main login window
@@ -371,8 +439,8 @@ class CreativeLoginApp:
     def request_bonus(self):
         messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
 
-    def create_remove_hr(self):
-        messagebox.showinfo("Admin Window", "Create/Remove HR Login Button Pressed")
+    # def create_remove_hr(self):
+    #     messagebox.showinfo("Admin Window", "Create/Remove HR Login Button Pressed")
 
     def sick_vacation_days_view(self):
         messagebox.showinfo("Employee Window", "Sick/Vacation Days View Button Pressed")
