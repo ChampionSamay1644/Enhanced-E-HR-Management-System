@@ -100,11 +100,10 @@ class CreativeLoginApp:
                     self.open_boss_window()
                 case 'employee':
                     self.open_employee_window()
-                case _:
-                    messagebox.showerror("Login Failed", "Invalid role. Please try again.")
+               
 
         else:
-            messagebox.show.showerror("Login Failed", "Invalid username or password. Please try again.")
+         messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
 
     def open_admin_window(self):
         self.root.destroy()  # Close the main login window
