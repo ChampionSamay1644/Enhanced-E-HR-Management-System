@@ -188,6 +188,22 @@ class CreativeLoginApp:
         welcome_label = tk.Label(boss_window, text="Welcome Boss!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
+        boss_buttons_frame = tk.Frame(boss_window)  # Define boss_buttons_frame
+        boss_buttons_frame.pack(pady=20)
+
+        buttons_info = [
+            ("Performance Review Approval", self.perform_review_approval),
+            ("Approve Vacations and Sick Leaves", self.approve_vacations_sick_leaves),
+            ("Progress on Task", self.progress_on_task),
+            ("Approve Promotion", self.approve_promotion),
+            ("Approve Resignation", self.approve_resignation),
+            ("Request for Bonus", self.request_bonus)
+        ]
+
+        for i, (button_text, button_command) in enumerate(buttons_info):
+            button = tk.Button(boss_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14))
+            button.grid(row=i // 3, column=i % 3, padx=10, pady=10)
+
         # Bind the window resize event for the boss window
         boss_window.bind("<Configure>", lambda event, img=self.boss_img, label=boss_background_label: self.resize_image(event, img, label))
 
@@ -236,6 +252,25 @@ class CreativeLoginApp:
 
     def survey_feedback(self):
         messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
+
+    def perform_review_approval(self):
+        messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
+
+    def approve_vacations_sick_leaves(self):
+        messagebox.showinfo("Boss Window", "Approve Vacations and Sick Leaves Button Pressed")
+
+    def progress_on_task(self):
+        messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
+
+    def approve_promotion(self):
+        messagebox.showinfo("Boss Window", "Approve Promotion Button Pressed")
+
+    def approve_resignation(self):
+        messagebox.showinfo("Boss Window", "Approve Resignation Button Pressed")
+
+    def request_bonus(self):
+        messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
+
 
 
 
