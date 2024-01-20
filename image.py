@@ -7,7 +7,7 @@ from firebase_admin import db, credentials
 
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate("credentials.json")
-firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-firebase-project-id.firebaseio.com/'})
+firebase_admin.initialize_app(cred, {'databaseURL': 'https://hr-management-system-f7c9f-default-rtdb.asia-southeast1.firebasedatabase.app/'})
 
 class CreativeLoginApp:
     def __init__(self, root):
