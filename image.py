@@ -30,7 +30,7 @@ class CreativeLoginApp:
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         # Bind the window resize event
-        root.bind("<Configure>", self.resize_image)
+        root.bind("<Configure>", lambda event, img=self.img, label=self.background_label: self.resize_image(event, img, label))
 
         # Label for Username
         username_label = tk.Label(root, text="Username", font=("Helvetica", 12, "bold"), bg='white')
@@ -61,7 +61,7 @@ class CreativeLoginApp:
         # # Load credentials from the database
         # self.credentials = self.load_credentials_from_database()
 
-    def resize_image(self, event):
+    def resize_image(self, event, img, label):
         new_width = event.width
         new_height = event.height
 
@@ -74,6 +74,8 @@ class CreativeLoginApp:
         # Update the label
         self.background_label.config(image=self.img)
         self.background_label.image = self.img  # Keep a reference to avoid garbage collection
+    
+    
 
     # def load_credentials_from_database(self):
     #     try:
@@ -219,3 +221,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
