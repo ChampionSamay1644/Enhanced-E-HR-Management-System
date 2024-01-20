@@ -2,6 +2,12 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import os
+import firebase_admin
+from firebase_admin import db, credentials
+
+# Initialize Firebase Admin SDK
+cred = credentials.Certificate("credentials.json")
+firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-firebase-project-id.firebaseio.com/'})
 
 class CreativeLoginApp:
     def __init__(self, root):
@@ -52,8 +58,8 @@ class CreativeLoginApp:
         self.exit_button = tk.Button(root, text="Exit", command=root.destroy, font=("Helvetica", 14))
         self.exit_button.place(relx=0.5, rely=0.75, anchor="center")
 
-        # Predefined credentials
-        self.credentials = {'user1': 'password1', 'user2': 'password2'}
+        # Load credentials from the database
+        self.credentials = self.load_credentials_from_database()
 
     def resize_image(self, event):
         new_width = event.width
@@ -69,18 +75,31 @@ class CreativeLoginApp:
         self.background_label.config(image=self.img)
         self.background_label.image = self.img  # Keep a reference to avoid garbage collection
 
+    def load_credentials_from_database(self):
+        try:
+            admins_ref = db.reference('admins')
+            admins_data = admins_ref.get()
+            return admins_data
+        except Exception as e:
+            print("Error loading credentials from the database:", e)
+            return {}
+
     def login(self):
-        username = self.username_entry.get()
-        password = self.password_entry.get()
+      username = self.username_entry.get()
+      password = self.password_entry.get()
 
-        if not username or not password:
-            messagebox.showerror("Login Failed", "Please enter both username and password.")
-            return
+      if not username or not password:
+        messagebox.showerror("Login Failed", "Please enter both username and password.")
+        return
 
-        if username in self.credentials and self.credentials[username] == password:
+      if username in self.credentials and 'password' in self.credentials[username]:
+        if self.credentials[username]['password'] == password:
             messagebox.showinfo("Login Successful", f"Welcome, {username}!")
         else:
-            messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
+            messagebox.showerror("Login Failed", "Invalid password. Please try again.")
+      else:
+        messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
+
 
 def main():
     root = tk.Tk()
