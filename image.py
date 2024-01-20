@@ -86,19 +86,20 @@ class CreativeLoginApp:
         return {}
 
     def login(self):
-      username = self.username_entry.get()
-      password = self.password_entry.get()
+     username = self.username_entry.get()
+     password = self.password_entry.get()
 
-      if not username or not password:
+     if not username or not password:
         messagebox.showerror("Login Failed", "Please enter both username and password.")
         return
 
-      if username in self.credentials and 'password' in self.credentials[username]:
+     if username in self.credentials and 'password' in self.credentials[username]:
         if self.credentials[username]['password'] == password:
-            messagebox.showinfo("Login Successful", f"Welcome, {username}!")
+            role = self.credentials[username].get('role', 'User')  # Fetch role, default to 'User' if not found
+            messagebox.showinfo("Login Successful", f"Welcome, {username}! \n You are logged in as a {role}.")
         else:
             messagebox.showerror("Login Failed", "Invalid password. Please try again.")
-      else:
+     else:
         messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
 
 
