@@ -58,6 +58,10 @@ class CreativeLoginApp:
         self.exit_button = tk.Button(root, text="Exit", command=root.destroy, font=("Helvetica", 14))
         self.exit_button.place(relx=0.5, rely=0.75, anchor="center")
 
+        # Credits button
+        self.credits_button = tk.Button(root, text="Credits", command=self.show_credits, font=("Helvetica", 14))
+        self.credits_button.place(relx=0.5, rely=0.85, anchor="center")
+
         # # Load credentials from the database
         # self.credentials = self.load_credentials_from_database()
 
@@ -326,6 +330,21 @@ class CreativeLoginApp:
     def submit_survey_feedback_complaint(self):
        messagebox.showinfo("Employee Window", "Submit Survey/Feedback/Complaint Button Pressed")
    
+    def show_credits(self):
+        credits_dialog = tk.Toplevel(self.root)
+        credits_dialog.title("Credits")
+
+        # You can customize the credits information as per your needs
+        credits_text = (
+            "HR Management System\n\n"
+            "Developed by: \n Samay Pandey, Armaan Nakhuda, Sushant Navle\n"
+            "Stage Completition: Stage 4 completed\n"
+            "Date: 6th Feb 2024\n"
+            "\nSpecial Thanks to:\n- OpenAI\n- Firebase\n- Yash Patil\n"
+        )
+
+        credits_label = tk.Label(credits_dialog, text=credits_text, font=("Helvetica", 12))
+        credits_label.pack(padx=20, pady=20)
 
 def main():
     root = tk.Tk()
