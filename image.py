@@ -179,7 +179,6 @@ class CreativeLoginApp:
         admin_window.mainloop()
 
     def create_remove_hr(self):
-        print("Create/Remove HR Login button pressed")
         # Ask the admin whether to add or remove a login
         action = tk.simpledialog.askstring("Create/Remove HR Login", "Enter 'add' to add a login, 'remove' to remove a login:")
         action = action.lower()
