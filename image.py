@@ -124,6 +124,10 @@ class CreativeLoginApp:
         welcome_label = tk.Label(admin_window, text="Welcome Admin!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
+        # Buttons for Admin window
+        create_remove_hr_button = tk.Button(admin_window, text="Create/Remove HR Login", command=self.create_remove_hr, font=("Helvetica", 14))
+        create_remove_hr_button.pack(pady=10)
+
         # Bind the window resize event for the admin window
         admin_window.bind("<Configure>", lambda event, img=admin_img, label=admin_background_label: self.resize_image(event, img, label))
 
@@ -271,6 +275,8 @@ class CreativeLoginApp:
     def request_bonus(self):
         messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
 
+    def create_remove_hr(self):
+        messagebox.showinfo("Admin Window", "Create/Remove HR Login Button Pressed")
 
 
 
