@@ -71,13 +71,14 @@ class CreativeLoginApp:
         # Create a new PhotoImage object
         self.img = ImageTk.PhotoImage(resized_image)
 
-        try:
-            if self.root.winfo_exists():  # Check if the main window still exists
-                # Update the label only if the main window exists
-                label.config(image=self.img)
-                label.image = self.img  # Keep a reference to avoid garbage collection
-        except tk.TclError:
-            pass  # Ignore TclError if the main window has been destroyed
+        #for future purposes, if we break something remove comment and activate this
+        # try:
+        #     if self.root.winfo_exists():  # Check if the main window still exists
+        #         # Update the label only if the main window exists
+        #         label.config(image=self.img)
+        #         label.image = self.img  # Keep a reference to avoid garbage collection
+        # except tk.TclError:
+        #     pass  # Ignore TclError if the main window has been destroyed
 
 
     
