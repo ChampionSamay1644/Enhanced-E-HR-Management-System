@@ -30,6 +30,9 @@ class CreativeLoginApp:
         self.background_label = tk.Label(root, image=self.img, bg='white')
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
+        #focus on window
+        root.focus_force()
+
         # Bind the window resize event
         root.bind("<Configure>", lambda event, img=self.img, label=self.background_label: self.resize_image(event, img, label))
 
@@ -159,6 +162,9 @@ class CreativeLoginApp:
         exit_button = tk.Button(admin_window, text="Exit", command=admin_window.destroy, font=("Helvetica", 14),
                             width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
         exit_button.place(relx=0.5, rely=0.95, anchor="center")
+
+        #focus on window
+        admin_window.focus_force()
      
          # Bind the Escape key to the exit function
         admin_window.bind("<Escape>", lambda event: admin_window.destroy())
@@ -209,9 +215,12 @@ class CreativeLoginApp:
         exit_button = tk.Button(hr_window, text="Exit", command=hr_window.destroy, font=("Helvetica", 14),
                             width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
         exit_button.place(relx=0.5, rely=0.95, anchor="center")
+    
+     #focus on window
+     hr_window.focus_force()
 
      # Bind the Escape key to the exit function
-        hr_window.bind("<Escape>", lambda event: hr_window.destroy())
+     hr_window.bind("<Escape>", lambda event: hr_window.destroy())
 
      # Bind the window resize event for the HR window
      hr_window.bind("<Configure>", lambda event, img=self.hr_img, label=hr_background_label: self.resize_image(event, img, label))
@@ -259,6 +268,9 @@ class CreativeLoginApp:
         exit_button = tk.Button(boss_window, text="Exit", command=boss_window.destroy, font=("Helvetica", 14),
                             width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
         exit_button.place(relx=0.5, rely=0.95, anchor="center")
+
+        #focus on window
+        boss_window.focus_force()
         
         # Bind the Escape key to the exit function
         boss_window.bind("<Escape>", lambda event: boss_window.destroy())
@@ -309,6 +321,9 @@ class CreativeLoginApp:
         exit_button = tk.Button(employee_window, text="Exit", command=employee_window.destroy, font=("Helvetica", 14),
                             width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
         exit_button.place(relx=0.5, rely=0.95, anchor="center")
+
+        #focus on window
+        employee_window.focus_force()
 
         # Bind the Escape key to the exit function
         employee_window.bind("<Escape>", lambda event: employee_window.destroy())
