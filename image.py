@@ -149,6 +149,12 @@ class CreativeLoginApp:
                             width=20, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
             button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
+         # Add an Exit button at the bottom
+        exit_button = tk.Button(admin_window, text="Exit", command=admin_window.destroy, font=("Helvetica", 14),
+                            width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
+        exit_button.place(relx=0.5, rely=0.95, anchor="center")
+     
+
         # Bind the window resize event for the admin window
         admin_window.bind("<Configure>", lambda event, img=admin_img, label=admin_background_label: self.resize_image(event, img, label))
 
@@ -190,6 +196,11 @@ class CreativeLoginApp:
         button = tk.Button(hr_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
                            width=30, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
         button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+
+         # Add an Exit button at the bottom
+        exit_button = tk.Button(hr_window, text="Exit", command=hr_window.destroy, font=("Helvetica", 14),
+                            width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
+        exit_button.place(relx=0.5, rely=0.95, anchor="center")
 
      # Bind the window resize event for the HR window
      hr_window.bind("<Configure>", lambda event, img=self.hr_img, label=hr_background_label: self.resize_image(event, img, label))
@@ -233,6 +244,11 @@ class CreativeLoginApp:
                             width=30, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
             button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
+        # Add an Exit button at the bottom
+        exit_button = tk.Button(boss_window, text="Exit", command=boss_window.destroy, font=("Helvetica", 14),
+                            width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
+        exit_button.place(relx=0.5, rely=0.95, anchor="center")
+
         # Bind the window resize event for the boss window
         boss_window.bind("<Configure>", lambda event, img=self.boss_img, label=boss_background_label: self.resize_image(event, img, label))
 
@@ -274,6 +290,11 @@ class CreativeLoginApp:
             button = tk.Button(employee_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
                             width=30, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
             button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+
+        # Add an Exit button at the bottom
+        exit_button = tk.Button(employee_window, text="Exit", command=employee_window.destroy, font=("Helvetica", 14),
+                            width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
+        exit_button.place(relx=0.5, rely=0.95, anchor="center")
 
         # Bind the window resize event for the employee window
         employee_window.bind("<Configure>", lambda event, img=self.employee_img, label=employee_background_label: self.resize_image(event, img, label))
