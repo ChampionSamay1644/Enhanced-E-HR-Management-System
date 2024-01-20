@@ -148,6 +148,22 @@ class CreativeLoginApp:
         welcome_label = tk.Label(hr_window, text="Welcome HR!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
+        buttons_info = [
+        ("Salary Management", self.salary_management),
+        ("Employee Add/Remove", self.employee_add_remove),
+        ("Approve Bonus", self.approve_bonus),
+        ("Approve Resignation", self.approve_resignation),
+        ("Check Employee Hours", self.check_hours_attended),
+        ("Survey/Feedback", self.survey_feedback)
+        ]
+
+        hr_buttons_frame = tk.Frame(hr_window)  # Define hr_buttons_frame
+        hr_buttons_frame.pack(pady=20)
+
+        for i, (button_text, button_command) in enumerate(buttons_info):
+            button = tk.Button(hr_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14), width=20, height=2)
+            button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+
         # Bind the window resize event for the HR window
         hr_window.bind("<Configure>", lambda event, img=self.hr_img, label=hr_background_label: self.resize_image(event, img, label))
 
@@ -202,6 +218,25 @@ class CreativeLoginApp:
 
         # Run the main loop for the employee window
         employee_window.mainloop()
+
+    def salary_management(self):
+        messagebox.showinfo("HR Window", "Salary Management Button Pressed")
+
+    def employee_add_remove(self):
+        messagebox.showinfo("HR Window", "Employee Add/Remove Button Pressed")
+
+    def approve_bonus(self):
+        messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
+
+    def approve_resignation(self):
+        messagebox.showinfo("HR Window", "Approve Resignation Button Pressed")
+
+    def check_hours_attended(self):
+        messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
+
+    def survey_feedback(self):
+        messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
+
 
 
 def main():
