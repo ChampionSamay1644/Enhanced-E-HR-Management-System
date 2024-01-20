@@ -125,8 +125,17 @@ class CreativeLoginApp:
         welcome_label.pack(pady=20)
 
         # Buttons for Admin window
-        create_remove_hr_button = tk.Button(admin_window, text="Create/Remove HR Login", command=self.create_remove_hr, font=("Helvetica", 14))
-        create_remove_hr_button.pack(pady=10)
+        buttons_info = [
+            ("Create/Remove HR Login", self.create_remove_hr)
+        ]
+
+        admin_buttons_frame = tk.Frame(admin_window, bg='black')  # Define admin_buttons_frame
+        admin_buttons_frame.pack(pady=20)
+
+        for i, (button_text, button_command) in enumerate(buttons_info):
+            button = tk.Button(admin_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
+                            width=20, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
+            button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
         # Bind the window resize event for the admin window
         admin_window.bind("<Configure>", lambda event, img=admin_img, label=admin_background_label: self.resize_image(event, img, label))
@@ -134,45 +143,48 @@ class CreativeLoginApp:
         # Run the main loop for the admin window
         admin_window.mainloop()
 
+
     def open_hr_window(self):
-        self.root.destroy()  # Close the main login window
-        hr_window = tk.Tk()  # Use Tk() to create a new window
-        hr_window.geometry("800x600")  # Set the window size
-        hr_window.title("HR Window")
+     self.root.destroy()  # Close the main login window
+     hr_window = tk.Tk()  # Use Tk() to create a new window
+     hr_window.geometry("800x600")  # Set the window size
+     hr_window.title("HR Window")
 
-        # Background image for the HR window
-        hr_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-        hr_original_image = Image.open(hr_img_path)
-        self.hr_img = ImageTk.PhotoImage(hr_original_image)
+     # Background image for the HR window
+     hr_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+     hr_original_image = Image.open(hr_img_path)
+     self.hr_img = ImageTk.PhotoImage(hr_original_image)
 
-        hr_background_label = tk.Label(hr_window, image=self.hr_img, bg='white')
-        hr_background_label.place(x=0, y=0, relwidth=1, relheight=1)
+     hr_background_label = tk.Label(hr_window, image=self.hr_img, bg='white')
+     hr_background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        # Welcome message for the HR
-        welcome_label = tk.Label(hr_window, text="Welcome HR!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
-        welcome_label.pack(pady=20)
+     # Welcome message for the HR
+     welcome_label = tk.Label(hr_window, text="Welcome HR!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
+     welcome_label.pack(pady=20)
 
-        buttons_info = [
-        ("Salary Management", self.salary_management),
-        ("Employee Add/Remove", self.employee_add_remove),
-        ("Approve Bonus", self.approve_bonus),
-        ("Approve Resignation", self.approve_resignation),
-        ("Check Employee Hours", self.check_hours_attended),
-        ("Survey/Feedback", self.survey_feedback)
-        ]
+     buttons_info = [
+         ("Salary Management", self.salary_management),
+         ("Employee Add/Remove", self.employee_add_remove),
+         ("Approve Bonus", self.approve_bonus),
+         ("Approve Resignation", self.approve_resignation),
+         ("Check Employee Hours", self.check_hours_attended),
+         ("Survey/Feedback", self.survey_feedback)
+     ]
 
-        hr_buttons_frame = tk.Frame(hr_window)  # Define hr_buttons_frame
-        hr_buttons_frame.pack(pady=20)
+     hr_buttons_frame = tk.Frame(hr_window, bg='black')  # Define hr_buttons_frame
+     hr_buttons_frame.pack(pady=20)
 
-        for i, (button_text, button_command) in enumerate(buttons_info):
-            button = tk.Button(hr_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14), width=20, height=2)
-            button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+     for i, (button_text, button_command) in enumerate(buttons_info):
+        button = tk.Button(hr_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
+                           width=30, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
+        button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
-        # Bind the window resize event for the HR window
-        hr_window.bind("<Configure>", lambda event, img=self.hr_img, label=hr_background_label: self.resize_image(event, img, label))
+     # Bind the window resize event for the HR window
+     hr_window.bind("<Configure>", lambda event, img=self.hr_img, label=hr_background_label: self.resize_image(event, img, label))
 
-        # Run the main loop for the HR window
-        hr_window.mainloop()
+     #  Run the main loop for the HR window
+     hr_window.mainloop()
+
 
     def open_boss_window(self):
         self.root.destroy()  # Close the main login window
@@ -192,9 +204,6 @@ class CreativeLoginApp:
         welcome_label = tk.Label(boss_window, text="Welcome Boss!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
-        boss_buttons_frame = tk.Frame(boss_window)  # Define boss_buttons_frame
-        boss_buttons_frame.pack(pady=20)
-
         buttons_info = [
             ("Performance Review Approval", self.perform_review_approval),
             ("Approve Vacations and Sick Leaves", self.approve_vacations_sick_leaves),
@@ -204,15 +213,20 @@ class CreativeLoginApp:
             ("Request for Bonus", self.request_bonus)
         ]
 
+        boss_buttons_frame = tk.Frame(boss_window, bg='black')  # Define boss_buttons_frame
+        boss_buttons_frame.pack(pady=20)
+
         for i, (button_text, button_command) in enumerate(buttons_info):
-            button = tk.Button(boss_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14))
-            button.grid(row=i // 3, column=i % 3, padx=10, pady=10)
+            button = tk.Button(boss_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
+                            width=30, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
+            button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
         # Bind the window resize event for the boss window
         boss_window.bind("<Configure>", lambda event, img=self.boss_img, label=boss_background_label: self.resize_image(event, img, label))
 
         # Run the main loop for the boss window
         boss_window.mainloop()
+
    
    
     def open_employee_window(self):
@@ -233,26 +247,28 @@ class CreativeLoginApp:
         welcome_label = tk.Label(employee_window, text="Welcome Employee!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
-        employee_buttons_frame = tk.Frame(employee_window)  # Define employee_buttons_frame
+        buttons_info = [
+            ("Sick/Vacation Days View", self.sick_vacation_days_view),
+            ("Apply for Vacation Days", self.apply_for_vacation_days),
+            ("Apply for Resignation", self.apply_for_resignation),
+            ("Check Progress on Tasks", self.check_progress_on_tasks),
+            ("Submit Survey/Feedback/Complaint", self.submit_survey_feedback_complaint)
+        ]
+
+        employee_buttons_frame = tk.Frame(employee_window, bg='black')  # Define employee_buttons_frame
         employee_buttons_frame.pack(pady=20)
 
-        buttons_info = [
-           ("Sick/Vacation Days View", self.sick_vacation_days_view),
-           ("Apply for Vacation Days", self.apply_for_vacation_days),
-           ("Apply for Resignation", self.apply_for_resignation),
-           ("Check Progress on Tasks", self.check_progress_on_tasks),
-           ("Submit Survey/Feedback/Complaint", self.submit_survey_feedback_complaint)
-             ]
-
         for i, (button_text, button_command) in enumerate(buttons_info):
-              button = tk.Button(employee_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14), width=20, height=2)
-              button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+            button = tk.Button(employee_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
+                            width=30, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
+            button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
         # Bind the window resize event for the employee window
         employee_window.bind("<Configure>", lambda event, img=self.employee_img, label=employee_background_label: self.resize_image(event, img, label))
 
         # Run the main loop for the employee window
         employee_window.mainloop()
+
 
     def salary_management(self):
         messagebox.showinfo("HR Window", "Salary Management Button Pressed")
