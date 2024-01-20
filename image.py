@@ -233,6 +233,21 @@ class CreativeLoginApp:
         welcome_label = tk.Label(employee_window, text="Welcome Employee!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
+        employee_buttons_frame = tk.Frame(employee_window)  # Define employee_buttons_frame
+        employee_buttons_frame.pack(pady=20)
+
+        buttons_info = [
+           ("Sick/Vacation Days View", self.sick_vacation_days_view),
+           ("Apply for Vacation Days", self.apply_for_vacation_days),
+           ("Apply for Resignation", self.apply_for_resignation),
+           ("Check Progress on Tasks", self.check_progress_on_tasks),
+           ("Submit Survey/Feedback/Complaint", self.submit_survey_feedback_complaint)
+             ]
+
+        for i, (button_text, button_command) in enumerate(buttons_info):
+              button = tk.Button(employee_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14), width=20, height=2)
+              button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+
         # Bind the window resize event for the employee window
         employee_window.bind("<Configure>", lambda event, img=self.employee_img, label=employee_background_label: self.resize_image(event, img, label))
 
@@ -278,7 +293,21 @@ class CreativeLoginApp:
     def create_remove_hr(self):
         messagebox.showinfo("Admin Window", "Create/Remove HR Login Button Pressed")
 
+    def sick_vacation_days_view(self):
+        messagebox.showinfo("Employee Window", "Sick/Vacation Days View Button Pressed")
 
+    def apply_for_vacation_days(self):
+       messagebox.showinfo("Employee Window", "Apply for Vacation Days Button Pressed")
+   
+    def apply_for_resignation(self):
+       messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
+   
+    def check_progress_on_tasks(self):
+       messagebox.showinfo("Employee Window", "Check Progress on Tasks Button Pressed")
+   
+    def submit_survey_feedback_complaint(self):
+       messagebox.showinfo("Employee Window", "Submit Survey/Feedback/Complaint Button Pressed")
+   
 
 def main():
     root = tk.Tk()
