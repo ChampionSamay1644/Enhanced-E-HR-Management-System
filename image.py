@@ -154,30 +154,6 @@ class CreativeLoginApp:
         # Run the main loop for the HR window
         hr_window.mainloop()
 
-    def open_employee_window(self):
-        self.root.destroy()  # Close the main login window
-        employee_window = tk.Tk()  # Use Tk() to create a new window
-        employee_window.geometry("800x600")  # Set the window size
-        employee_window.title("Employee Window")
-
-        # Background image for the employee window
-        employee_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-        self.employee_original_image = Image.open(employee_img_path)
-        self.employee_img = ImageTk.PhotoImage(self.employee_original_image)
-
-        employee_background_label = tk.Label(employee_window, image=self.employee_img, bg='white')
-        employee_background_label.place(x=0, y=0, relwidth=1, relheight=1)
-
-        # Welcome message for the employee
-        welcome_label = tk.Label(employee_window, text="Welcome Employee!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
-        welcome_label.pack(pady=20)
-
-        # Bind the window resize event for the employee window
-        employee_window.bind("<Configure>", lambda event, img=self.employee_img, label=employee_background_label: self.resize_image(event, img, label))
-
-        # Run the main loop for the employee window
-        employee_window.mainloop()
-
     def open_boss_window(self):
         self.root.destroy()  # Close the main login window
         boss_window = tk.Tk()  # Use Tk() to create a new window
@@ -201,6 +177,31 @@ class CreativeLoginApp:
 
         # Run the main loop for the boss window
         boss_window.mainloop()
+   
+   
+    def open_employee_window(self):
+        self.root.destroy()  # Close the main login window
+        employee_window = tk.Tk()  # Use Tk() to create a new window
+        employee_window.geometry("800x600")  # Set the window size
+        employee_window.title("Employee Window")
+
+        # Background image for the employee window
+        employee_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+        self.employee_original_image = Image.open(employee_img_path)
+        self.employee_img = ImageTk.PhotoImage(self.employee_original_image)
+
+        employee_background_label = tk.Label(employee_window, image=self.employee_img, bg='white')
+        employee_background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+        # Welcome message for the employee
+        welcome_label = tk.Label(employee_window, text="Welcome Employee!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
+        welcome_label.pack(pady=20)
+
+        # Bind the window resize event for the employee window
+        employee_window.bind("<Configure>", lambda event, img=self.employee_img, label=employee_background_label: self.resize_image(event, img, label))
+
+        # Run the main loop for the employee window
+        employee_window.mainloop()
 
 
 def main():
