@@ -17,13 +17,6 @@ class CreativeLoginApp:
         self.employee_img = None
         self.boss_original_image = None
         self.boss_img = None
-        
-        def username_del(e):
-            self.username_entry.delete(0, tk.END)
-        
-        def password_del(e):
-            self.password_entry.delete(0, tk.END)
-            
 
         # Construct the full path to the image file
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -40,25 +33,23 @@ class CreativeLoginApp:
         root.bind("<Configure>", self.resize_image)
     
 
-        # # Label for Username
-        # username_label = tk.Label(root, text="Username", font=("Helvetica", 12, "bold"), bg='white')
-        # username_label.place(relx=0.5, rely=0.35, anchor="center")
+        # Label for Username
+        username_label = tk.Label(root, text="Username", font=("Helvetica", 12, "bold"), bg='white')
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
 
         # Username entry
         self.username_entry = tk.Entry(root, font=("Helvetica", 12, "bold"))
         self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
-        self.username_entry.insert(0, "Username")  # Default text
-        self.username_entry.bind("<FocusIn>", username_del)
+        self.username_entry.insert(0, "")  # Default text
 
-        # # Label for Password
-        # password_label = tk.Label(root, text="Password", font=("Helvetica", 12, "bold"), bg='white')
-        # password_label.place(relx=0.5, rely=0.5, anchor="center")
+        # Label for Password
+        password_label = tk.Label(root, text="Password", font=("Helvetica", 12, "bold"), bg='white')
+        password_label.place(relx=0.5, rely=0.5, anchor="center")
 
         # Password entry
         self.password_entry = tk.Entry(root, show="*", font=("Helvetica", 12, "bold"))
         self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
-        self.password_entry.insert(0, "Password")  # Default text
-        self.password_entry.bind("<FocusIn>", password_del)
+        self.password_entry.insert(0, "")  # Default text
 
         # Login button
         self.login_button = tk.Button(root, text="Login", command=self.login, font=("Helvetica", 14))
