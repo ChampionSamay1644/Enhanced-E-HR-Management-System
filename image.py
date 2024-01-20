@@ -123,17 +123,21 @@ class CreativeLoginApp:
         # Background image for the admin window
         admin_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
         admin_original_image = Image.open(admin_img_path)
-        admin_img = ImageTk.PhotoImage(admin_original_image)
+        self.admin_img = ImageTk.PhotoImage(admin_original_image)
 
-        admin_background_label = tk.Label(admin_window, image=admin_img, bg='white')
+        admin_background_label = tk.Label(admin_window, image=self.admin_img, bg='white')
         admin_background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         # Welcome message for the admin
         welcome_label = tk.Label(admin_window, text="Welcome Admin!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
+        # Buttons for Admin window
+        create_remove_hr_button = tk.Button(admin_window, text="Create/Remove HR Login", command=self.create_remove_hr, font=("Helvetica", 14))
+        create_remove_hr_button.pack(pady=10)
+
         # Bind the window resize event for the admin window
-        admin_window.bind("<Configure>", lambda event, img=admin_img, label=admin_background_label: self.resize_image(event, img, label))
+        admin_window.bind("<Configure>", lambda event, img=self.admin_img, label=admin_background_label: self.resize_image(event, img, label))
 
         # Run the main loop for the admin window
         admin_window.mainloop()
@@ -212,8 +216,8 @@ class CreativeLoginApp:
 
         # Background image for the boss window
         boss_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-        self.boss_original_image = Image.open(boss_img_path)
-        self.boss_img = ImageTk.PhotoImage(self.boss_original_image)
+        boss_original_image = Image.open(boss_img_path)
+        self.boss_img = ImageTk.PhotoImage(boss_original_image)
 
         boss_background_label = tk.Label(boss_window, image=self.boss_img, bg='white')
         boss_background_label.place(x=0, y=0, relwidth=1, relheight=1)
@@ -221,6 +225,28 @@ class CreativeLoginApp:
         # Welcome message for the boss
         welcome_label = tk.Label(boss_window, text="Welcome Boss!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
+
+        # Buttons for Boss window
+        boss_buttons_frame = tk.Frame(boss_window, bg='white')
+        boss_buttons_frame.pack(pady=20)
+
+        performance_review_button = tk.Button(boss_buttons_frame, text="Performance Review Approval", command=self.perform_review_approval, font=("Helvetica", 14))
+        performance_review_button.grid(row=0, column=0, padx=10)
+
+        approve_vacations_sick_leaves_button = tk.Button(boss_buttons_frame, text="Approve Vacations and Sick Leaves", command=self.approve_vacations_sick_leaves, font=("Helvetica", 14))
+        approve_vacations_sick_leaves_button.grid(row=0, column=1, padx=10)
+
+        progress_on_task_button = tk.Button(boss_buttons_frame, text="Progress on Task", command=self.progress_on_task, font=("Helvetica", 14))
+        progress_on_task_button.grid(row=0, column=2, padx=10)
+
+        approve_promotion_button = tk.Button(boss_buttons_frame, text="Approve Promotion", command=self.approve_promotion, font=("Helvetica", 14))
+        approve_promotion_button.grid(row=1, column=0, pady=10)
+
+        approve_resignation_button = tk.Button(boss_buttons_frame, text="Approve Resignation", command=self.approve_resignation, font=("Helvetica", 14))
+        approve_resignation_button.grid(row=1, column=1, pady=10)
+
+        request_bonus_button = tk.Button(boss_buttons_frame, text="Request for Bonus", command=self.request_bonus, font=("Helvetica", 14))
+        request_bonus_button.grid(row=1, column=2, pady=10)
 
         # Bind the window resize event for the boss window
         boss_window.bind("<Configure>", lambda event, img=self.boss_img, label=boss_background_label: self.resize_image(event, img, label))
@@ -245,6 +271,28 @@ class CreativeLoginApp:
 
     def survey_feedback(self):
         messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
+
+    def create_remove_hr(self):
+        messagebox.showinfo("Admin Window", "Create/Remove HR Login Button Pressed")
+   
+    def perform_review_approval(self):
+        messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
+
+    def approve_vacations_sick_leaves(self):
+        messagebox.showinfo("Boss Window", "Approve Vacations and Sick Leaves Button Pressed")
+
+    def progress_on_task(self):
+        messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
+
+    def approve_promotion(self):
+        messagebox.showinfo("Boss Window", "Approve Promotion Button Pressed")
+
+    def approve_resignation(self):
+        messagebox.showinfo("Boss Window", "Approve Resignation Button Pressed")
+
+    def request_bonus(self):
+        messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
+
 
 
 def main():
