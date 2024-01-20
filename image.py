@@ -68,6 +68,12 @@ class CreativeLoginApp:
         self.credits_button = tk.Button(root, text="Credits", command=self.show_credits, font=("Helvetica", 14))
         self.credits_button.place(relx=0.5, rely=0.85, anchor="center")
 
+         # Bind the Enter key to the login function
+        root.bind("<Return>", lambda event: self.login())
+
+        # Bind the Escape key to the exit function
+        root.bind("<Escape>", lambda event: root.destroy())
+
         # # Load credentials from the database
         # self.credentials = self.load_credentials_from_database()
 
@@ -154,6 +160,8 @@ class CreativeLoginApp:
                             width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
         exit_button.place(relx=0.5, rely=0.95, anchor="center")
      
+         # Bind the Escape key to the exit function
+        admin_window.bind("<Escape>", lambda event: admin_window.destroy())
 
         # Bind the window resize event for the admin window
         admin_window.bind("<Configure>", lambda event, img=admin_img, label=admin_background_label: self.resize_image(event, img, label))
@@ -202,6 +210,9 @@ class CreativeLoginApp:
                             width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
         exit_button.place(relx=0.5, rely=0.95, anchor="center")
 
+     # Bind the Escape key to the exit function
+        hr_window.bind("<Escape>", lambda event: hr_window.destroy())
+
      # Bind the window resize event for the HR window
      hr_window.bind("<Configure>", lambda event, img=self.hr_img, label=hr_background_label: self.resize_image(event, img, label))
 
@@ -248,6 +259,9 @@ class CreativeLoginApp:
         exit_button = tk.Button(boss_window, text="Exit", command=boss_window.destroy, font=("Helvetica", 14),
                             width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
         exit_button.place(relx=0.5, rely=0.95, anchor="center")
+        
+        # Bind the Escape key to the exit function
+        boss_window.bind("<Escape>", lambda event: boss_window.destroy())
 
         # Bind the window resize event for the boss window
         boss_window.bind("<Configure>", lambda event, img=self.boss_img, label=boss_background_label: self.resize_image(event, img, label))
@@ -296,6 +310,9 @@ class CreativeLoginApp:
                             width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
         exit_button.place(relx=0.5, rely=0.95, anchor="center")
 
+        # Bind the Escape key to the exit function
+        employee_window.bind("<Escape>", lambda event: employee_window.destroy())
+        
         # Bind the window resize event for the employee window
         employee_window.bind("<Configure>", lambda event, img=self.employee_img, label=employee_background_label: self.resize_image(event, img, label))
 
