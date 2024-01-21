@@ -434,7 +434,8 @@ class CreativeLoginApp:
          ("Approve Bonus", self.approve_bonus),
          ("Approve Resignation", self.approve_resignation),
          ("Check Employee Hours", self.check_hours_attended),
-         ("Survey/Feedback", self.survey_feedback)
+         ("Survey/Feedback", self.survey_feedback),
+         ("Add/Remove Boss/Employees", self.addremovebe)
      ]
 
      hr_buttons_frame = tk.Frame(hr_window, bg='black')  # Define hr_buttons_frame
@@ -597,6 +598,9 @@ class CreativeLoginApp:
 
     def survey_feedback(self):
         messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
+
+    def addremovebe(self):
+        messagebox.showinfo("HR Window", "Add/Remove Boss/Employee Button Pressed")
 
     def perform_review_approval(self):
         messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
