@@ -38,7 +38,7 @@ class CreativeLoginApp:
         root.bind("<Configure>", lambda event, img=self.img, label=self.background_label: self.resize_image(event, img, label))
 
         # Add the company name at the top center
-        company_name_label = tk.Label(root, text="Den Dover Inc", font=("Helvetica", 38, "bold"), fg='white', bg='black')
+        company_name_label = tk.Label(root, text="Ben Dover Inc", font=("Helvetica", 38, "bold"), fg='white', bg='black')
         company_name_label.place(relx=0.5, rely=0.1, anchor="center")
 
 
@@ -91,7 +91,7 @@ class CreativeLoginApp:
         # Create a new PhotoImage object
         self.img = ImageTk.PhotoImage(resized_image)
 
-        #for future purposes, if we break something remove comment and activate this(DO NOT DELETE, DELETE IF YOU GAY)
+        #for future purposes, if we break something remove comment and activate this(DO NOT DELETE, DELETE IF YOU GAY!!!!!!!!!!!!!!!)
         # try:
         #     if self.root.winfo_exists():  # Check if the main window still exists
         #         # Update the label only if the main window exists
@@ -110,35 +110,32 @@ class CreativeLoginApp:
             messagebox.showerror("Login Failed", "Username and password are required. Please enter both.")
             return
 
-        admins_ref = db.reference('admins')
-        hr_ref = db.reference('HR')
-        boss_ref = db.reference('boss')
-        employee_ref = db.reference('employee')
+        admins_ref = db.reference('/admins')
+        hr_ref = db.reference('/HR')
+        boss_ref = db.reference('/boss')
+        employee_ref = db.reference('/employee')
 
-        admins = admins_ref.get()
-        if username in admins and admins[username].get('password') == password:
-            role = admins[username].get('role', 'User')
+        
+        if admins_ref.child(username).child('password').get() == password:
+            role = admins_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
             self.open_admin_window(role)
             return
         
-        HR = hr_ref.get()
-        if username in HR and HR[username].get('password') == password:
-            role = HR[username].get('role', 'User')
+        if hr_ref.child(username).child('password').get() == password:
+            role = hr_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
             self.open_hr_window(role)
             return
         
-        boss = boss_ref.get()
-        if username in boss and boss[username].get('password') == password:
-            role = boss[username].get('role', 'User')
+        if boss_ref.child(username).child('password').get() == password:
+            role = boss_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
             self.open_boss_window(role)
             return
         
-        employee = employee_ref.get()
-        if username in employee and employee[username].get('password') == password:
-            role = employee[username].get('role', 'User')
+        if employee_ref.child(username).child('password').get() == password:
+            role = employee_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
             self.open_employee_window(role)
             return
