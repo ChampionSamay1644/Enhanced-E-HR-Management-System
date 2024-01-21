@@ -211,27 +211,27 @@ class CreativeLoginApp:
 
        # Buttons for Admin window
         buttons1_info = [
-    (("Create HR Login", lambda: self.create_hr(button_create_hr))),  # Use lambda to delay the method call
+    (("Create HR Login", lambda: self.create_all_admin(button_create_all_admin))),  # Use lambda to delay the method call
 ]
 
         admin_buttons_frame = tk.Frame(admin_window, bg='black')  # Define admin_buttons_frame
         admin_buttons_frame.pack(pady=20)
 
         for i, (button_text, button_command) in enumerate(buttons1_info):
-            button_create_hr = tk.Button(admin_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
+            button_create_all_admin = tk.Button(admin_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
                                         width=20, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
-            button_create_hr.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+            button_create_all_admin.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
         # Create a 2nd button for remove HR login
         buttons2_info = [
-            (("Remove HR Login", lambda: self.remove_hr(button_remove_hr))),  # Use lambda to delay the method call
+            (("Remove HR Login", lambda: self.remove_all_admin(button_remove_all_admin))),  # Use lambda to delay the method call
         ]
 
         for i, (button_text, button_command) in enumerate(buttons2_info):
-            button_remove_hr = tk.Button(admin_buttons_frame, text=button_text, command=button_command,
+            button_remove_all_admin = tk.Button(admin_buttons_frame, text=button_text, command=button_command,
                                         font=("Helvetica", 14), width=20, height=2, bd=0, fg='white', bg='#2E4053',
                                         activebackground='#566573')
-            button_remove_hr.grid(row=i // 2 + 1, column=i % 2, padx=10, pady=10)  # Adjusted row value
+            button_remove_all_admin.grid(row=i // 2 + 1, column=i % 2, padx=10, pady=10)  # Adjusted row value
 
         exit_button = tk.Button(admin_window, text="Exit", command=admin_window.destroy, font=("Helvetica", 14),
                                 width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
@@ -254,7 +254,7 @@ class CreativeLoginApp:
         # Run the main loop for the admin window
         admin_window.mainloop()
 
-    def create_hr(self, button1):
+    def create_all_admin(self, button1):
         # create a new window
         create_remove_hr_window = tk.Toplevel()
         create_remove_hr_window.geometry("800x600")  # Set the window size
@@ -293,7 +293,7 @@ class CreativeLoginApp:
         create_remove_hr_window.mainloop()
 
 
-    def remove_hr(self, button2):
+    def remove_all_admin(self, button2):
         # create a new window
         create_remove_hr_window = tk.Toplevel()
         create_remove_hr_window.geometry("800x600")  # Set the window size
@@ -482,7 +482,8 @@ class CreativeLoginApp:
          ("Approve Resignation", self.approve_resignation),
          ("Check Employee Hours", self.check_hours_attended),
          ("Survey/Feedback", self.survey_feedback),
-         ("Add/Remove Boss/Employees", self.addremovebe)
+         ("Add Boss/Employees", self.create_all_hr),
+         ("Remove Boss/Employees", self.remove_all_hr)
      ]
 
      hr_buttons_frame = tk.Frame(hr_window, bg='black')  # Define hr_buttons_frame
@@ -513,9 +514,6 @@ class CreativeLoginApp:
      #  Run the main loop for the HR window
      hr_window.mainloop()
 
-     self.center_window(hr_window)
-
-
     def salary_management(self):
         messagebox.showinfo("HR Window", "Salary Management Button Pressed")
 
@@ -536,6 +534,78 @@ class CreativeLoginApp:
 
     def addremovebe(self):
         messagebox.showinfo("HR Window", "Add/Remove Boss/Employee Button Pressed")
+
+
+    def create_all_hr(self):
+        # create a new window
+        create_remove_hr_window = tk.Toplevel()
+        create_remove_hr_window.geometry("800x600")  # Set the window size
+        create_remove_hr_window.title("Create HR Login")
+        # create a new entry for username
+        username_label = tk.Label(create_remove_hr_window, text="Username", font=("Helvetica", 12, "bold"), bg='white')
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
+        self.username_entry = tk.Entry(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.username_entry.insert(0, "")
+        # create a new entry for password
+        password_label = tk.Label(create_remove_hr_window, text="Password", font=("Helvetica", 12, "bold"), bg='white')
+        password_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.password_entry = tk.Entry(create_remove_hr_window, show="*", font=("Helvetica", 12, "bold"))
+        self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
+        self.password_entry.insert(0, "")
+        # create a new checkbox for role with options- HR, boss, employee
+        role_label = tk.Label(create_remove_hr_window, text="Role", font=("Helvetica", 12, "bold"), bg='white')
+        role_label.place(relx=0.5, rely=0.65, anchor="center")
+        self.role_entry = ttk.Combobox(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.role_entry['values'] = ('boss', 'employee')
+        self.role_entry.place(relx=0.5, rely=0.7, anchor="center")
+        self.role_entry.current(0)
+        # create a new button for adding the new login
+        add_button = tk.Button(create_remove_hr_window, text="Add", command=self.add_login_to_database, font=("Helvetica", 14))
+        add_button.place(relx=0.5, rely=0.8, anchor="center", width=100, height=30)
+        # store the values in 3 variables when the button is pressed
+        add_button.bind("<Button-1>", lambda event: self.add_login_to_database(create_remove_hr_window))
+        # Bind the Escape key to the exit function
+        create_remove_hr_window.bind("<Escape>", lambda event: create_remove_hr_window.destroy())
+        # focus on window
+        create_remove_hr_window.focus_force()
+        # Center the window with function center_window_test
+        self.center_window_all(create_remove_hr_window)
+        # Run the main loop for the create_remove_hr_window
+        create_remove_hr_window.mainloop()
+
+
+    def remove_all_hr(self):
+        # create a new window
+        create_remove_hr_window = tk.Toplevel()
+        create_remove_hr_window.geometry("800x600")  # Set the window size
+        create_remove_hr_window.title("Remove HR Login")
+        # create a new entry for username
+        username_label = tk.Label(create_remove_hr_window, text="Username", font=("Helvetica", 12, "bold"), bg='white')
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
+        self.username_entry = tk.Entry(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.username_entry.insert(0, "")
+        # create a checkbox for role with options- HR, boss, employee
+        role_label = tk.Label(create_remove_hr_window, text="Role", font=("Helvetica", 12, "bold"), bg='white')
+        role_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.role_entry = ttk.Combobox(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.role_entry['values'] = ('boss', 'employee')
+        self.role_entry.place(relx=0.5, rely=0.55, anchor="center")
+        self.role_entry.current(0)
+        # create a new button for removing the login
+        remove_button = tk.Button(create_remove_hr_window, text="Remove", command=self.remove_login_from_database, font=("Helvetica", 14))
+        remove_button.place(relx=0.5, rely=0.65, anchor="center", width=100, height=30)
+        # store the values in 2 variables when the button is pressed
+        remove_button.bind("<Button-1>", lambda event: self.remove_login_from_database(create_remove_hr_window))
+        # Bind the Escape key to the exit function
+        create_remove_hr_window.bind("<Escape>", lambda event: create_remove_hr_window.destroy())
+        # focus on window
+        create_remove_hr_window.focus_force()
+        # Center the window with function center_window_test
+        self.center_window_all(create_remove_hr_window)
+        # Run the main loop for the create_remove_hr_window
+        create_remove_hr_window.mainloop()
 
 
     def open_boss_window(self,role):
