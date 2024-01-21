@@ -114,6 +114,41 @@ class CreativeLoginApp:
         # except tk.TclError:
         #     pass  # Ignore TclError if the main window has been destroyed
 
+    def show_credits(self):
+        # Create a new Toplevel window for the credits
+        credits_dialog = tk.Toplevel(self.root)
+        credits_dialog.title("Credits")
+
+        # You can customize the credits information as per your needs
+        credits_text = (
+            "HR Management System\n\n"
+            "Developed by: \n -Samay Pandey, \n-Armaan Nakhuda, \n-Sushant Navle, \n-Peeyush Karnik\n\n"
+            "Stage Completition: Stage 4 completed\n"
+            "Date: 6th Feb 2024\n"
+            "\nSpecial Thanks to:\n- Firebase\n- OpenAI\n- Yash Patil\n"
+        )
+
+        # Create a label for credits information
+        credits_label = tk.Label(credits_dialog, text=credits_text, font=("Helvetica", 12))
+        credits_label.pack(padx=20, pady=20)
+
+        # Center the credits dialog relative to the main application window
+        credits_dialog.update_idletasks()
+
+        app_x = self.root.winfo_x()
+        app_y = self.root.winfo_y()
+        app_width = self.root.winfo_width()
+        app_height = self.root.winfo_height()
+
+        credits_width = credits_dialog.winfo_width()
+        credits_height = credits_dialog.winfo_height()
+
+        x = app_x + (app_width - credits_width) // 2
+        y = app_y + (app_height - credits_height) // 2
+
+        credits_dialog.geometry(f"{credits_width}x{credits_height}+{x}+{y}")
+
+        credits_dialog.mainloop()
 
     def login(self):
         username = self.username_entry.get()
@@ -481,6 +516,28 @@ class CreativeLoginApp:
      self.center_window(hr_window)
 
 
+    def salary_management(self):
+        messagebox.showinfo("HR Window", "Salary Management Button Pressed")
+
+    def employee_add_remove(self):
+        messagebox.showinfo("HR Window", "Employee Add/Remove Button Pressed")
+
+    def approve_bonus(self):
+        messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
+
+    def approve_resignation(self):
+        messagebox.showinfo("HR Window", "Approve Resignation Button Pressed")
+
+    def check_hours_attended(self):
+        messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
+
+    def survey_feedback(self):
+        messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
+
+    def addremovebe(self):
+        messagebox.showinfo("HR Window", "Add/Remove Boss/Employee Button Pressed")
+
+
     def open_boss_window(self,role):
         self.root.destroy()  # Close the main login window
         boss_window = tk.Tk()  # Use Tk() to create a new window
@@ -535,6 +592,24 @@ class CreativeLoginApp:
 
         # Run the main loop for the boss window
         boss_window.mainloop()
+
+    def perform_review_approval(self):
+        messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
+
+    def approve_vacations_sick_leaves(self):
+        messagebox.showinfo("Boss Window", "Approve Vacations and Sick Leaves Button Pressed")
+
+    def progress_on_task(self):
+        messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
+
+    def approve_promotion(self):
+        messagebox.showinfo("Boss Window", "Approve Promotion Button Pressed")
+
+    def approve_resignation(self):
+        messagebox.showinfo("Boss Window", "Approve Resignation Button Pressed")
+
+    def request_bonus(self):
+        messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
 
    
    
@@ -592,46 +667,6 @@ class CreativeLoginApp:
         # Run the main loop for the employee window
         employee_window.mainloop()
 
-
-    def salary_management(self):
-        messagebox.showinfo("HR Window", "Salary Management Button Pressed")
-
-    def employee_add_remove(self):
-        messagebox.showinfo("HR Window", "Employee Add/Remove Button Pressed")
-
-    def approve_bonus(self):
-        messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
-
-    def approve_resignation(self):
-        messagebox.showinfo("HR Window", "Approve Resignation Button Pressed")
-
-    def check_hours_attended(self):
-        messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
-
-    def survey_feedback(self):
-        messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
-
-    def addremovebe(self):
-        messagebox.showinfo("HR Window", "Add/Remove Boss/Employee Button Pressed")
-
-    def perform_review_approval(self):
-        messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
-
-    def approve_vacations_sick_leaves(self):
-        messagebox.showinfo("Boss Window", "Approve Vacations and Sick Leaves Button Pressed")
-
-    def progress_on_task(self):
-        messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
-
-    def approve_promotion(self):
-        messagebox.showinfo("Boss Window", "Approve Promotion Button Pressed")
-
-    def approve_resignation(self):
-        messagebox.showinfo("Boss Window", "Approve Resignation Button Pressed")
-
-    def request_bonus(self):
-        messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
-
     def sick_vacation_days_view(self):
         messagebox.showinfo("Employee Window", "Sick/Vacation Days View Button Pressed")
 
@@ -647,42 +682,7 @@ class CreativeLoginApp:
     def submit_survey_feedback_complaint(self):
        messagebox.showinfo("Employee Window", "Submit Survey/Feedback/Complaint Button Pressed")
    
-    def show_credits(self):
-        # Create a new Toplevel window for the credits
-        credits_dialog = tk.Toplevel(self.root)
-        credits_dialog.title("Credits")
-
-        # You can customize the credits information as per your needs
-        credits_text = (
-            "HR Management System\n\n"
-            "Developed by: \n -Samay Pandey, \n-Armaan Nakhuda, \n-Sushant Navle, \n-Peeyush Karnik\n\n"
-            "Stage Completition: Stage 4 completed\n"
-            "Date: 6th Feb 2024\n"
-            "\nSpecial Thanks to:\n- Firebase\n- OpenAI\n- Yash Patil\n"
-        )
-
-        # Create a label for credits information
-        credits_label = tk.Label(credits_dialog, text=credits_text, font=("Helvetica", 12))
-        credits_label.pack(padx=20, pady=20)
-
-        # Center the credits dialog relative to the main application window
-        credits_dialog.update_idletasks()
-
-        app_x = self.root.winfo_x()
-        app_y = self.root.winfo_y()
-        app_width = self.root.winfo_width()
-        app_height = self.root.winfo_height()
-
-        credits_width = credits_dialog.winfo_width()
-        credits_height = credits_dialog.winfo_height()
-
-        x = app_x + (app_width - credits_width) // 2
-        y = app_y + (app_height - credits_height) // 2
-
-        credits_dialog.geometry(f"{credits_width}x{credits_height}+{x}+{y}")
-
-        credits_dialog.mainloop()
-
+    
     def center_window_all(self,window):
          # Get the width and height of the screen
          screen_width = window.winfo_screenwidth()
