@@ -25,7 +25,7 @@ class CreativeLoginApp:
         # Load and set the background image
         self.original_image = Image.open(img_path)
         self.img = ImageTk.PhotoImage(self.original_image)
-
+    
         # Create and place a label with the background image
         self.background_label = tk.Label(root, image=self.img, bg='white')
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
@@ -87,11 +87,23 @@ class CreativeLoginApp:
         new_width = event.width
         new_height = event.height
 
+     
+        # Calculate the aspect ratio of the original image
+        aspect_ratio = self.original_image.width / self.original_image.height
+
+        # Calculate the new height to maintain the aspect ratio
+        calculated_height = int(new_width / aspect_ratio)
+
         # Resize the original image
-        resized_image = self.original_image.resize((new_width, new_height))
+        resized_image = self.original_image.resize((new_width, calculated_height))
 
         # Create a new PhotoImage object
         self.img = ImageTk.PhotoImage(resized_image)
+
+        # Update the label with the resized image
+        label.config(image=self.img)
+        label.image = self.img  # Keep a reference to avoid garbage collection
+
 
         #for future purposes, if we break something remove comment and activate this(DO NOT DELETE, DELETE IF YOU GAY!!!!!!!!!!!!!!!)
         # try:
@@ -678,10 +690,10 @@ class CreativeLoginApp:
 
          # Calculate the x and y coordinates to center the main window
          x = (screen_width / 2) - (900 / 2)
-         y = (screen_height / 2) - (700 / 2)
+         y = (screen_height / 2) - (600 / 2)
 
          # Set the dimensions of the screen and where it is placed
-         window.geometry('%dx%d+%d+%d' % (900, 700, x, y))
+         window.geometry('%dx%d+%d+%d' % (900, 600, x, y))
 
 
 def main():
