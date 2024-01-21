@@ -698,7 +698,7 @@ class CreativeLoginApp:
 
 def main():
     root = tk.Tk()
-    root.geometry("900x700")  # Set the window size
+    root.geometry("900x600")  # Set the window size
     app = CreativeLoginApp(root)
     root.mainloop()
 
