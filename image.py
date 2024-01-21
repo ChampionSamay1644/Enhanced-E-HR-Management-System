@@ -110,24 +110,40 @@ class CreativeLoginApp:
             messagebox.showerror("Login Failed", "Username and password are required. Please enter both.")
             return
 
-        admins = db.reference('admins')
+        admins_ref = db.reference('admins')
+        hr_ref = db.reference('HR')
+        boss_ref = db.reference('boss')
+        employee_ref = db.reference('employee')
 
-        if admins.child(username).child('password').get() == password:
-            role = admins.child(username).child('role').get()  # Fetch role, default to 'User' if not found
+        admins = admins_ref.get()
+        if username in admins and admins[username].get('password') == password:
+            role = admins[username].get('role', 'User')
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
-
-            match role:
-                case 'admin':
-                    self.open_admin_window()
-                case 'HR':
-                    self.open_hr_window()
-                case 'boss':
-                    self.open_boss_window()
-                case 'employee':
-                    self.open_employee_window()
-        else:
-            messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
-
+            self.open_admin_window(role)
+            return
+        
+        HR = hr_ref.get()
+        if username in HR and HR[username].get('password') == password:
+            role = HR[username].get('role', 'User')
+            messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
+            self.open_hr_window(role)
+            return
+        
+        boss = boss_ref.get()
+        if username in boss and boss[username].get('password') == password:
+            role = boss[username].get('role', 'User')
+            messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
+            self.open_boss_window(role)
+            return
+        
+        employee = employee_ref.get()
+        if username in employee and employee[username].get('password') == password:
+            role = employee[username].get('role', 'User')
+            messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
+            self.open_hr_window(role)
+            return
+        
+        messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
 
     def open_admin_window(self):
         self.root.destroy()  # Close the main login window
