@@ -14,7 +14,6 @@ class CreativeLoginApp:
     def __init__(self, root):
         self.root = root
         self.root.title("HR Management System")
-        self.center_window()
         self.employee_original_image = None
         self.employee_img = None
         self.boss_original_image = None
@@ -33,6 +32,9 @@ class CreativeLoginApp:
 
         #focus on window
         root.focus_force()
+
+        # Center the window with function center_window_test
+        self.center_window_all(root)
 
         # Bind the window resize event
         root.bind("<Configure>", lambda event, img=self.img, label=self.background_label: self.resize_image(event, img, label))
@@ -146,7 +148,7 @@ class CreativeLoginApp:
         self.root.destroy()  # Close the main login window
         admin_window = tk.Tk()  # Use Tk() to create a new window
         admin_window.geometry("800x600")  # Set the window size
-        admin_window.title("Admin Window")
+        admin_window.title("Admin Window")      
 
         # Background image for the admin window
         admin_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -182,6 +184,9 @@ class CreativeLoginApp:
         #focus on window
         admin_window.focus_force()
 
+        #Center the window with function center_window_test
+        self.center_window_all(admin_window)
+
         # Bind the Escape key to the exit function
         admin_window.bind("<Escape>", lambda event: admin_window.destroy())
 
@@ -190,6 +195,8 @@ class CreativeLoginApp:
 
         # Run the main loop for the admin window
         admin_window.mainloop()
+
+        self.center_window(admin_window)
 
     def create_remove_hr(self):
         # Ask the admin whether to add or remove a login
@@ -299,6 +306,9 @@ class CreativeLoginApp:
      #focus on window
      hr_window.focus_force()
 
+     # Center the window with function center_window_test
+     self.center_window_all(hr_window)
+
      # Bind the Escape key to the exit function
      hr_window.bind("<Escape>", lambda event: hr_window.destroy())
 
@@ -307,6 +317,8 @@ class CreativeLoginApp:
 
      #  Run the main loop for the HR window
      hr_window.mainloop()
+
+     self.center_window(hr_window)
 
 
     def open_boss_window(self,role):
@@ -351,6 +363,9 @@ class CreativeLoginApp:
 
         #focus on window
         boss_window.focus_force()
+
+        #Center the window with function center_window_test
+        self.center_window_all(boss_window)
         
         # Bind the Escape key to the exit function
         boss_window.bind("<Escape>", lambda event: boss_window.destroy())
@@ -404,6 +419,9 @@ class CreativeLoginApp:
 
         #focus on window
         employee_window.focus_force()
+
+        #Center the window with function center_window_test
+        self.center_window_all(employee_window)
 
         # Bind the Escape key to the exit function
         employee_window.bind("<Escape>", lambda event: employee_window.destroy())
@@ -502,19 +520,18 @@ class CreativeLoginApp:
 
         credits_dialog.mainloop()
 
+    def center_window_all(self,window):
+         # Get the width and height of the screen
+         screen_width = window.winfo_screenwidth()
+         screen_height = window.winfo_screenheight()
 
+         # Calculate the x and y coordinates to center the main window
+         x = (screen_width / 2) - (900 / 2)
+         y = (screen_height / 2) - (700 / 2)
 
-    def center_window(self):
-        # Get the width and height of the screen
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
+         # Set the dimensions of the screen and where it is placed
+         window.geometry('%dx%d+%d+%d' % (900, 700, x, y))
 
-        # Calculate the x and y coordinates to center the main window
-        x = (screen_width / 2) - (800 / 2)
-        y = (screen_height / 2) - (600 / 2)
-
-        # Set the dimensions of the screen and where it is placed
-        self.root.geometry('%dx%d+%d+%d' % (800, 600, x, y))
 
 def main():
     root = tk.Tk()
