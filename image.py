@@ -140,12 +140,12 @@ class CreativeLoginApp:
         if username in employee and employee[username].get('password') == password:
             role = employee[username].get('role', 'User')
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
-            self.open_hr_window(role)
+            self.open_employee_window(role)
             return
         
         messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
 
-    def open_admin_window(self):
+    def open_admin_window(self,role):
         self.root.destroy()  # Close the main login window
         admin_window = tk.Tk()  # Use Tk() to create a new window
         admin_window.geometry("800x600")  # Set the window size
@@ -259,7 +259,7 @@ class CreativeLoginApp:
             return None
         
 
-    def open_hr_window(self):
+    def open_hr_window(self,role):
      self.root.destroy()  # Close the main login window
      hr_window = tk.Tk()  # Use Tk() to create a new window
      hr_window.geometry("800x600")  # Set the window size
@@ -312,7 +312,7 @@ class CreativeLoginApp:
      hr_window.mainloop()
 
 
-    def open_boss_window(self):
+    def open_boss_window(self,role):
         self.root.destroy()  # Close the main login window
         boss_window = tk.Tk()  # Use Tk() to create a new window
         boss_window.geometry("800x600")  # Set the window size
@@ -366,7 +366,7 @@ class CreativeLoginApp:
 
    
    
-    def open_employee_window(self):
+    def open_employee_window(self,role):
         self.root.destroy()  # Close the main login window
         employee_window = tk.Tk()  # Use Tk() to create a new window
         employee_window.geometry("800x600")  # Set the window size
