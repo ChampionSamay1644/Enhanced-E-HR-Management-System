@@ -325,138 +325,7 @@ class CreativeLoginApp:
         # Run the main loop for the create_remove_hr_window
         create_remove_hr_window.mainloop()
 
-        
-    def remove_login_from_database(self,create_remove_hr_window):
-        username = self.username_entry.get()
-        role = self.role_entry.get()
-        admins_ref = db.reference('/admins')
-        hr_ref = db.reference('/HR')
-        boss_ref = db.reference('/boss')
-        employee_ref = db.reference('/employee')
-        if role == 'HR':
-            if hr_ref.child(username).get():
-                # Remove the login from the database
-                hr_ref.child(username).delete()
-                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
-            else:
-                messagebox.showinfo("Remove HR Login", "Username does not exist.")
-        elif role == 'boss':
-            if boss_ref.child(username).get():
-                # Remove the login from the database
-                boss_ref.child(username).delete()
-                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
-            else:
-                messagebox.showinfo("Remove HR Login", "Username does not exist.")
-        elif role == 'employee':
-            if employee_ref.child(username).get():
-                # Remove the login from the database
-                employee_ref.child(username).delete()
-                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
-            else:
-                messagebox.showinfo("Remove HR Login", "Username does not exist.")
-        #close the window
-        create_remove_hr_window.destroy()
-        
-    
-    def add_login_to_database(self,create_remove_hr_window):
-        username = self.username_entry.get()
-        password = self.password_entry.get()
-        role = self.role_entry.get()
-
-        admins_ref = db.reference('/admins')
-        hr_ref = db.reference('/HR')
-        boss_ref = db.reference('/boss')
-        employee_ref = db.reference('/employee')
-
-        if admins_ref.child(username).get() or hr_ref.child(username).get() or boss_ref.child(username).get() or employee_ref.child(username).get():
-            messagebox.showinfo("Add HR Login", "Username already exists. Choose a different username.")
-        else:
-            # Add the new login to the database
-            if role == 'HR':
-                hr_ref.child(username).set({
-                    'password': password,
-                    'role': role
-                })
-            elif role == 'boss':
-                boss_ref.child(username).set({
-                    'password': password,
-                    'role': role
-                })
-            elif role == 'employee':
-                employee_ref.child(username).set({
-                    'password': password,
-                    'role': role
-                })
-            messagebox.showinfo("Add HR Login", "Login added successfully.")
-        #close the window
-        create_remove_hr_window.destroy()
-        
-        
-    # def create_remove_hr(self):
-    #     # Ask the admin whether to add or remove a login
-    #     action = tk.simpledialog.askstring("Create/Remove HR Login", "Enter 'add' to add a login, 'remove' to remove a login:")
-    #     action = action.lower()
-    #     if action == "add":
-    #         # Gather information for the new login
-    #         username = tk.simpledialog.askstring("Add HR Login", "Enter the username:")
-    #         password = tk.simpledialog.askstring("Add HR Login", "Enter the password:")
-    #         role = tk.simpledialog.askstring("Add HR Login", "Enter the role (admin, HR, boss, employee):")
-
-    #         # Update the database with the new login
-    #         self.add_login_to_database(username, password, role)
-
-    #     elif action == "remove":
-    #         # Fetch all logins from the database
-    #         logins = self.fetch_all_logins_from_database()
-
-    #         if not logins:
-    #             messagebox.showinfo("Remove HR Login", "No logins found.")
-    #             return
-
-    #         # Ask the admin to select a login for removal
-    #         selected_login = tk.simpledialog.askstring("Remove HR Login", "Select a login to remove:")
-
-    #         # Update the database by removing the selected login
-    #         self.remove_login_from_database(selected_login)
-
-    #     else:
-    #         messagebox.showinfo("Create/Remove HR Login", "Invalid action. Please enter 'add' or 'remove'.")
-
-    # def add_login_to_database(self, username, password, role):
-    #     admins_ref = db.reference('admins')
-
-    #     # Check if the username already exists
-    #     if admins_ref.child(username).get():
-    #         messagebox.showinfo("Add HR Login", "Username already exists. Choose a different username.")
-    #     else:
-    #         # Add the new login to the database
-    #         admins_ref.child(username).set({
-    #             'password': password,
-    #             'role': role
-    #         })
-    #         messagebox.showinfo("Add HR Login", "Login added successfully.")
-
-    # def remove_login_from_database(self, username):
-    #     admins_ref = db.reference('admins')
-
-    #     # Check if the username exists
-    #     if admins_ref.child(username).get():
-    #         # Remove the login from the database
-    #         admins_ref.child(username).delete()
-    #         messagebox.showinfo("Remove HR Login", "Login removed successfully.")
-    #     else:
-    #         messagebox.showinfo("Remove HR Login", "Username does not exist.")
-    
-    # def fetch_all_logins_from_database(self):
-    #     admins_ref = db.reference('admins')
-    #     admins = admins_ref.get()
-
-    #     if admins:
-    #         return list(admins.keys())
-    #     else:
-    #         return None
-        
-
+  
     def open_hr_window(self,role):
      self.root.destroy()  # Close the main login window
      hr_window = tk.Tk()  # Use Tk() to create a new window
@@ -764,6 +633,73 @@ class CreativeLoginApp:
 
          # Set the dimensions of the screen and where it is placed
          window.geometry('%dx%d+%d+%d' % (900, 600, x, y))
+
+
+    
+    def add_login_to_database(self,create_remove_hr_window):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        role = self.role_entry.get()
+
+        admins_ref = db.reference('/admins')
+        hr_ref = db.reference('/HR')
+        boss_ref = db.reference('/boss')
+        employee_ref = db.reference('/employee')
+
+        if admins_ref.child(username).get() or hr_ref.child(username).get() or boss_ref.child(username).get() or employee_ref.child(username).get():
+            messagebox.showinfo("Add HR Login", "Username already exists. Choose a different username.")
+        else:
+            # Add the new login to the database
+            if role == 'HR':
+                hr_ref.child(username).set({
+                    'password': password,
+                    'role': role
+                })
+            elif role == 'boss':
+                boss_ref.child(username).set({
+                    'password': password,
+                    'role': role
+                })
+            elif role == 'employee':
+                employee_ref.child(username).set({
+                    'password': password,
+                    'role': role
+                })
+            messagebox.showinfo("Add HR Login", "Login added successfully.")
+        #close the window
+        create_remove_hr_window.destroy()
+
+    def remove_login_from_database(self,create_remove_hr_window):
+        username = self.username_entry.get()
+        role = self.role_entry.get()
+        admins_ref = db.reference('/admins')
+        hr_ref = db.reference('/HR')
+        boss_ref = db.reference('/boss')
+        employee_ref = db.reference('/employee')
+        if role == 'HR':
+            if hr_ref.child(username).get():
+                # Remove the login from the database
+                hr_ref.child(username).delete()
+                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+            else:
+                messagebox.showinfo("Remove HR Login", "Username does not exist.")
+        elif role == 'boss':
+            if boss_ref.child(username).get():
+                # Remove the login from the database
+                boss_ref.child(username).delete()
+                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+            else:
+                messagebox.showinfo("Remove HR Login", "Username does not exist.")
+        elif role == 'employee':
+            if employee_ref.child(username).get():
+                # Remove the login from the database
+                employee_ref.child(username).delete()
+                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+            else:
+                messagebox.showinfo("Remove HR Login", "Username does not exist.")
+        #close the window
+        create_remove_hr_window.destroy()
+        
 
 
 def main():
