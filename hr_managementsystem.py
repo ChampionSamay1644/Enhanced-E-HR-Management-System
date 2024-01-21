@@ -164,21 +164,19 @@ class CreativeLoginApp:
 
        # Buttons for Admin window
         buttons_info = [
-        (("Create/Remove HR Login", self.create_remove_hr)), 
-         ]
-
+            (("Create/Remove HR Login", lambda: self.create_remove_hr(button_create_hr))),  # Use lambda to delay the method call
+        ]
 
         admin_buttons_frame = tk.Frame(admin_window, bg='black')  # Define admin_buttons_frame
         admin_buttons_frame.pack(pady=20)
-
+        
         for i, (button_text, button_command) in enumerate(buttons_info):
-            button = tk.Button(admin_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
-                            width=20, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
-            button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+            button_create_hr = tk.Button(admin_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
+                               width=20, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
+            button_create_hr.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
-         # Add an Exit button at the bottom
         exit_button = tk.Button(admin_window, text="Exit", command=admin_window.destroy, font=("Helvetica", 14),
-                            width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
+                                width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
         exit_button.place(relx=0.5, rely=0.95, anchor="center")
 
         #focus on window
@@ -196,71 +194,134 @@ class CreativeLoginApp:
         # Run the main loop for the admin window
         admin_window.mainloop()
 
-        self.center_window(admin_window)
+    def create_remove_hr(self,button1):
+        #create a new window
+        create_remove_hr_window = tk.Tk()
+        create_remove_hr_window.geometry("800x600")  # Set the window size
+        create_remove_hr_window.title("Create/Remove HR Login")
+        #create a new entry for username
+        username_label = tk.Label(create_remove_hr_window, text="Username", font=("Helvetica", 12, "bold"), bg='white')
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
+        self.username_entry = tk.Entry(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.username_entry.insert(0, "")  # Default text
+        #create a new entry for password
+        password_label = tk.Label(create_remove_hr_window, text="Password", font=("Helvetica", 12, "bold"), bg='white')
+        password_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.password_entry = tk.Entry(create_remove_hr_window, show="*", font=("Helvetica", 12, "bold"))
+        self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
+        self.password_entry.insert(0, "")  # Default text
+        #create a new checkbox for role with options- HR, boss, employee
+        role_label = tk.Label(create_remove_hr_window, text="Role", font=("Helvetica", 12, "bold"), bg='white')
+        role_label.place(relx=0.5, rely=0.65, anchor="center")
+        self.role_entry = ttk.Combobox(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.role_entry['values'] = ('HR', 'boss', 'employee')
+        self.role_entry.place(relx=0.5, rely=0.7, anchor="center")
+        self.role_entry.current(0)
+        #create a new button for adding the new login
+        add_button = tk.Button(create_remove_hr_window, text="Add", command=self.add_login_to_database, font=("Helvetica", 14))
+        add_button.place(relx=0.5, rely=0.8, anchor="center", width=100, height=30)
+        #store the values in 3 variables when the button is pressed
+        add_button.bind("<Button-1>", lambda event: self.add_login_to_database())
+        
+    
+    def add_login_to_database(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        role = self.role_entry.get()
 
-    def create_remove_hr(self):
-        # Ask the admin whether to add or remove a login
-        action = tk.simpledialog.askstring("Create/Remove HR Login", "Enter 'add' to add a login, 'remove' to remove a login:")
-        action = action.lower()
-        if action == "add":
-            # Gather information for the new login
-            username = tk.simpledialog.askstring("Add HR Login", "Enter the username:")
-            password = tk.simpledialog.askstring("Add HR Login", "Enter the password:")
-            role = tk.simpledialog.askstring("Add HR Login", "Enter the role (admin, HR, boss, employee):")
+        admins_ref = db.reference('/admins')
+        hr_ref = db.reference('/HR')
+        boss_ref = db.reference('/boss')
+        employee_ref = db.reference('/employee')
 
-            # Update the database with the new login
-            self.add_login_to_database(username, password, role)
-
-        elif action == "remove":
-            # Fetch all logins from the database
-            logins = self.fetch_all_logins_from_database()
-
-            if not logins:
-                messagebox.showinfo("Remove HR Login", "No logins found.")
-                return
-
-            # Ask the admin to select a login for removal
-            selected_login = tk.simpledialog.askstring("Remove HR Login", "Select a login to remove:")
-
-            # Update the database by removing the selected login
-            self.remove_login_from_database(selected_login)
-
-        else:
-            messagebox.showinfo("Create/Remove HR Login", "Invalid action. Please enter 'add' or 'remove'.")
-
-    def add_login_to_database(self, username, password, role):
-        admins_ref = db.reference('admins')
-
-        # Check if the username already exists
-        if admins_ref.child(username).get():
+        if admins_ref.child(username).get() or hr_ref.child(username).get() or boss_ref.child(username).get() or employee_ref.child(username).get():
             messagebox.showinfo("Add HR Login", "Username already exists. Choose a different username.")
         else:
             # Add the new login to the database
-            admins_ref.child(username).set({
-                'password': password,
-                'role': role
-            })
+            if role == 'HR':
+                hr_ref.child(username).set({
+                    'password': password,
+                    'role': role
+                })
+            elif role == 'boss':
+                boss_ref.child(username).set({
+                    'password': password,
+                    'role': role
+                })
+            elif role == 'employee':
+                employee_ref.child(username).set({
+                    'password': password,
+                    'role': role
+                })
             messagebox.showinfo("Add HR Login", "Login added successfully.")
+        #close the window
+        self.create_remove_hr_window.destroy()
+        
+        
+    # def create_remove_hr(self):
+    #     # Ask the admin whether to add or remove a login
+    #     action = tk.simpledialog.askstring("Create/Remove HR Login", "Enter 'add' to add a login, 'remove' to remove a login:")
+    #     action = action.lower()
+    #     if action == "add":
+    #         # Gather information for the new login
+    #         username = tk.simpledialog.askstring("Add HR Login", "Enter the username:")
+    #         password = tk.simpledialog.askstring("Add HR Login", "Enter the password:")
+    #         role = tk.simpledialog.askstring("Add HR Login", "Enter the role (admin, HR, boss, employee):")
 
-    def remove_login_from_database(self, username):
-        admins_ref = db.reference('admins')
+    #         # Update the database with the new login
+    #         self.add_login_to_database(username, password, role)
 
-        # Check if the username exists
-        if admins_ref.child(username).get():
-            # Remove the login from the database
-            admins_ref.child(username).delete()
-            messagebox.showinfo("Remove HR Login", "Login removed successfully.")
-        else:
-            messagebox.showinfo("Remove HR Login", "Username does not exist.")
+    #     elif action == "remove":
+    #         # Fetch all logins from the database
+    #         logins = self.fetch_all_logins_from_database()
+
+    #         if not logins:
+    #             messagebox.showinfo("Remove HR Login", "No logins found.")
+    #             return
+
+    #         # Ask the admin to select a login for removal
+    #         selected_login = tk.simpledialog.askstring("Remove HR Login", "Select a login to remove:")
+
+    #         # Update the database by removing the selected login
+    #         self.remove_login_from_database(selected_login)
+
+    #     else:
+    #         messagebox.showinfo("Create/Remove HR Login", "Invalid action. Please enter 'add' or 'remove'.")
+
+    # def add_login_to_database(self, username, password, role):
+    #     admins_ref = db.reference('admins')
+
+    #     # Check if the username already exists
+    #     if admins_ref.child(username).get():
+    #         messagebox.showinfo("Add HR Login", "Username already exists. Choose a different username.")
+    #     else:
+    #         # Add the new login to the database
+    #         admins_ref.child(username).set({
+    #             'password': password,
+    #             'role': role
+    #         })
+    #         messagebox.showinfo("Add HR Login", "Login added successfully.")
+
+    # def remove_login_from_database(self, username):
+    #     admins_ref = db.reference('admins')
+
+    #     # Check if the username exists
+    #     if admins_ref.child(username).get():
+    #         # Remove the login from the database
+    #         admins_ref.child(username).delete()
+    #         messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+    #     else:
+    #         messagebox.showinfo("Remove HR Login", "Username does not exist.")
     
-    def fetch_all_logins_from_database(self):
-        admins_ref = db.reference('admins')
-        admins = admins_ref.get()
+    # def fetch_all_logins_from_database(self):
+    #     admins_ref = db.reference('admins')
+    #     admins = admins_ref.get()
 
-        if admins:
-            return list(admins.keys())
-        else:
-            return None
+    #     if admins:
+    #         return list(admins.keys())
+    #     else:
+    #         return None
         
 
     def open_hr_window(self,role):
