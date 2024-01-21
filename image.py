@@ -438,9 +438,6 @@ class CreativeLoginApp:
     def request_bonus(self):
         messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
 
-    # def create_remove_hr(self):
-    #     messagebox.showinfo("Admin Window", "Create/Remove HR Login Button Pressed")
-
     def sick_vacation_days_view(self):
         messagebox.showinfo("Employee Window", "Sick/Vacation Days View Button Pressed")
 
