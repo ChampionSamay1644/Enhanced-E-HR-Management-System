@@ -2,7 +2,7 @@ import firebase_admin
 from firebase_admin import db,credentials
 
 cred=credentials.Certificate("credentials.json")
-firebase_admin.initialize_app(cred,{'databaseURL':'https://hr-management-system-f7c9f-default-rtdb.asia-southeast1.firebasedatabase.app/'})
+firebase_admin.initialize_app(cred,{'databaseURL':'https://hr-mgntsystem-test.asia-southeast1.firebasedatabase.app/'})
 
 admins = db.reference('admins')
 to_search='Samay'
