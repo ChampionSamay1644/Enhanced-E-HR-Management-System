@@ -670,6 +670,15 @@ class CreativeLoginApp:
                     'role': role,
                     'designnation: ': '',
                     'salary': '',
+                    'sick days': '',
+                    'vacation days': '',
+                    'bonus': '',
+                    'hours attended': '',
+                    'apply for resignation': '',
+                    'apply for vacation': '',
+                    'progress on task': '',
+                    'survey': '',
+                    'feedback': '',
                 })
             messagebox.showinfo("Add HR Login", "Login added successfully.")
         #close the window
