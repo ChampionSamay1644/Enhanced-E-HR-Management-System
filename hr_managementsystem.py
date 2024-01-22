@@ -571,11 +571,17 @@ class CreativeLoginApp:
         welcome_label.pack(pady=20)
 
         buttons_info = [
-            ("Sick/Vacation Days View", self.sick_vacation_days_view),
+            ("Sick Days View", self.sick_days_view),
+            ("Vacation Days View", self.vacation_days_view),
             ("Apply for Vacation Days", self.apply_for_vacation_days),
+            ("View Salary", self.salary_view),
+            ("View Bonus", self.bonus_view),
+            ("View Hours attended", self.hours_attended_view),
             ("Apply for Resignation", self.apply_for_resignation),
-            ("Check Progress on Tasks", self.check_progress_on_tasks),
-            ("Submit Survey/Feedback/Complaint", self.submit_survey_feedback_complaint)
+            ("Check and update Progress on Tasks", self.check_progress_on_tasks),
+            ("View and Submit Survey", self.submit_survey),
+            ("View and Submit Feedback", self.submit_feedback),
+            ("Submit Complaint", self.submit_complaint),
         ]
 
         employee_buttons_frame = tk.Frame(employee_window, bg='black')  # Define employee_buttons_frame
@@ -606,11 +612,20 @@ class CreativeLoginApp:
         # Run the main loop for the employee window
         employee_window.mainloop()
 
-    def sick_vacation_days_view(self):
-        messagebox.showinfo("Employee Window", "Sick/Vacation Days View Button Pressed")
+    def sick_days_view(self):
+        messagebox.showinfo("Employee Window", "Sick Days View Button Pressed")
+
+    def vacation_days_view(self):
+        messagebox.showinfo("Employee Window", "Vacation Days View Button Pressed")
 
     def apply_for_vacation_days(self):
        messagebox.showinfo("Employee Window", "Apply for Vacation Days Button Pressed")
+
+    def salary_view(self):
+       messagebox.showinfo("Employee Window", "Salary View Button Pressed")
+    
+    def bonus_view(self):
+         messagebox.showinfo("Employee Window", "Bonus View Button Pressed")
    
     def apply_for_resignation(self):
        messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
@@ -618,8 +633,17 @@ class CreativeLoginApp:
     def check_progress_on_tasks(self):
        messagebox.showinfo("Employee Window", "Check Progress on Tasks Button Pressed")
    
-    def submit_survey_feedback_complaint(self):
-       messagebox.showinfo("Employee Window", "Submit Survey/Feedback/Complaint Button Pressed")
+    def submit_survey(self):
+       messagebox.showinfo("Employee Window", "Submit Survey Button Pressed")
+
+    def submit_feedback(self):
+       messagebox.showinfo("Employee Window", "Submit Feedback Button Pressed")
+    
+    def submit_complaint(self):
+       messagebox.showinfo("Employee Window", "Submit Complaint Button Pressed")
+
+    def hours_attended_view(self):
+         messagebox.showinfo("Employee Window", "Hours Attended View Button Pressed")
    
     
     def center_window_all(self,window):
@@ -654,7 +678,7 @@ class CreativeLoginApp:
                 hr_ref.child(username).set({
                     'password': password,
                     'role': role,
-                      'post: ': '',
+                      'post:': '',
                     'salary': '',
                 })
             elif role == 'boss':
