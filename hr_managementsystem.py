@@ -500,7 +500,7 @@ class CreativeLoginApp:
             ("Approve Vacations and Sick Leaves", self.approve_vacations_sick_leaves),
             ("Progress on Task", self.progress_on_task),
             ("Approve Promotion", self.approve_promotion),
-            ("Approve Resignation", self.approve_resignation),
+            ("Approve Resignation", self.approve_resignatin),
             ("Request for Bonus", self.request_bonus)
         ]
 
@@ -544,7 +544,7 @@ class CreativeLoginApp:
     def approve_promotion(self):
         messagebox.showinfo("Boss Window", "Approve Promotion Button Pressed")
 
-    def approve_resignation(self):
+    def approve_resignatin(self):
         messagebox.showinfo("Boss Window", "Approve Resignation Button Pressed")
 
     def request_bonus(self):
