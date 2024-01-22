@@ -653,17 +653,23 @@ class CreativeLoginApp:
             if role == 'HR':
                 hr_ref.child(username).set({
                     'password': password,
-                    'role': role
+                    'role': role,
+                      'post: ': '',
+                    'salary': '',
                 })
             elif role == 'boss':
                 boss_ref.child(username).set({
                     'password': password,
-                    'role': role
+                    'role': role,
+                    'designnation: ': '',
+                    'salary': '',
                 })
             elif role == 'employee':
                 employee_ref.child(username).set({
                     'password': password,
-                    'role': role
+                    'role': role,
+                    'designnation: ': '',
+                    'salary': '',
                 })
             messagebox.showinfo("Add HR Login", "Login added successfully.")
         #close the window
