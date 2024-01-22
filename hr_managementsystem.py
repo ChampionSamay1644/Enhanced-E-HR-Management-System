@@ -268,7 +268,7 @@ class CreativeLoginApp:
         # create a new entry for password
         password_label = tk.Label(create_remove_hr_window, text="Password", font=("Helvetica", 12, "bold"), bg='white')
         password_label.place(relx=0.5, rely=0.5, anchor="center")
-        self.password_entry = tk.Entry(create_remove_hr_window, show="*", font=("Helvetica", 12, "bold"))
+        self.password_entry = tk.Entry(create_remove_hr_window, show="", font=("Helvetica", 12, "bold"))
         self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
         self.password_entry.insert(0, "")
         # create a new checkbox for role with options- HR, boss, employee
@@ -419,7 +419,7 @@ class CreativeLoginApp:
         # create a new entry for password
         password_label = tk.Label(create_remove_hr_window, text="Password", font=("Helvetica", 12, "bold"), bg='white')
         password_label.place(relx=0.5, rely=0.5, anchor="center")
-        self.password_entry = tk.Entry(create_remove_hr_window, show="*", font=("Helvetica", 12, "bold"))
+        self.password_entry = tk.Entry(create_remove_hr_window, show="", font=("Helvetica", 12, "bold"))
         self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
         self.password_entry.insert(0, "")
         # create a new checkbox for role with options- HR, boss, employee
