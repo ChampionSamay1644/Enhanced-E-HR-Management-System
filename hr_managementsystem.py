@@ -668,7 +668,7 @@ class CreativeLoginApp:
                 employee_ref.child(username).set({
                     'password': password,
                     'role': role,
-                    'designnation: ': '',
+                    'designation': '',
                     'salary': '',
                     'sick days': '',
                     'vacation days': '',
