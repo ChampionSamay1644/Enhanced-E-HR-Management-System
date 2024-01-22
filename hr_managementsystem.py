@@ -409,7 +409,7 @@ class CreativeLoginApp:
         # create a new window
         create_remove_hr_window = tk.Toplevel()
         create_remove_hr_window.geometry("800x600")  # Set the window size
-        create_remove_hr_window.title("Create HR Login")
+        create_remove_hr_window.title("Create Boss/Employee Login")
         # create a new entry for username
         username_label = tk.Label(create_remove_hr_window, text="Username", font=("Helvetica", 12, "bold"), bg='white')
         username_label.place(relx=0.5, rely=0.35, anchor="center")
@@ -448,7 +448,7 @@ class CreativeLoginApp:
         # create a new window
         create_remove_hr_window = tk.Toplevel()
         create_remove_hr_window.geometry("800x600")  # Set the window size
-        create_remove_hr_window.title("Remove HR Login")
+        create_remove_hr_window.title("Remove Boss/Employee Login")
         # create a new entry for username
         username_label = tk.Label(create_remove_hr_window, text="Username", font=("Helvetica", 12, "bold"), bg='white')
         username_label.place(relx=0.5, rely=0.35, anchor="center")
