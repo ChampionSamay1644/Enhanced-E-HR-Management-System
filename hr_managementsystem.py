@@ -671,6 +671,8 @@ class CreativeLoginApp:
         hr_ref = db.reference('/HR')
         boss_ref = db.reference('/boss')
         employee_ref = db.reference('/employee')
+        emp_id_ref= db.reference('/')
+        emp_uni=emp_id_ref.child('emp_id').get()
 
         if admins_ref.child(username).get() or hr_ref.child(username).get() or boss_ref.child(username).get() or employee_ref.child(username).get():
             messagebox.showinfo("Add HR Login", "Username already exists. Choose a different username.")
@@ -682,17 +684,19 @@ class CreativeLoginApp:
                     'role': role,
                       'post:': '',
                     'salary': '',
+                    'emp_id': emp_uni+1,
                 })
+                emp_id_ref.child('emp_id').set(emp_uni+1)
             elif role == 'boss':
                 boss_ref.child(username).set({
                     'password': password,
                     'role': role,
                     'designnation: ': '',
                     'salary': '',
+                    'emp_id': emp_uni+1,
                 })
+                emp_id_ref.child('emp_id').set(emp_uni+1)
             elif role == 'employee':
-                emp_id_ref= db.reference('/')
-                emp_uni=emp_id_ref.child('emp_id').get()
                 employee_ref.child(username).set({
                     'password': password,
                     'role': role,
