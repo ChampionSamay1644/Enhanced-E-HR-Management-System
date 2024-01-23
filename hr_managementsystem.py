@@ -40,7 +40,7 @@ class CreativeLoginApp:
         root.bind("<Configure>", lambda event, img=self.img, label=self.background_label: self.resize_image(event, img, label))
 
         # Add the company name at the top center
-        company_name_label = tk.Label(root, text="PlaceHolder", font=("Helvetica", 38, "bold"), fg='white', bg='black')
+        company_name_label = tk.Label(root, text="Ben Dover Inc", font=("Helvetica", 38, "bold"), fg='white', bg='black')
         company_name_label.place(relx=0.5, rely=0.1, anchor="center")
 
 
@@ -557,7 +557,7 @@ class CreativeLoginApp:
         employee_window = tk.Tk()  # Use Tk() to create a new window
         employee_window.geometry("800x600")  # Set the window size
         employee_window.title("Employee Window")
-
+       
         # Background image for the employee window
         employee_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
         self.employee_original_image = Image.open(employee_img_path)
@@ -566,17 +566,13 @@ class CreativeLoginApp:
         employee_background_label = tk.Label(employee_window, image=self.employee_img, bg='white')
         employee_background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        # Welcome message for the employee
-        welcome_label = tk.Label(employee_window, text="Welcome Employee!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
+        # Welcome message for the employee along with username
+        welcome_label = tk.Label(employee_window, text=f"Welcome Employee, {username}!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
         buttons_info = [
-            ("Sick Days View", lambda:self.sick_days_view(username)),
-            ("Vacation Days View", self.vacation_days_view),
+            ("Employee Profile", lambda:self.profile_employee(username)),
             ("Apply for Vacation Days", self.apply_for_vacation_days),
-            ("View Salary", self.salary_view),
-            ("View Bonus", self.bonus_view),
-            ("View Hours attended", self.hours_attended_view),
             ("Apply for Resignation", self.apply_for_resignation),
             ("Check and update Progress on Tasks", self.check_progress_on_tasks),
             ("View and Submit Survey", self.submit_survey),
@@ -612,23 +608,55 @@ class CreativeLoginApp:
         # Run the main loop for the employee window
         employee_window.mainloop()
 
-    def sick_days_view(self,username):
-        employee_ref = db.reference('/employee')
-        sickdays=employee_ref.child(username).child('sick_days').get()
-        messagebox.showinfo("Employee Window", "Sick Days= "+sickdays)
+    def profile_employee(self,username):
+         employee_ref = db.reference('/employee')
+         emp_id=employee_ref.child(username).child('emp_id').get()
+         designation=employee_ref.child(username).child('designation').get()
+         salary=employee_ref.child(username).child('salary').get()
+         sickdays=employee_ref.child(username).child('sick_days').get()
+         vacationdays=employee_ref.child(username).child('vacation_days').get()
+         bonus=employee_ref.child(username).child('bonus').get()
+         hours_attended=employee_ref.child(username).child('hours_attended').get()
 
-    def vacation_days_view(self):
-        messagebox.showinfo("Employee Window", "Vacation Days View Button Pressed")
+         profile_employee_window = tk.Toplevel()
+         profile_employee_window.geometry("800x600")
+         profile_employee_window.title("Employee Profile")
+        
+         # Background image for the employee window
+         employee_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+         self.employee_original_image = Image.open(employee_img_path)
+         self.employee_img = ImageTk.PhotoImage(self.employee_original_image)
 
+         employee_background_label = tk.Label(profile_employee_window, image=self.employee_img, bg='white')
+         employee_background_label.place(x=0, y=0, relwidth=1, relheight=1)
+         
+         #name of the employee on the top
+         welcome_label = tk.Label(profile_employee_window, text=f"Welcome {username}!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
+         welcome_label.pack(pady=20)
+         
+         #center window
+         self.center_window_all(profile_employee_window)
+
+         #show the details pulled from the db
+         emp_id = tk.Label(profile_employee_window, text=f"Employee ID: {emp_id}", font=("Helvetica", 12, "bold"), bg='white')
+         emp_id.place(relx=0.5, rely=0.35, anchor="center")
+         designation = tk.Label(profile_employee_window, text=f"Designation: {designation}", font=("Helvetica", 12, "bold"), bg='white')
+         designation.place(relx=0.5, rely=0.5, anchor="center")
+         salary = tk.Label(profile_employee_window, text=f"Salary: {salary}", font=("Helvetica", 12, "bold"), bg='white')
+         salary.place(relx=0.5, rely=0.65, anchor="center")
+         sickdays = tk.Label(profile_employee_window, text=f"Sick Days: {sickdays}", font=("Helvetica", 12, "bold"), bg='white')
+         sickdays.place(relx=0.5, rely=0.8, anchor="center")
+         vacationdays = tk.Label(profile_employee_window, text=f"Vacation Days: {vacationdays}", font=("Helvetica", 12, "bold"), bg='white')
+         vacationdays.place(relx=0.5, rely=0.95, anchor="center")
+         bonus = tk.Label(profile_employee_window, text=f"Bonus: {bonus}", font=("Helvetica", 12, "bold"), bg='white')
+         bonus.place(relx=0.5, rely=1.1, anchor="center")
+         hours_attended = tk.Label(profile_employee_window, text=f"Hours Attended: {hours_attended}", font=("Helvetica", 12, "bold"), bg='white')
+         hours_attended.place(relx=0.5, rely=1.25, anchor="center")
+        
+        
     def apply_for_vacation_days(self):
        messagebox.showinfo("Employee Window", "Apply for Vacation Days Button Pressed")
-
-    def salary_view(self):
-       messagebox.showinfo("Employee Window", "Salary View Button Pressed")
-    
-    def bonus_view(self):
-         messagebox.showinfo("Employee Window", "Bonus View Button Pressed")
-   
+ 
     def apply_for_resignation(self):
        messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
    
@@ -644,9 +672,6 @@ class CreativeLoginApp:
     def submit_complaint(self):
        messagebox.showinfo("Employee Window", "Submit Complaint Button Pressed")
 
-    def hours_attended_view(self):
-         messagebox.showinfo("Employee Window", "Hours Attended View Button Pressed")
-   
     
     def center_window_all(self,window):
          # Get the width and height of the screen
