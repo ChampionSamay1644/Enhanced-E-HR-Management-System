@@ -168,30 +168,30 @@ class CreativeLoginApp:
         if admins_ref.child(username).child('password').get() == password:
             role = admins_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
-            self.open_admin_window(role)
+            self.open_admin_window(role,username)
             return
         
         if hr_ref.child(username).child('password').get() == password:
             role = hr_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
-            self.open_hr_window(role)
+            self.open_hr_window(role,username)
             return
         
         if boss_ref.child(username).child('password').get() == password:
             role = boss_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
-            self.open_boss_window(role)
+            self.open_boss_window(role,username)
             return
         
         if employee_ref.child(username).child('password').get() == password:
             role = employee_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
-            self.open_employee_window(role)
+            self.open_employee_window(role,username)
             return
         
         messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
 
-    def open_admin_window(self,role):
+    def open_admin_window(self,role,username):
         self.root.destroy()  # Close the main login window
         admin_window = tk.Tk()  # Use Tk() to create a new window
         admin_window.geometry("800x600")  # Set the window size
@@ -326,7 +326,7 @@ class CreativeLoginApp:
         create_remove_hr_window.mainloop()
 
   
-    def open_hr_window(self,role):
+    def open_hr_window(self,role,username):
      self.root.destroy()  # Close the main login window
      hr_window = tk.Tk()  # Use Tk() to create a new window
      hr_window.geometry("800x600")  # Set the window size
@@ -477,7 +477,7 @@ class CreativeLoginApp:
         create_remove_hr_window.mainloop()
 
 
-    def open_boss_window(self,role):
+    def open_boss_window(self,role,username):
         self.root.destroy()  # Close the main login window
         boss_window = tk.Tk()  # Use Tk() to create a new window
         boss_window.geometry("800x600")  # Set the window size
@@ -552,7 +552,7 @@ class CreativeLoginApp:
 
    
    
-    def open_employee_window(self,role):
+    def open_employee_window(self,role,username):
         self.root.destroy()  # Close the main login window
         employee_window = tk.Tk()  # Use Tk() to create a new window
         employee_window.geometry("800x600")  # Set the window size
@@ -571,7 +571,7 @@ class CreativeLoginApp:
         welcome_label.pack(pady=20)
 
         buttons_info = [
-            ("Sick Days View", self.sick_days_view),
+            ("Sick Days View", lambda:self.sick_days_view(username)),
             ("Vacation Days View", self.vacation_days_view),
             ("Apply for Vacation Days", self.apply_for_vacation_days),
             ("View Salary", self.salary_view),
@@ -612,8 +612,10 @@ class CreativeLoginApp:
         # Run the main loop for the employee window
         employee_window.mainloop()
 
-    def sick_days_view(self):
-        messagebox.showinfo("Employee Window", "Sick Days View Button Pressed")
+    def sick_days_view(self,username):
+        employee_ref = db.reference('/employee')
+        sickdays=employee_ref.child(username).child('sick_days').get()
+        messagebox.showinfo("Employee Window", "Sick Days= "+sickdays)
 
     def vacation_days_view(self):
         messagebox.showinfo("Employee Window", "Vacation Days View Button Pressed")
