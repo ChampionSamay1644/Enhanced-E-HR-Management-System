@@ -691,10 +691,13 @@ class CreativeLoginApp:
                     'salary': '',
                 })
             elif role == 'employee':
+                emp_id_ref= db.reference('/')
+                emp_uni=emp_id_ref.child('emp_id').get()
                 employee_ref.child(username).set({
                     'password': password,
                     'role': role,
                     'designation': '',
+                    'emp_id': emp_uni+1,
                     'salary': '',
                     'sick days': '',
                     'vacation days': '',
@@ -706,6 +709,7 @@ class CreativeLoginApp:
                     'survey': '',
                     'feedback': '',
                 })
+                emp_id_ref.child('emp_id').set(emp_uni+1)
             messagebox.showinfo("Add HR Login", "Login added successfully.")
         #close the window
         create_remove_hr_window.destroy()
