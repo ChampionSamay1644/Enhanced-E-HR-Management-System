@@ -1,0 +1,15 @@
+Employee:
+
+Sick days
+Vacation days
+
+apply for vacation
+apply for resignation
+
+progress on current task
+
+submit feedback
+submit complaint
+
+salary
+designation

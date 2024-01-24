@@ -11,6 +11,7 @@ cred = credentials.Certificate("credentials.json")  # Path: credentials.json
 firebase_admin.initialize_app(cred, {'databaseURL': 'https://hr-management-system-f7c9f-default-rtdb.asia-southeast1.firebasedatabase.app/'})
 
 class CreativeLoginApp:
+   
     def __init__(self, root):
         self.root = root
         self.root.title("HR Management System")
@@ -18,31 +19,26 @@ class CreativeLoginApp:
         self.employee_img = None
         self.boss_original_image = None
         self.boss_img = None
+        self.company_name_text = None  # Initialize company_name_text attribute
 
         # Construct the full path to the image file
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
-        # Load and set the background image
-        self.original_image = Image.open(img_path)
-        self.img = ImageTk.PhotoImage(self.original_image)
-
-        # Create and place a label with the background image
-        self.background_label = tk.Label(root, image=self.img, bg='white')
-        self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
-
-        #focus on window
+        # Focus on window
         root.focus_force()
 
         # Center the window with function center_window_test
         self.center_window_all(root)
 
-        # Bind the window resize event
-        root.bind("<Configure>", lambda event, img=self.img, label=self.background_label: self.resize_image(event, img, label))
+        # create a canvas that resizes with the window
+        self.company_logo_canvas = tk.Canvas(root, bg='white', highlightthickness=0)
+        self.company_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
-        # Add the company name at the top center
-        company_name_label = tk.Label(root, text="Ben Dover Inc", font=("Helvetica", 38, "bold"), fg='white', bg='black')
-        company_name_label.place(relx=0.5, rely=0.1, anchor="center")
+          # bind window resize event to function
+        root.bind("<Configure>", self.on_window_resize)
 
+           # import the image as the background on the canvas
+        self.load_image(img_path)
 
         # Label for Username
         username_label = tk.Label(root, text="Username", font=("Helvetica", 12, "bold"), bg='white')
@@ -61,7 +57,7 @@ class CreativeLoginApp:
         self.password_entry = tk.Entry(root, show="*", font=("Helvetica", 12, "bold"))
         self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
         self.password_entry.insert(0, "")  # Default text
-       
+
         # Login button
         self.login_button = tk.Button(root, text="Login", command=self.login, font=("Helvetica", 14))
         self.login_button.place(relx=0.5, rely=0.65, anchor="center", width=100, height=30)
@@ -74,34 +70,85 @@ class CreativeLoginApp:
         self.credits_button = tk.Button(root, text="Credits", command=self.show_credits, font=("Helvetica", 14))
         self.credits_button.place(relx=0.5, rely=0.85, anchor="center", width=100, height=30)
 
-         # Bind the Enter key to the login function
+        # Bind the Enter key to the login function
         root.bind("<Return>", lambda event: self.login())
 
         # Bind the Escape key to the exit function
         root.bind("<Escape>", lambda event: root.destroy())
+   
+     
+    def load_image(self, img_path):
+        # Load image and adjust canvas size
+        self.original_company_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image()
 
-        # # Load credentials from the database
-        # self.credentials = self.load_credentials_from_database()
+    def resize_canvas_and_image(self):
+        # Get the current window size
+        window_width = self.root.winfo_width()
+        window_height = self.root.winfo_height()
 
-    def resize_image(self, event, img, label):
-        new_width = event.width
-        new_height = event.height
+        # Resize the canvas to the current window size
+        self.company_logo_canvas.config(width=window_width, height=window_height)
 
-        # Resize the original image
-        resized_image = self.original_image.resize((new_width, new_height))
+        # Update the position of the company name text
+        self.company_logo_canvas.coords(self.company_name_text, window_width / 2, 100)
 
-        # Create a new PhotoImage object
-        self.img = ImageTk.PhotoImage(resized_image)
+        # Resize the image if needed
+        resized_image = self.original_company_logo_image.resize((window_width, window_height))
+        self.company_logo_image = ImageTk.PhotoImage(resized_image)
 
-        #for future purposes, if we break something remove comment and activate this(DO NOT DELETE, DELETE IF YOU GAY!!!!!!!!!!!!!!!)
-        # try:
-        #     if self.root.winfo_exists():  # Check if the main window still exists
-        #         # Update the label only if the main window exists
-        #         label.config(image=self.img)
-        #         label.image = self.img  # Keep a reference to avoid garbage collection
-        # except tk.TclError:
-        #     pass  # Ignore TclError if the main window has been destroyed
+        # Update the image on the canvas
+        self.company_logo_canvas.delete("all")
+        self.company_logo_canvas.create_image(0, 0, image=self.company_logo_image, anchor='nw')
+ 
+        self.company_name_text = self.company_logo_canvas.create_text(
+        window_width / 2,
+        100,
+        text="Ben Dover Inc",
+        font=("Helvetica", 28, "bold"),
+        fill='white'
+    )
 
+
+    def on_window_resize(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image()
+    
+    def show_credits(self):
+        # Create a new Toplevel window for the credits
+        credits_dialog = tk.Toplevel(self.root)
+        credits_dialog.title("Credits")
+
+        # You can customize the credits information as per your needs
+        credits_text = (
+            "HR Management System\n\n"
+            "Developed by: \n -Samay Pandey, \n-Armaan Nakhuda, \n-Sushant Navle, \n-Peeyush Karnik(assuming he does any work)\n\n"
+            "Stage Completition: Stage 4 completed\n"
+            "Date: 6th Feb 2024\n"
+            "\nSpecial Thanks to:\n- Firebase\n- OpenAI\n- Yash Patil\n"
+        )
+
+        # Create a label for credits information
+        credits_label = tk.Label(credits_dialog, text=credits_text, font=("Helvetica", 12))
+        credits_label.pack(padx=20, pady=20)
+
+        # Center the credits dialog relative to the main application window
+        credits_dialog.update_idletasks()
+
+        app_x = self.root.winfo_x()
+        app_y = self.root.winfo_y()
+        app_width = self.root.winfo_width()
+        app_height = self.root.winfo_height()
+
+        credits_width = credits_dialog.winfo_width()
+        credits_height = credits_dialog.winfo_height()
+
+        x = app_x + (app_width - credits_width) // 2
+        y = app_y + (app_height - credits_height) // 2
+
+        credits_dialog.geometry(f"{credits_width}x{credits_height}+{x}+{y}")
+
+        credits_dialog.mainloop()
 
     def login(self):
         username = self.username_entry.get()
@@ -121,30 +168,30 @@ class CreativeLoginApp:
         if admins_ref.child(username).child('password').get() == password:
             role = admins_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
-            self.open_admin_window(role)
+            self.open_admin_window(role,username)
             return
         
         if hr_ref.child(username).child('password').get() == password:
             role = hr_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
-            self.open_hr_window(role)
+            self.open_hr_window(role,username)
             return
         
         if boss_ref.child(username).child('password').get() == password:
             role = boss_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
-            self.open_boss_window(role)
+            self.open_boss_window(role,username)
             return
         
         if employee_ref.child(username).child('password').get() == password:
             role = employee_ref.child(username).child('role').get()
             messagebox.showinfo("Login Successful", f"Welcome, {username}!\nYou are logged in as a {role}.")
-            self.open_employee_window(role)
+            self.open_employee_window(role,username)
             return
         
         messagebox.showerror("Login Failed", "Invalid username or password. Please try again.")
 
-    def open_admin_window(self,role):
+    def open_admin_window(self,role,username):
         self.root.destroy()  # Close the main login window
         admin_window = tk.Tk()  # Use Tk() to create a new window
         admin_window.geometry("800x600")  # Set the window size
@@ -163,23 +210,34 @@ class CreativeLoginApp:
         welcome_label.pack(pady=20)
 
        # Buttons for Admin window
-        buttons_info = [
-        (("Create/Remove HR Login", self.create_remove_hr)), 
-         ]
-
+        buttons1_info = [
+    (("Create HR Login", lambda: self.create_all_admin(button_create_all_admin))),  # Use lambda to delay the method call
+]
 
         admin_buttons_frame = tk.Frame(admin_window, bg='black')  # Define admin_buttons_frame
         admin_buttons_frame.pack(pady=20)
 
-        for i, (button_text, button_command) in enumerate(buttons_info):
-            button = tk.Button(admin_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
-                            width=20, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
-            button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+        for i, (button_text, button_command) in enumerate(buttons1_info):
+            button_create_all_admin = tk.Button(admin_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
+                                        width=20, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
+            button_create_all_admin.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
-         # Add an Exit button at the bottom
+        # Create a 2nd button for remove HR login
+        buttons2_info = [
+            (("Remove HR Login", lambda: self.remove_all_admin(button_remove_all_admin))),  # Use lambda to delay the method call
+        ]
+
+        for i, (button_text, button_command) in enumerate(buttons2_info):
+            button_remove_all_admin = tk.Button(admin_buttons_frame, text=button_text, command=button_command,
+                                        font=("Helvetica", 14), width=20, height=2, bd=0, fg='white', bg='#2E4053',
+                                        activebackground='#566573')
+            button_remove_all_admin.grid(row=i // 2 + 1, column=i % 2, padx=10, pady=10)  # Adjusted row value
+
         exit_button = tk.Button(admin_window, text="Exit", command=admin_window.destroy, font=("Helvetica", 14),
-                            width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
+                                width=15, height=2, bd=0, fg='white', bg='#FF4500', activebackground='#FF6347')
         exit_button.place(relx=0.5, rely=0.95, anchor="center")
+
+        
 
         #focus on window
         admin_window.focus_force()
@@ -196,74 +254,79 @@ class CreativeLoginApp:
         # Run the main loop for the admin window
         admin_window.mainloop()
 
-        self.center_window(admin_window)
+    def create_all_admin(self, button1):
+        # create a new window
+        create_remove_hr_window = tk.Toplevel()
+        create_remove_hr_window.geometry("800x600")  # Set the window size
+        create_remove_hr_window.title("Create HR Login")
+        # create a new entry for username
+        username_label = tk.Label(create_remove_hr_window, text="Username", font=("Helvetica", 12, "bold"), bg='white')
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
+        self.username_entry = tk.Entry(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.username_entry.insert(0, "")
+        # create a new entry for password
+        password_label = tk.Label(create_remove_hr_window, text="Password", font=("Helvetica", 12, "bold"), bg='white')
+        password_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.password_entry = tk.Entry(create_remove_hr_window, show="", font=("Helvetica", 12, "bold"))
+        self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
+        self.password_entry.insert(0, "")
+        # create a new checkbox for role with options- HR, boss, employee
+        role_label = tk.Label(create_remove_hr_window, text="Role", font=("Helvetica", 12, "bold"), bg='white')
+        role_label.place(relx=0.5, rely=0.65, anchor="center")
+        self.role_entry = ttk.Combobox(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.role_entry['values'] = ('HR', 'boss', 'employee')
+        self.role_entry.place(relx=0.5, rely=0.7, anchor="center")
+        self.role_entry.current(0)
+        # create a new button for adding the new login
+        add_button = tk.Button(create_remove_hr_window, text="Add", command=self.add_login_to_database, font=("Helvetica", 14))
+        add_button.place(relx=0.5, rely=0.8, anchor="center", width=100, height=30)
+        # store the values in 3 variables when the button is pressed
+        add_button.bind("<Button-1>", lambda event: self.add_login_to_database(create_remove_hr_window))
+        # Bind the Escape key to the exit function
+        create_remove_hr_window.bind("<Escape>", lambda event: create_remove_hr_window.destroy())
+        # focus on window
+        create_remove_hr_window.focus_force()
+        # Center the window with function center_window_test
+        self.center_window_all(create_remove_hr_window)
+        # Run the main loop for the create_remove_hr_window
+        create_remove_hr_window.mainloop()
 
-    def create_remove_hr(self):
-        # Ask the admin whether to add or remove a login
-        action = tk.simpledialog.askstring("Create/Remove HR Login", "Enter 'add' to add a login, 'remove' to remove a login:")
-        action = action.lower()
-        if action == "add":
-            # Gather information for the new login
-            username = tk.simpledialog.askstring("Add HR Login", "Enter the username:")
-            password = tk.simpledialog.askstring("Add HR Login", "Enter the password:")
-            role = tk.simpledialog.askstring("Add HR Login", "Enter the role (admin, HR, boss, employee):")
 
-            # Update the database with the new login
-            self.add_login_to_database(username, password, role)
+    def remove_all_admin(self, button2):
+        # create a new window
+        create_remove_hr_window = tk.Toplevel()
+        create_remove_hr_window.geometry("800x600")  # Set the window size
+        create_remove_hr_window.title("Remove HR Login")
+        # create a new entry for username
+        username_label = tk.Label(create_remove_hr_window, text="Username", font=("Helvetica", 12, "bold"), bg='white')
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
+        self.username_entry = tk.Entry(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.username_entry.insert(0, "")
+        # create a checkbox for role with options- HR, boss, employee
+        role_label = tk.Label(create_remove_hr_window, text="Role", font=("Helvetica", 12, "bold"), bg='white')
+        role_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.role_entry = ttk.Combobox(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.role_entry['values'] = ('HR', 'boss', 'employee')
+        self.role_entry.place(relx=0.5, rely=0.55, anchor="center")
+        self.role_entry.current(0)
+        # create a new button for removing the login
+        remove_button = tk.Button(create_remove_hr_window, text="Remove", command=self.remove_login_from_database, font=("Helvetica", 14))
+        remove_button.place(relx=0.5, rely=0.65, anchor="center", width=100, height=30)
+        # store the values in 2 variables when the button is pressed
+        remove_button.bind("<Button-1>", lambda event: self.remove_login_from_database(create_remove_hr_window))
+        # Bind the Escape key to the exit function
+        create_remove_hr_window.bind("<Escape>", lambda event: create_remove_hr_window.destroy())
+        # focus on window
+        create_remove_hr_window.focus_force()
+        # Center the window with function center_window_test
+        self.center_window_all(create_remove_hr_window)
+        # Run the main loop for the create_remove_hr_window
+        create_remove_hr_window.mainloop()
 
-        elif action == "remove":
-            # Fetch all logins from the database
-            logins = self.fetch_all_logins_from_database()
-
-            if not logins:
-                messagebox.showinfo("Remove HR Login", "No logins found.")
-                return
-
-            # Ask the admin to select a login for removal
-            selected_login = tk.simpledialog.askstring("Remove HR Login", "Select a login to remove:")
-
-            # Update the database by removing the selected login
-            self.remove_login_from_database(selected_login)
-
-        else:
-            messagebox.showinfo("Create/Remove HR Login", "Invalid action. Please enter 'add' or 'remove'.")
-
-    def add_login_to_database(self, username, password, role):
-        admins_ref = db.reference('admins')
-
-        # Check if the username already exists
-        if admins_ref.child(username).get():
-            messagebox.showinfo("Add HR Login", "Username already exists. Choose a different username.")
-        else:
-            # Add the new login to the database
-            admins_ref.child(username).set({
-                'password': password,
-                'role': role
-            })
-            messagebox.showinfo("Add HR Login", "Login added successfully.")
-
-    def remove_login_from_database(self, username):
-        admins_ref = db.reference('admins')
-
-        # Check if the username exists
-        if admins_ref.child(username).get():
-            # Remove the login from the database
-            admins_ref.child(username).delete()
-            messagebox.showinfo("Remove HR Login", "Login removed successfully.")
-        else:
-            messagebox.showinfo("Remove HR Login", "Username does not exist.")
-    
-    def fetch_all_logins_from_database(self):
-        admins_ref = db.reference('admins')
-        admins = admins_ref.get()
-
-        if admins:
-            return list(admins.keys())
-        else:
-            return None
-        
-
-    def open_hr_window(self,role):
+  
+    def open_hr_window(self,role,username):
      self.root.destroy()  # Close the main login window
      hr_window = tk.Tk()  # Use Tk() to create a new window
      hr_window.geometry("800x600")  # Set the window size
@@ -287,7 +350,9 @@ class CreativeLoginApp:
          ("Approve Bonus", self.approve_bonus),
          ("Approve Resignation", self.approve_resignation),
          ("Check Employee Hours", self.check_hours_attended),
-         ("Survey/Feedback", self.survey_feedback)
+         ("Survey/Feedback", self.survey_feedback),
+         ("Add Boss/Employees", self.create_all_hr),
+         ("Remove Boss/Employees", self.remove_all_hr)
      ]
 
      hr_buttons_frame = tk.Frame(hr_window, bg='black')  # Define hr_buttons_frame
@@ -318,10 +383,101 @@ class CreativeLoginApp:
      #  Run the main loop for the HR window
      hr_window.mainloop()
 
-     self.center_window(hr_window)
+    def salary_management(self):
+        messagebox.showinfo("HR Window", "Salary Management Button Pressed")
+
+    def employee_add_remove(self):
+        messagebox.showinfo("HR Window", "Employee Add/Remove Button Pressed")
+
+    def approve_bonus(self):
+        messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
+
+    def approve_resignation(self):
+        messagebox.showinfo("HR Window", "Approve Resignation Button Pressed")
+
+    def check_hours_attended(self):
+        messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
+
+    def survey_feedback(self):
+        messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
+
+    def addremovebe(self):
+        messagebox.showinfo("HR Window", "Add/Remove Boss/Employee Button Pressed")
 
 
-    def open_boss_window(self,role):
+    def create_all_hr(self):
+        # create a new window
+        create_remove_hr_window = tk.Toplevel()
+        create_remove_hr_window.geometry("800x600")  # Set the window size
+        create_remove_hr_window.title("Create Boss/Employee Login")
+        # create a new entry for username
+        username_label = tk.Label(create_remove_hr_window, text="Username", font=("Helvetica", 12, "bold"), bg='white')
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
+        self.username_entry = tk.Entry(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.username_entry.insert(0, "")
+        # create a new entry for password
+        password_label = tk.Label(create_remove_hr_window, text="Password", font=("Helvetica", 12, "bold"), bg='white')
+        password_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.password_entry = tk.Entry(create_remove_hr_window, show="", font=("Helvetica", 12, "bold"))
+        self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
+        self.password_entry.insert(0, "")
+        # create a new checkbox for role with options- HR, boss, employee
+        role_label = tk.Label(create_remove_hr_window, text="Role", font=("Helvetica", 12, "bold"), bg='white')
+        role_label.place(relx=0.5, rely=0.65, anchor="center")
+        self.role_entry = ttk.Combobox(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.role_entry['values'] = ('boss', 'employee')
+        self.role_entry.place(relx=0.5, rely=0.7, anchor="center")
+        self.role_entry.current(0)
+        # create a new button for adding the new login
+        add_button = tk.Button(create_remove_hr_window, text="Add", command=self.add_login_to_database, font=("Helvetica", 14))
+        add_button.place(relx=0.5, rely=0.8, anchor="center", width=100, height=30)
+        # store the values in 3 variables when the button is pressed
+        add_button.bind("<Button-1>", lambda event: self.add_login_to_database(create_remove_hr_window))
+        # Bind the Escape key to the exit function
+        create_remove_hr_window.bind("<Escape>", lambda event: create_remove_hr_window.destroy())
+        # focus on window
+        create_remove_hr_window.focus_force()
+        # Center the window with function center_window_test
+        self.center_window_all(create_remove_hr_window)
+        # Run the main loop for the create_remove_hr_window
+        create_remove_hr_window.mainloop()
+
+
+    def remove_all_hr(self):
+        # create a new window
+        create_remove_hr_window = tk.Toplevel()
+        create_remove_hr_window.geometry("800x600")  # Set the window size
+        create_remove_hr_window.title("Remove Boss/Employee Login")
+        # create a new entry for username
+        username_label = tk.Label(create_remove_hr_window, text="Username", font=("Helvetica", 12, "bold"), bg='white')
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
+        self.username_entry = tk.Entry(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.username_entry.insert(0, "")
+        # create a checkbox for role with options- HR, boss, employee
+        role_label = tk.Label(create_remove_hr_window, text="Role", font=("Helvetica", 12, "bold"), bg='white')
+        role_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.role_entry = ttk.Combobox(create_remove_hr_window, font=("Helvetica", 12, "bold"))
+        self.role_entry['values'] = ('boss', 'employee')
+        self.role_entry.place(relx=0.5, rely=0.55, anchor="center")
+        self.role_entry.current(0)
+        # create a new button for removing the login
+        remove_button = tk.Button(create_remove_hr_window, text="Remove", command=self.remove_login_from_database, font=("Helvetica", 14))
+        remove_button.place(relx=0.5, rely=0.65, anchor="center", width=100, height=30)
+        # store the values in 2 variables when the button is pressed
+        remove_button.bind("<Button-1>", lambda event: self.remove_login_from_database(create_remove_hr_window))
+        # Bind the Escape key to the exit function
+        create_remove_hr_window.bind("<Escape>", lambda event: create_remove_hr_window.destroy())
+        # focus on window
+        create_remove_hr_window.focus_force()
+        # Center the window with function center_window_test
+        self.center_window_all(create_remove_hr_window)
+        # Run the main loop for the create_remove_hr_window
+        create_remove_hr_window.mainloop()
+
+
+    def open_boss_window(self,role,username):
         self.root.destroy()  # Close the main login window
         boss_window = tk.Tk()  # Use Tk() to create a new window
         boss_window.geometry("800x600")  # Set the window size
@@ -344,7 +500,7 @@ class CreativeLoginApp:
             ("Approve Vacations and Sick Leaves", self.approve_vacations_sick_leaves),
             ("Progress on Task", self.progress_on_task),
             ("Approve Promotion", self.approve_promotion),
-            ("Approve Resignation", self.approve_resignation),
+            ("Approve Resignation", self.approve_resignatin),
             ("Request for Bonus", self.request_bonus)
         ]
 
@@ -376,14 +532,40 @@ class CreativeLoginApp:
         # Run the main loop for the boss window
         boss_window.mainloop()
 
+    def perform_review_approval(self):
+        messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
+
+    def approve_vacations_sick_leaves(self):
+        messagebox.showinfo("Boss Window", "Approve Vacations and Sick Leaves Button Pressed")
+
+    def progress_on_task(self):
+        messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
+
+    def approve_promotion(self):
+        messagebox.showinfo("Boss Window", "Approve Promotion Button Pressed")
+
+    def approve_resignatin(self):
+        messagebox.showinfo("Boss Window", "Approve Resignation Button Pressed")
+
+    def request_bonus(self):
+        messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
+
    
    
-    def open_employee_window(self,role):
+    def open_employee_window(self,role,username):
         self.root.destroy()  # Close the main login window
         employee_window = tk.Tk()  # Use Tk() to create a new window
         employee_window.geometry("800x600")  # Set the window size
         employee_window.title("Employee Window")
-
+        employee_ref = db.reference('/employee')
+        emp_id=employee_ref.child(username).child('emp_id').get()
+        designation=employee_ref.child(username).child('designation').get()
+        salary=employee_ref.child(username).child('salary').get()
+        sickdays=employee_ref.child(username).child('sick_days').get()
+        vacationdays=employee_ref.child(username).child('vacation_days').get()
+        bonus=employee_ref.child(username).child('bonus').get()
+        hours_attended=employee_ref.child(username).child('hours_attended').get()
+       
         # Background image for the employee window
         employee_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
         self.employee_original_image = Image.open(employee_img_path)
@@ -392,25 +574,47 @@ class CreativeLoginApp:
         employee_background_label = tk.Label(employee_window, image=self.employee_img, bg='white')
         employee_background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        # Welcome message for the employee
-        welcome_label = tk.Label(employee_window, text="Welcome Employee!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
+        # Welcome message for the employee along with username
+        welcome_label = tk.Label(employee_window, text=f"Welcome Employee, {username}!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
-        buttons_info = [
-            ("Sick/Vacation Days View", self.sick_vacation_days_view),
-            ("Apply for Vacation Days", self.apply_for_vacation_days),
-            ("Apply for Resignation", self.apply_for_resignation),
-            ("Check Progress on Tasks", self.check_progress_on_tasks),
-            ("Submit Survey/Feedback/Complaint", self.submit_survey_feedback_complaint)
+         # Show the details pulled from the db on the left side of the window
+        details_frame = tk.Frame(employee_window, bg='white', padx=20)
+        details_frame.pack(side=tk.LEFT, fill=tk.Y)
+
+        details_labels = [
+            ("Employee ID: ", emp_id),
+            ("Designation: ", designation),
+            ("Salary: ", salary),
+            ("Sick Days: ", sickdays),
+            ("Vacation Days: ", vacationdays),
+            ("Bonus: ", bonus),
+            ("Hours Attended: ", hours_attended),
         ]
 
-        employee_buttons_frame = tk.Frame(employee_window, bg='black')  # Define employee_buttons_frame
-        employee_buttons_frame.pack(pady=20)
+        for label_text, detail_value in details_labels:
+            label = tk.Label(details_frame, text=label_text, font=("Helvetica", 12, "bold"), bg='white')
+            label.grid(sticky="w")
+            value_label = tk.Label(details_frame, text=detail_value, font=("Helvetica", 12), bg='white')
+            value_label.grid(row=details_labels.index((label_text, detail_value)), column=1, sticky="w")
+
+        # Buttons on the right side of the window
+        buttons_frame = tk.Frame(employee_window, bg='black', padx=20)
+        buttons_frame.pack(side=tk.RIGHT, fill=tk.Y)
+
+        buttons_info = [
+            ("Apply for Vacation Days", self.apply_for_vacation_days),
+            ("Apply for Resignation", self.apply_for_resignation),
+            ("Check and update Progress on Tasks", self.check_progress_on_tasks),
+            ("View and Submit Survey", self.submit_survey),
+            ("View and Submit Feedback", self.submit_feedback),
+            ("Submit Complaint", self.submit_complaint),
+        ]
 
         for i, (button_text, button_command) in enumerate(buttons_info):
-            button = tk.Button(employee_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
+            button = tk.Button(buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
                             width=30, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
-            button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+            button.grid(row=i, column=0, pady=10)
 
         # Add an Exit button at the bottom
         exit_button = tk.Button(employee_window, text="Exit", command=employee_window.destroy, font=("Helvetica", 14),
@@ -431,95 +635,26 @@ class CreativeLoginApp:
 
         # Run the main loop for the employee window
         employee_window.mainloop()
-
-
-    def salary_management(self):
-        messagebox.showinfo("HR Window", "Salary Management Button Pressed")
-
-    def employee_add_remove(self):
-        messagebox.showinfo("HR Window", "Employee Add/Remove Button Pressed")
-
-    def approve_bonus(self):
-        messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
-
-    def approve_resignation(self):
-        messagebox.showinfo("HR Window", "Approve Resignation Button Pressed")
-
-    def check_hours_attended(self):
-        messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
-
-    def survey_feedback(self):
-        messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
-
-    def perform_review_approval(self):
-        messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
-
-    def approve_vacations_sick_leaves(self):
-        messagebox.showinfo("Boss Window", "Approve Vacations and Sick Leaves Button Pressed")
-
-    def progress_on_task(self):
-        messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
-
-    def approve_promotion(self):
-        messagebox.showinfo("Boss Window", "Approve Promotion Button Pressed")
-
-    def approve_resignation(self):
-        messagebox.showinfo("Boss Window", "Approve Resignation Button Pressed")
-
-    def request_bonus(self):
-        messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
-
-    def sick_vacation_days_view(self):
-        messagebox.showinfo("Employee Window", "Sick/Vacation Days View Button Pressed")
-
+        
     def apply_for_vacation_days(self):
        messagebox.showinfo("Employee Window", "Apply for Vacation Days Button Pressed")
-   
+ 
     def apply_for_resignation(self):
        messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
    
     def check_progress_on_tasks(self):
        messagebox.showinfo("Employee Window", "Check Progress on Tasks Button Pressed")
    
-    def submit_survey_feedback_complaint(self):
-       messagebox.showinfo("Employee Window", "Submit Survey/Feedback/Complaint Button Pressed")
-   
-    def show_credits(self):
-        # Create a new Toplevel window for the credits
-        credits_dialog = tk.Toplevel(self.root)
-        credits_dialog.title("Credits")
+    def submit_survey(self):
+       messagebox.showinfo("Employee Window", "Submit Survey Button Pressed")
 
-        # You can customize the credits information as per your needs
-        credits_text = (
-            "HR Management System\n\n"
-            "Developed by: \n -Samay Pandey, \n-Armaan Nakhuda, \n-Sushant Navle, \n-Peeyush Karnik\n\n"
-            "Stage Completition: Stage 4 completed\n"
-            "Date: 6th Feb 2024\n"
-            "\nSpecial Thanks to:\n- Firebase\n- OpenAI\n- Yash Patil\n"
-        )
+    def submit_feedback(self):
+       messagebox.showinfo("Employee Window", "Submit Feedback Button Pressed")
+    
+    def submit_complaint(self):
+       messagebox.showinfo("Employee Window", "Submit Complaint Button Pressed")
 
-        # Create a label for credits information
-        credits_label = tk.Label(credits_dialog, text=credits_text, font=("Helvetica", 12))
-        credits_label.pack(padx=20, pady=20)
-
-        # Center the credits dialog relative to the main application window
-        credits_dialog.update_idletasks()
-
-        app_x = self.root.winfo_x()
-        app_y = self.root.winfo_y()
-        app_width = self.root.winfo_width()
-        app_height = self.root.winfo_height()
-
-        credits_width = credits_dialog.winfo_width()
-        credits_height = credits_dialog.winfo_height()
-
-        x = app_x + (app_width - credits_width) // 2
-        y = app_y + (app_height - credits_height) // 2
-
-        credits_dialog.geometry(f"{credits_width}x{credits_height}+{x}+{y}")
-
-        credits_dialog.mainloop()
-
+    
     def center_window_all(self,window):
          # Get the width and height of the screen
          screen_width = window.winfo_screenwidth()
@@ -527,15 +662,105 @@ class CreativeLoginApp:
 
          # Calculate the x and y coordinates to center the main window
          x = (screen_width / 2) - (900 / 2)
-         y = (screen_height / 2) - (700 / 2)
+         y = (screen_height / 2) - (600 / 2)
 
          # Set the dimensions of the screen and where it is placed
-         window.geometry('%dx%d+%d+%d' % (900, 700, x, y))
+         window.geometry('%dx%d+%d+%d' % (900, 600, x, y))
+
+
+    
+    def add_login_to_database(self,create_remove_hr_window):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        role = self.role_entry.get()
+
+        admins_ref = db.reference('/admins')
+        hr_ref = db.reference('/HR')
+        boss_ref = db.reference('/boss')
+        employee_ref = db.reference('/employee')
+        emp_id_ref= db.reference('/')
+        emp_uni=emp_id_ref.child('emp_id').get()
+
+        if admins_ref.child(username).get() or hr_ref.child(username).get() or boss_ref.child(username).get() or employee_ref.child(username).get():
+            messagebox.showinfo("Add HR Login", "Username already exists. Choose a different username.")
+        else:
+            # Add the new login to the database
+            if role == 'HR':
+                hr_ref.child(username).set({
+                    'password': password,
+                    'role': role,
+                      'post:': '',
+                    'salary': '',
+                    'emp_id': emp_uni+1,
+                })
+                emp_id_ref.child('emp_id').set(emp_uni+1)
+            elif role == 'boss':
+                boss_ref.child(username).set({
+                    'password': password,
+                    'role': role,
+                    'designnation: ': '',
+                    'salary': '',
+                    'emp_id': emp_uni+1,
+                })
+                emp_id_ref.child('emp_id').set(emp_uni+1)
+            elif role == 'employee':
+                employee_ref.child(username).set({
+                    'password': password,
+                    'role': role,
+                    'designation': '',
+                    'emp_id': emp_uni+1,
+                    'salary': '',
+                    'sick days': '',
+                    'vacation days': '',
+                    'bonus': '',
+                    'hours attended': '',
+                    'apply for resignation': '',
+                    'apply for vacation': '',
+                    'progress on task': '',
+                    'survey': '',
+                    'feedback': '',
+                })
+                emp_id_ref.child('emp_id').set(emp_uni+1)
+            messagebox.showinfo("Add HR Login", "Login added successfully.")
+        #close the window
+        create_remove_hr_window.destroy()
+
+    def remove_login_from_database(self,create_remove_hr_window):
+        username = self.username_entry.get()
+        role = self.role_entry.get()
+        admins_ref = db.reference('/admins')
+        hr_ref = db.reference('/HR')
+        boss_ref = db.reference('/boss')
+        employee_ref = db.reference('/employee')
+        if role == 'HR':
+            if hr_ref.child(username).get():
+                # Remove the login from the database
+                hr_ref.child(username).delete()
+                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+            else:
+                messagebox.showinfo("Remove HR Login", "Username does not exist.")
+        elif role == 'boss':
+            if boss_ref.child(username).get():
+                # Remove the login from the database
+                boss_ref.child(username).delete()
+                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+            else:
+                messagebox.showinfo("Remove HR Login", "Username does not exist.")
+        elif role == 'employee':
+            if employee_ref.child(username).get():
+                # Remove the login from the database
+                employee_ref.child(username).delete()
+                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+            else:
+                messagebox.showinfo("Remove HR Login", "Username does not exist.")
+        #close the window
+        create_remove_hr_window.destroy()
+        
 
 
 def main():
     root = tk.Tk()
-    root.geometry("900x700")  # Set the window size
+    root.geometry("900x600")  # Set the window size
     app = CreativeLoginApp(root)
     root.mainloop()
 
