@@ -711,8 +711,8 @@ class CreativeLoginApp:
         # Bind the Escape key to the exit function
         employee_window.bind("<Escape>", lambda event: employee_window.destroy())
         
-        # # Bind the window resize event for the employee window
-        # employee_window.bind("<Configure>", lambda event, img=self.employee_img, label=employee_background_label: self.resize_image(event, img, label))
+        # Bind the window resize event for the employee window
+        employee_window.bind("<Configure>", lambda event, img=self.employee_img, label=employee_background_label: self.resize_image(event, img, label))
 
         # Run the main loop for the employee window
         employee_window.mainloop()
