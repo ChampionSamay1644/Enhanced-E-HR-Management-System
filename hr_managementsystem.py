@@ -90,9 +90,6 @@ class CreativeLoginApp:
         # Resize the canvas to the current window size
         self.company_logo_canvas.config(width=window_width, height=window_height)
 
-        # Update the position of the company name text
-        self.company_logo_canvas.coords(self.company_name_text, window_width / 2, 100)
-
         # Resize the image if needed
         resized_image = self.original_company_logo_image.resize((window_width, window_height))
         self.company_logo_image = ImageTk.PhotoImage(resized_image)
@@ -100,14 +97,18 @@ class CreativeLoginApp:
         # Update the image on the canvas
         self.company_logo_canvas.delete("all")
         self.company_logo_canvas.create_image(0, 0, image=self.company_logo_image, anchor='nw')
- 
+
+        # Redraw the company name text
+        if hasattr(self, 'company_name_text'):
+            self.company_logo_canvas.delete(self.company_name_text)  # Remove the old text
         self.company_name_text = self.company_logo_canvas.create_text(
-        window_width / 2,
-        100,
-        text="Ben Dover Inc",
-        font=("Helvetica", 28, "bold"),
-        fill='white'
-    )
+            window_width / 2,
+            100,
+            text="Ben Dover Inc",
+            font=("Helvetica", 28, "bold"),
+            fill='white'
+        )
+
 
 
     def on_window_resize(self, event):
