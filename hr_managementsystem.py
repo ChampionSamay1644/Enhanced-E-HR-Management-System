@@ -11,6 +11,7 @@ cred = credentials.Certificate("credentials.json")  # Path: credentials.json
 firebase_admin.initialize_app(cred, {'databaseURL': 'https://hr-management-system-f7c9f-default-rtdb.asia-southeast1.firebasedatabase.app/'})
 
 class CreativeLoginApp:
+   
     def __init__(self, root):
         self.root = root
         self.root.title("HR Management System")
@@ -25,12 +26,12 @@ class CreativeLoginApp:
         # Load and set the background image
         self.original_image = Image.open(img_path)
         self.img = ImageTk.PhotoImage(self.original_image)
-    
+
         # Create and place a label with the background image
         self.background_label = tk.Label(root, image=self.img, bg='white')
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        #focus on window
+        # Focus on window
         root.focus_force()
 
         # Center the window with function center_window_test
@@ -39,9 +40,20 @@ class CreativeLoginApp:
         # Bind the window resize event
         root.bind("<Configure>", lambda event, img=self.img, label=self.background_label: self.resize_image(event, img, label))
 
-        # Add the company name at the top center
-        company_name_label = tk.Label(root, text="Ben Dover Inc", font=("Helvetica", 38, "bold"), fg='white', bg='black')
-        company_name_label.place(relx=0.5, rely=0.1, anchor="center")
+       #create a canvas the size of the whole window
+        self.company_logo_canvas = tk.Canvas(root, width=900, height=600, bg='white', highlightthickness=0)
+        self.company_logo_canvas.place(x=0, y=0)
+
+        #import the image as the background on the canvas
+        self.company_logo_image = Image.open("HR_background.png")
+        self.company_logo_image = self.company_logo_image.resize((900, 600))
+        self.company_logo_image = ImageTk.PhotoImage(self.company_logo_image)
+        self.company_logo_canvas.create_image(0, 0, image=self.company_logo_image, anchor='nw')
+
+
+
+        # Display the company name as text on the canvas and top center it
+        self.company_name_text = self.company_logo_canvas.create_text(450, 100, text="Ben Dover Inc", font=("Helvetica", 38, "bold"), fill='black')
 
 
         # Label for Username
@@ -61,7 +73,7 @@ class CreativeLoginApp:
         self.password_entry = tk.Entry(root, show="*", font=("Helvetica", 12, "bold"))
         self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
         self.password_entry.insert(0, "")  # Default text
-       
+
         # Login button
         self.login_button = tk.Button(root, text="Login", command=self.login, font=("Helvetica", 14))
         self.login_button.place(relx=0.5, rely=0.65, anchor="center", width=100, height=30)
@@ -74,11 +86,80 @@ class CreativeLoginApp:
         self.credits_button = tk.Button(root, text="Credits", command=self.show_credits, font=("Helvetica", 14))
         self.credits_button.place(relx=0.5, rely=0.85, anchor="center", width=100, height=30)
 
-         # Bind the Enter key to the login function
+        # Bind the Enter key to the login function
         root.bind("<Return>", lambda event: self.login())
 
         # Bind the Escape key to the exit function
         root.bind("<Escape>", lambda event: root.destroy())
+   
+    # def __init__(self, root):
+    #     self.root = root
+    #     self.root.title("HR Management System")
+    #     self.employee_original_image = None
+    #     self.employee_img = None
+    #     self.boss_original_image = None
+    #     self.boss_img = None
+
+    #     # Construct the full path to the image file
+    #     img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+    #     # Load and set the background image
+    #     self.original_image = Image.open(img_path)
+    #     self.img = ImageTk.PhotoImage(self.original_image)
+    
+    #     # Create and place a label with the background image
+    #     self.background_label = tk.Label(root, image=self.img, bg='white')
+    #     self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+    #     #focus on window
+    #     root.focus_force()
+
+    #     # Center the window with function center_window_test
+    #     self.center_window_all(root)
+
+    #     # Bind the window resize event
+    #     root.bind("<Configure>", lambda event, img=self.img, label=self.background_label: self.resize_image(event, img, label))
+
+    #     # Add the company name at the top center
+    #     company_name_label = tk.Label(root, text="Ben Dover Inc", font=("Helvetica", 38, "bold"), fg='white', bg='black')
+    #     company_name_label.place(relx=0.5, rely=0.1, anchor="center")
+
+
+    #     # Label for Username
+    #     username_label = tk.Label(root, text="Username", font=("Helvetica", 12, "bold"), bg='white')
+    #     username_label.place(relx=0.5, rely=0.35, anchor="center")
+
+    #     # Username entry
+    #     self.username_entry = tk.Entry(root, font=("Helvetica", 12, "bold"))
+    #     self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+    #     self.username_entry.insert(0, "")  # Default text
+
+    #     # Label for Password
+    #     password_label = tk.Label(root, text="Password", font=("Helvetica", 12, "bold"), bg='white')
+    #     password_label.place(relx=0.5, rely=0.5, anchor="center")
+
+    #     # Password entry
+    #     self.password_entry = tk.Entry(root, show="*", font=("Helvetica", 12, "bold"))
+    #     self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
+    #     self.password_entry.insert(0, "")  # Default text
+       
+    #     # Login button
+    #     self.login_button = tk.Button(root, text="Login", command=self.login, font=("Helvetica", 14))
+    #     self.login_button.place(relx=0.5, rely=0.65, anchor="center", width=100, height=30)
+
+    #     # Exit button
+    #     self.exit_button = tk.Button(root, text="Exit", command=root.destroy, font=("Helvetica", 14))
+    #     self.exit_button.place(relx=0.5, rely=0.75, anchor="center", width=100, height=30)
+
+    #     # Credits button
+    #     self.credits_button = tk.Button(root, text="Credits", command=self.show_credits, font=("Helvetica", 14))
+    #     self.credits_button.place(relx=0.5, rely=0.85, anchor="center", width=100, height=30)
+
+    #      # Bind the Enter key to the login function
+    #     root.bind("<Return>", lambda event: self.login())
+
+    #     # Bind the Escape key to the exit function
+    #     root.bind("<Escape>", lambda event: root.destroy())
 
         # # Load credentials from the database
         # self.credentials = self.load_credentials_from_database()
