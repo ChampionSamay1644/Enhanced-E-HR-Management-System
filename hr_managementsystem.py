@@ -557,6 +557,14 @@ class CreativeLoginApp:
         employee_window = tk.Tk()  # Use Tk() to create a new window
         employee_window.geometry("800x600")  # Set the window size
         employee_window.title("Employee Window")
+        employee_ref = db.reference('/employee')
+        emp_id=employee_ref.child(username).child('emp_id').get()
+        designation=employee_ref.child(username).child('designation').get()
+        salary=employee_ref.child(username).child('salary').get()
+        sickdays=employee_ref.child(username).child('sick_days').get()
+        vacationdays=employee_ref.child(username).child('vacation_days').get()
+        bonus=employee_ref.child(username).child('bonus').get()
+        hours_attended=employee_ref.child(username).child('hours_attended').get()
        
         # Background image for the employee window
         employee_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -570,8 +578,31 @@ class CreativeLoginApp:
         welcome_label = tk.Label(employee_window, text=f"Welcome Employee, {username}!", font=("Helvetica", 18, "bold"), fg="white", bg='black')
         welcome_label.pack(pady=20)
 
+         # Show the details pulled from the db on the left side of the window
+        details_frame = tk.Frame(employee_window, bg='white', padx=20)
+        details_frame.pack(side=tk.LEFT, fill=tk.Y)
+
+        details_labels = [
+            ("Employee ID: ", emp_id),
+            ("Designation: ", designation),
+            ("Salary: ", salary),
+            ("Sick Days: ", sickdays),
+            ("Vacation Days: ", vacationdays),
+            ("Bonus: ", bonus),
+            ("Hours Attended: ", hours_attended),
+        ]
+
+        for label_text, detail_value in details_labels:
+            label = tk.Label(details_frame, text=label_text, font=("Helvetica", 12, "bold"), bg='white')
+            label.grid(sticky="w")
+            value_label = tk.Label(details_frame, text=detail_value, font=("Helvetica", 12), bg='white')
+            value_label.grid(row=details_labels.index((label_text, detail_value)), column=1, sticky="w")
+
+        # Buttons on the right side of the window
+        buttons_frame = tk.Frame(employee_window, bg='black', padx=20)
+        buttons_frame.pack(side=tk.RIGHT, fill=tk.Y)
+
         buttons_info = [
-            ("Employee Profile", lambda:self.profile_employee(username)),
             ("Apply for Vacation Days", self.apply_for_vacation_days),
             ("Apply for Resignation", self.apply_for_resignation),
             ("Check and update Progress on Tasks", self.check_progress_on_tasks),
@@ -580,13 +611,46 @@ class CreativeLoginApp:
             ("Submit Complaint", self.submit_complaint),
         ]
 
-        employee_buttons_frame = tk.Frame(employee_window, bg='black')  # Define employee_buttons_frame
-        employee_buttons_frame.pack(pady=20)
-
         for i, (button_text, button_command) in enumerate(buttons_info):
-            button = tk.Button(employee_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
+            button = tk.Button(buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
                             width=30, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
-            button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+            button.grid(row=i, column=0, pady=10)
+
+    #     #show the details pulled from the db on the left side of the window
+    #     emp_id = tk.Label(employee_window, text=f"Employee ID: {emp_id}", font=("Helvetica", 12, "bold"), bg='white')
+    #     emp_id.place(relx=0.1, rely=0.35, anchor="center")
+    #     designation = tk.Label(employee_window, text=f"Designation: {designation}", font=("Helvetica", 12, "bold"), bg='white')
+    #     designation.place(relx=0.1, rely=0.5, anchor="center")
+    #     salary = tk.Label(employee_window, text=f"Salary: {salary}", font=("Helvetica", 12, "bold"), bg='white')
+    #     salary.place(relx=0.1, rely=0.65, anchor="center")
+    #     sickdays = tk.Label(employee_window, text=f"Sick Days: {sickdays}", font=("Helvetica", 12, "bold"), bg='white')
+    #     sickdays.place(relx=0.1, rely=0.8, anchor="center")
+    #     vacationdays = tk.Label(employee_window, text=f"Vacation Days: {vacationdays}", font=("Helvetica", 12, "bold"), bg='white')
+    #     vacationdays.place(relx=0.1, rely=0.95, anchor="center")
+    #     bonus = tk.Label(employee_window, text=f"Bonus: {bonus}", font=("Helvetica", 12, "bold"), bg='white')
+    #     bonus.place(relx=0.1, rely=1.1, anchor="center")
+    #     hours_attended = tk.Label(employee_window, text=f"Hours Attended: {hours_attended}", font=("Helvetica", 12, "bold"), bg='white')
+    #     hours_attended.place(relx=0.1, rely=1.25, anchor="center")
+
+
+    #     buttons_info = [
+    #         ("Apply for Vacation Days", self.apply_for_vacation_days),
+    #         ("Apply for Resignation", self.apply_for_resignation),
+    #         ("Check and update Progress on Tasks", self.check_progress_on_tasks),
+    #         ("View and Submit Survey", self.submit_survey),
+    #         ("View and Submit Feedback", self.submit_feedback),
+    #         ("Submit Complaint", self.submit_complaint),
+    #     ]
+
+    #     employee_buttons_frame = tk.Frame(employee_window, bg='black')  # Define employee_buttons_frame
+    #     employee_buttons_frame.pack(pady=20)
+
+    #   #the buttons should be on the right side of the window
+    #     for i, (button_text, button_command) in enumerate(buttons_info):
+    #         button = tk.Button(employee_buttons_frame, text=button_text, command=button_command, font=("Helvetica", 14),
+    #                         width=30, height=2, bd=0, fg='white', bg='#2E4053', activebackground='#566573')
+    #         button.grid(row=i // 1, column=i % 2, padx=10, pady=10)
+        
 
         # Add an Exit button at the bottom
         exit_button = tk.Button(employee_window, text="Exit", command=employee_window.destroy, font=("Helvetica", 14),
