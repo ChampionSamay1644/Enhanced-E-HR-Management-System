@@ -28,7 +28,7 @@ class CreativeLoginApp:
 
         # Construct the full path to the image file
         img_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "HR_background.jpg"
+            os.path.dirname(os.path.realpath(__file__)), "HR_background.jpg" #change jpg to png for main background
         )
 
         # Focus on window
