@@ -730,69 +730,160 @@ class CreativeLoginApp:
         boss_window.geometry("800x600")  # Set the window size
         boss_window.title("Boss Window")
 
-        # Background image for the boss window
-        boss_img_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "HR_background.png"
+
+        # create a canvas that resizes with the window
+        self.boss_logo_canvas = tk.Canvas(boss_window, bg="white", highlightthickness=0)
+        self.boss_logo_canvas.pack(fill=tk.BOTH, expand=True)
+
+        # bind window resize event to function
+        boss_window.bind("<Configure>", lambda event: self.on_window_resize_boss(event,username))
+
+        # import the image as the background on the canvas
+        self.load_image_boss(username)
+
+        #buttons of Boss window
+        self.perform_review_approval = tk.Button(
+            self.boss_logo_canvas, text="Performance Review Approval", command=lambda:self.perform_review_approval(), font=("Helvetica", 14)
         )
-        self.boss_original_image = Image.open(boss_img_path)
-        self.boss_img = ImageTk.PhotoImage(self.boss_original_image)
-
-        boss_background_label = tk.Label(boss_window, image=self.boss_img, bg="white")
-        boss_background_label.place(x=0, y=0, relwidth=1, relheight=1)
-
-        # Welcome message for the boss
-        welcome_label = tk.Label(
-            boss_window,
-            text="Welcome Boss!",
-            font=("Helvetica", 18, "bold"),
-            fg="white",
-            bg="black",
+        self.perform_review_approval.pack(
+            pady=20
         )
-        welcome_label.pack(pady=20)
+        self.perform_review_approval.place(
+            relx=0.5, rely=0.5, anchor="center", width=200, height=30
+        )
+        self.approve_vacations_sick_leaves = tk.Button(
+            self.boss_logo_canvas, text="Approve Vacations and Sick Leaves", command=lambda:self.approve_vacations_sick_leaves(), font=("Helvetica", 14)
+        )
+        self.approve_vacations_sick_leaves.pack(
+            pady=20
+        )
+        self.approve_vacations_sick_leaves.place(
+            relx=0.5, rely=0.6, anchor="center", width=200, height=30
+        )
+        self.progress_on_task = tk.Button(
+            self.boss_logo_canvas, text="Progress on Task", command=lambda:self.progress_on_task(), font=("Helvetica", 14)
+        )
+        self.progress_on_task.pack(
+            pady=20
+        )
+        self.progress_on_task.place(
+          relx=0.5, rely=0.7, anchor="center", width=200, height=30
+        )
+        self.approve_promotion = tk.Button(
+            self.boss_logo_canvas, text="Approve Promotion", command=lambda:self.approve_promotion(), font=("Helvetica", 14)
+        )
+        self.approve_promotion.pack(
+            pady=20
+        )
+        self.approve_promotion.place(
+            relx=0.5, rely=0.8, anchor="center", width=200, height=30
+        )
+        self.approve_resignation = tk.Button(
+            self.boss_logo_canvas, text="Approve Resignation", command=lambda:self.approve_resignation(), font=("Helvetica", 14)
+        )
+        self.approve_resignation.pack(
+            pady=20
+        )
+        self.approve_resignation.place(
+            relx=0.5, rely=0.9, anchor="center", width=200, height=30
+        )
+        self.request_bonus = tk.Button(
+            self.boss_logo_canvas, text="Request for Bonus", command=lambda:self.request_bonus(), font=("Helvetica", 14)
+        )
+        self.request_bonus.pack(
+            pady=20
+        )
+        self.request_bonus.place(
+            relx=0.5, rely=1.0, anchor="center", width=200, height=30
+        )
 
-        buttons_info = [
-            ("Performance Review Approval", self.perform_review_approval),
-            ("Approve Vacations and Sick Leaves", self.approve_vacations_sick_leaves),
-            ("Progress on Task", self.progress_on_task),
-            ("Approve Promotion", self.approve_promotion),
-            ("Approve Resignation", self.approve_resignatin),
-            ("Request for Bonus", self.request_bonus),
-        ]
 
-        boss_buttons_frame = tk.Frame(
-            boss_window, bg="black"
-        )  # Define boss_buttons_frame
-        boss_buttons_frame.pack(pady=20)
+        #add the following buttons to the canvas Performance Review Approval, Approve Vacations and Sick Leaves, Progress on Task, Approve Promotion, Approve Resignation, Request for Bonus
+    
 
-        for i, (button_text, button_command) in enumerate(buttons_info):
-            button = tk.Button(
-                boss_buttons_frame,
-                text=button_text,
-                command=button_command,
-                font=("Helvetica", 14),
-                width=30,
-                height=2,
-                bd=0,
-                fg="white",
-                bg="#2E4053",
-                activebackground="#566573",
-            )
-            button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
-        # Add an Exit button at the bottom
+        #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
-            boss_window,
-            text="Exit",
-            command=boss_window.destroy,
-            font=("Helvetica", 14),
-            width=15,
-            height=2,
-            bd=0,
-            fg="white",
-            bg="#FF4500",
-            activebackground="#FF6347",
-        )
-        exit_button.place(relx=0.5, rely=0.95, anchor="center")
+        self.boss_logo_canvas,
+        text="Exit",
+        command=boss_window.destroy,
+        font=("Helvetica", 14),
+        width=15,
+        height=2,
+        bd=0,
+        fg="white",
+        bg="#FF4500",
+        activebackground="#FF6347",
+    )
+        exit_button.place(relx=0.5, rely=1.0, anchor="s")
+
+
+
+
+
+        # # Background image for the boss window
+        # boss_img_path = os.path.join(
+        #     os.path.dirname(os.path.realpath(__file__)), "HR_background.png"
+        # )
+        # self.boss_original_image = Image.open(boss_img_path)
+        # self.boss_img = ImageTk.PhotoImage(self.boss_original_image)
+
+        # boss_background_label = tk.Label(boss_window, image=self.boss_img, bg="white")
+        # boss_background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+        # # Welcome message for the boss
+        # welcome_label = tk.Label(
+        #     boss_window,
+        #     text="Welcome Boss!",
+        #     font=("Helvetica", 18, "bold"),
+        #     fg="white",
+        #     bg="black",
+        # )
+        # welcome_label.pack(pady=20)
+
+        # buttons_info = [
+        #     ("Performance Review Approval", self.perform_review_approval),
+        #     ("Approve Vacations and Sick Leaves", self.approve_vacations_sick_leaves),
+        #     ("Progress on Task", self.progress_on_task),
+        #     ("Approve Promotion", self.approve_promotion),
+        #     ("Approve Resignation", self.approve_resignatin),
+        #     ("Request for Bonus", self.request_bonus),
+        # ]
+        # 
+        # boss_buttons_frame = tk.Frame(
+        #     boss_window, bg="black"
+        # )  # Define boss_buttons_frame
+        # boss_buttons_frame.pack(pady=20)
+
+        # for i, (button_text, button_command) in enumerate(buttons_info):
+        #     button = tk.Button(
+        #         boss_buttons_frame,
+        #         text=button_text,
+        #         command=button_command,
+        #         font=("Helvetica", 14),
+        #         width=30,
+        #         height=2,
+        #         bd=0,
+        #         fg="white",
+        #         bg="#2E4053",
+        #         activebackground="#566573",
+        #     )
+        #     button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+
+        # # Add an Exit button at the bottom
+        # exit_button = tk.Button(
+        #     boss_window,
+        #     text="Exit",
+        #     command=boss_window.destroy,
+        #     font=("Helvetica", 14),
+        #     width=15,
+        #     height=2,
+        #     bd=0,
+        #     fg="white",
+        #     bg="#FF4500",
+        #     activebackground="#FF6347",
+        # )
+        # exit_button.place(relx=0.5, rely=0.95, anchor="center")
 
         # focus on window
         boss_window.focus_force()
@@ -803,16 +894,67 @@ class CreativeLoginApp:
         # Bind the Escape key to the exit function
         boss_window.bind("<Escape>", lambda event: boss_window.destroy())
 
-        # Bind the window resize event for the boss window
-        boss_window.bind(
-            "<Configure>",
-            lambda event, img=self.boss_img, label=boss_background_label: self.resize_image(
-                event, img, label
-            ),
-        )
+        # # Bind the window resize event for the boss window
+        # boss_window.bind(
+        #     "<Configure>",
+        #     lambda event, img=self.boss_img, label=boss_background_label: self.resize_image(
+        #         event, img, label
+        #     ),
+        # )
 
         # Run the main loop for the boss window
         boss_window.mainloop()
+
+    def load_image_boss(self,username):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_boss_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_boss(username)
+
+    def resize_canvas_and_image_boss(self,username):
+        username_boss = username
+        # Get the boss window size
+        window_width = self.boss_logo_canvas.winfo_width()
+        window_height = self.boss_logo_canvas.winfo_height()
+       
+
+        # Resize the canvas to the current window size
+        self.boss_logo_canvas.config(width=window_width, height=window_height)
+
+
+        # Resize the image if needed
+        resized_image = self.original_boss_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.boss_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.boss_logo_canvas.delete("all")
+        self.boss_logo_canvas.create_image(
+            0, 0, image=self.boss_logo_image, anchor="nw"
+        )
+
+         #redraw the boss name text    
+        if hasattr(self, "boss_name_text"):
+            self.boss_logo_canvas.delete(
+                self.boss_name_text
+            )  # Remove the old text
+
+        self.boss_name_text = self.boss_logo_canvas.create_text(
+            window_width / 2,
+            100,
+            text=f"Welcome {username_boss}!",
+            font=("Helvetica", 28, "bold"),
+            fill="white",
+        )
+
+    def on_window_resize_boss(self, event,username):
+        # Handle window resize event
+        self.resize_canvas_and_image_boss(username)
+
+
 
     def perform_review_approval(self):
         messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
