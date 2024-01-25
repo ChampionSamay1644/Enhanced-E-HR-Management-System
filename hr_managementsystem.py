@@ -247,11 +247,11 @@ class CreativeLoginApp:
         self.admin_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
          # bind window resize event to function
-        admin_window.bind("<Configure>", lambda event: self.on_window_resize_admin(event))
+        admin_window.bind("<Configure>", lambda event: self.on_window_resize_admin(event,username))
 
 
          # import the image as the background on the canvas
-        self.load_image_admin()
+        self.load_image_admin(username)
 
         # # Background image for the admin window
         # admin_img_path = os.path.join(
@@ -273,76 +273,76 @@ class CreativeLoginApp:
         # )
         # welcome_label.pack(pady=20)
 
-        # Buttons for Admin window
-        buttons1_info = [
-            (
-                (
-                    "Create HR Login",
-                    lambda: self.create_all_admin(button_create_all_admin),
-                )
-            ),  # Use lambda to delay the method call
-        ]
+        # # Buttons for Admin window
+        # buttons1_info = [
+        #     (
+        #         (
+        #             "Create HR Login",
+        #             lambda: self.create_all_admin(button_create_all_admin),
+        #         )
+        #     ),  # Use lambda to delay the method call
+        # ]
 
-        admin_buttons_frame = tk.Frame(
-            admin_window, bg="black"
-        )  # Define admin_buttons_frame
-        admin_buttons_frame.pack(pady=20)
+        # admin_buttons_frame = tk.Frame(
+        #     admin_window, bg="black"
+        # )  # Define admin_buttons_frame
+        # admin_buttons_frame.pack(pady=20)
 
-        for i, (button_text, button_command) in enumerate(buttons1_info):
-            button_create_all_admin = tk.Button(
-                admin_buttons_frame,
-                text=button_text,
-                command=button_command,
-                font=("Helvetica", 14),
-                width=20,
-                height=2,
-                bd=0,
-                fg="white",
-                bg="#2E4053",
-                activebackground="#566573",
-            )
-            button_create_all_admin.grid(row=i // 2, column=i % 2, padx=10, pady=10)
+        # for i, (button_text, button_command) in enumerate(buttons1_info):
+        #     button_create_all_admin = tk.Button(
+        #         admin_buttons_frame,
+        #         text=button_text,
+        #         command=button_command,
+        #         font=("Helvetica", 14),
+        #         width=20,
+        #         height=2,
+        #         bd=0,
+        #         fg="white",
+        #         bg="#2E4053",
+        #         activebackground="#566573",
+        #     )
+        #     button_create_all_admin.grid(row=i // 2, column=i % 2, padx=10, pady=10)
 
-        # Create a 2nd button for remove HR login
-        buttons2_info = [
-            (
-                (
-                    "Remove HR Login",
-                    lambda: self.remove_all_admin(button_remove_all_admin),
-                )
-            ),  # Use lambda to delay the method call
-        ]
+        # # Create a 2nd button for remove HR login
+        # buttons2_info = [
+        #     (
+        #         (
+        #             "Remove HR Login",
+        #             lambda: self.remove_all_admin(button_remove_all_admin),
+        #         )
+        #     ),  # Use lambda to delay the method call
+        # ]
 
-        for i, (button_text, button_command) in enumerate(buttons2_info):
-            button_remove_all_admin = tk.Button(
-                admin_buttons_frame,
-                text=button_text,
-                command=button_command,
-                font=("Helvetica", 14),
-                width=20,
-                height=2,
-                bd=0,
-                fg="white",
-                bg="#2E4053",
-                activebackground="#566573",
-            )
-            button_remove_all_admin.grid(
-                row=i // 2 + 1, column=i % 2, padx=10, pady=10
-            )  # Adjusted row value
+        # for i, (button_text, button_command) in enumerate(buttons2_info):
+        #     button_remove_all_admin = tk.Button(
+        #         admin_buttons_frame,
+        #         text=button_text,
+        #         command=button_command,
+        #         font=("Helvetica", 14),
+        #         width=20,
+        #         height=2,
+        #         bd=0,
+        #         fg="white",
+        #         bg="#2E4053",
+        #         activebackground="#566573",
+        #     )
+        #     button_remove_all_admin.grid(
+        #         row=i // 2 + 1, column=i % 2, padx=10, pady=10
+        #     )  # Adjusted row value
 
-        exit_button = tk.Button(
-            admin_window,
-            text="Exit",
-            command=admin_window.destroy,
-            font=("Helvetica", 14),
-            width=15,
-            height=2,
-            bd=0,
-            fg="white",
-            bg="#FF4500",
-            activebackground="#FF6347",
-        )
-        exit_button.place(relx=0.5, rely=0.95, anchor="center")
+        # exit_button = tk.Button(
+        #     admin_window,
+        #     text="Exit",
+        #     command=admin_window.destroy,
+        #     font=("Helvetica", 14),
+        #     width=15,
+        #     height=2,
+        #     bd=0,
+        #     fg="white",
+        #     bg="#FF4500",
+        #     activebackground="#FF6347",
+        # )
+        # exit_button.place(relx=0.5, rely=0.95, anchor="center")
 
         # focus on window
         admin_window.focus_force()
@@ -360,19 +360,17 @@ class CreativeLoginApp:
 
 
 
-    def load_image_admin(self):
+    def load_image_admin(self,username):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
         # Load image and adjust canvas size
         self.original_admin_logo_image = Image.open(img_path)
-        self.resize_canvas_and_image_admin()
-    # def load_image_admin(self,img_path,role,username):
-    #     # Load image and adjust canvas size
-    #     self.original_admin_logo_image = Image.open(img_path)
-    #     self.resize_canvas_and_image_admin()
+        self.resize_canvas_and_image_admin(username)
+    
 
-    def resize_canvas_and_image_admin(self):
+    def resize_canvas_and_image_admin(self,username):
+        username_admin = username
         # Get the admin window size
         window_width = self.admin_logo_canvas.winfo_width()
         window_height = self.admin_logo_canvas.winfo_height()
@@ -394,7 +392,7 @@ class CreativeLoginApp:
             0, 0, image=self.admin_logo_image, anchor="nw"
         )
 
-        # Redraw the company name text
+         #redraw the admin name text    
         if hasattr(self, "admin_name_text"):
             self.admin_logo_canvas.delete(
                 self.admin_name_text
@@ -402,14 +400,14 @@ class CreativeLoginApp:
         self.admin_name_text = self.admin_logo_canvas.create_text(
             window_width / 2,
             100,
-            text="Welcome {username}!",
+            text=f"Welcome {username_admin}!",
             font=("Helvetica", 28, "bold"),
             fill="white",
         )
     
-    def on_window_resize_admin(self, event):
+    def on_window_resize_admin(self, event,username):
         # Handle window resize event
-        self.resize_canvas_and_image_admin()
+        self.resize_canvas_and_image_admin(username)
 
 
     def create_all_admin(self, button1):
