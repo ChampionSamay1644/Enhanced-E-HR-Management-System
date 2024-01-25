@@ -330,19 +330,21 @@ class CreativeLoginApp:
         #         row=i // 2 + 1, column=i % 2, padx=10, pady=10
         #     )  # Adjusted row value
 
-        # exit_button = tk.Button(
-        #     admin_window,
-        #     text="Exit",
-        #     command=admin_window.destroy,
-        #     font=("Helvetica", 14),
-        #     width=15,
-        #     height=2,
-        #     bd=0,
-        #     fg="white",
-        #     bg="#FF4500",
-        #     activebackground="#FF6347",
-        # )
-        # exit_button.place(relx=0.5, rely=0.95, anchor="center")
+
+        exit_button = tk.Button(
+        admin_window,
+        text="Exit",
+        command=admin_window.destroy,
+        font=("Helvetica", 14),
+        width=15,
+        height=2,
+        bd=0,
+        fg="white",
+        bg="#FF4500",
+        activebackground="#FF6347",
+    )
+        exit_button.place(relx=0.5, rely=1.0, anchor="s")
+
 
         # focus on window
         admin_window.focus_force()
