@@ -496,7 +496,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.salary_management_button.place(
-            relx=0.5, rely=0.3, anchor="center", width=200, height=30
+            relx=0.75, rely=0.3, anchor="center", width=200, height=30
         )
         self.employee_add_remove_button = tk.Button(
             self.hr_logo_canvas, text="Employee Add/Remove", command=lambda:self.employee_add_remove(), font=("Helvetica", 14)
@@ -505,7 +505,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.employee_add_remove_button.place(
-            relx=0.5, rely=0.4, anchor="center", width=200, height=30
+            relx=0.75, rely=0.375, anchor="center", width=230, height=30
         )
         self.approve_bonus_button = tk.Button(
             self.hr_logo_canvas, text="Approve Bonus", command=lambda:self.approve_bonus(), font=("Helvetica", 14)
@@ -515,7 +515,7 @@ class CreativeLoginApp:
         )
         self.approve_bonus_button.place(
 
-            relx=0.5, rely=0.5, anchor="center", width=200, height=30
+            relx=0.75, rely=0.450, anchor="center", width=200, height=30
         )
         self.approve_resignation_button = tk.Button(
             self.hr_logo_canvas, text="Approve Resignation", command=lambda:self.approve_resignation(), font=("Helvetica", 14)
@@ -524,7 +524,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.approve_resignation_button.place(
-            relx=0.5, rely=0.6, anchor="center", width=200, height=30
+            relx=0.75, rely=0.525, anchor="center", width=200, height=30
         )
         self.check_hours_attended_button = tk.Button(
             self.hr_logo_canvas, text="Check Employee Hours Attended", command=lambda:self.check_hours_attended(), font=("Helvetica", 14)
@@ -533,7 +533,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.check_hours_attended_button.place(
-            relx=0.5, rely=0.7, anchor="center", width=300, height=30
+            relx=0.75, rely=0.6, anchor="center", width=300, height=30
         )
         self.survey_feedback_button = tk.Button(
             self.hr_logo_canvas, text="Survey/Feedback", command=lambda:self.survey_feedback(), font=("Helvetica", 14)
@@ -542,7 +542,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.survey_feedback_button.place(
-            relx=0.5, rely=0.8, anchor="center", width=200, height=30
+            relx=0.75, rely=0.675, anchor="center", width=200, height=30
         )
         self.addremovebe_button = tk.Button(
             self.hr_logo_canvas, text="Add/Remove Boss/Employee", command=lambda:self.addremovebe(), font=("Helvetica", 14)
@@ -551,7 +551,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.addremovebe_button.place(
-            relx=0.5, rely=0.9, anchor="center", width=300, height=30
+            relx=0.75, rely=0.750, anchor="center", width=300, height=30
         )
 
     
@@ -702,7 +702,6 @@ class CreativeLoginApp:
     def on_window_resize_hr(self, event,username):
         # Handle window resize event
         self.resize_canvas_and_image_hr(username)
-
 
     def salary_management(self):
         messagebox.showinfo("HR Window", "Salary Management Button Pressed")
