@@ -989,7 +989,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.apply_for_vacation_days.place(
-            relx=0.5, rely=0.5, anchor="center", width=200, height=30
+            relx=0.75, rely=0.3, anchor="center", width=300, height=30
         )
 
         self.apply_for_resignation = tk.Button(
@@ -999,7 +999,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.apply_for_resignation.place(
-            relx=0.5, rely=0.6, anchor="center", width=200, height=30
+            relx=0.75, rely=0.4, anchor="center", width=300, height=30
         )
 
         self.check_progress_on_tasks = tk.Button(
@@ -1009,7 +1009,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.check_progress_on_tasks.place(
-            relx=0.5, rely=0.7, anchor="center", width=200, height=30
+            relx=0.75, rely=0.5, anchor="center", width=350, height=30
         )
 
         self.submit_survey = tk.Button(
@@ -1019,7 +1019,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.submit_survey.place(
-            relx=0.5, rely=0.8, anchor="center", width=200, height=30
+            relx=0.75, rely=0.6, anchor="center", width=300, height=30
         )
 
         self.submit_feedback = tk.Button(
@@ -1029,7 +1029,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.submit_feedback.place(
-            relx=0.5, rely=0.9, anchor="center", width=200, height=30
+            relx=0.75, rely=0.7, anchor="center", width=300, height=30
         )
 
         self.submit_complaint = tk.Button(
@@ -1040,7 +1040,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.submit_complaint.place(
-            relx=0.5, rely=1.0, anchor="center", width=200, height=30
+            relx=0.75, rely=0.8, anchor="center", width=300, height=30
         )
         
         
