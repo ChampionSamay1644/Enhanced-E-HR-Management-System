@@ -1042,64 +1042,64 @@ class CreativeLoginApp:
         self.load_image_employee(username)
 
         #buttons of Employee window to the right side of the screen
-        self.apply_for_vacation_days = tk.Button(
+        self.apply_for_vacation_days_button = tk.Button(
             self.employee_logo_canvas, text="Apply for Vacation Days", command=lambda:self.apply_for_vacation_days(), font=("Helvetica", 14)
         )
-        self.apply_for_vacation_days.pack(
+        self.apply_for_vacation_days_button.pack(
             pady=20
         )
-        self.apply_for_vacation_days.place(
+        self.apply_for_vacation_days_button.place(
             relx=0.75, rely=0.3, anchor="center", width=300, height=30
         )
 
-        self.apply_for_resignation = tk.Button(
+        self.apply_for_resignation_button = tk.Button(
             self.employee_logo_canvas, text="Apply for Resignation", command=lambda:self.apply_for_resignation(), font=("Helvetica", 14)
         )
-        self.apply_for_resignation.pack(
+        self.apply_for_resignation_button.pack(
             pady=20
         )
-        self.apply_for_resignation.place(
+        self.apply_for_resignation_button.place(
             relx=0.75, rely=0.4, anchor="center", width=300, height=30
         )
 
-        self.check_progress_on_tasks = tk.Button(
+        self.check_progress_on_tasks_button = tk.Button(
             self.employee_logo_canvas, text="Check and update Progress on Tasks", command=lambda:self.check_progress_on_tasks(), font=("Helvetica", 14)
         )
-        self.check_progress_on_tasks.pack(
+        self.check_progress_on_tasks_button.pack(
             pady=20
         )
-        self.check_progress_on_tasks.place(
+        self.check_progress_on_tasks_button.place(
             relx=0.75, rely=0.5, anchor="center", width=350, height=30
         )
 
-        self.submit_survey = tk.Button(
+        self.submit_survey_button = tk.Button(
             self.employee_logo_canvas, text="View and Submit Survey", command=lambda:self.submit_survey(), font=("Helvetica", 14)
         )
-        self.submit_survey.pack(
+        self.submit_survey_button.pack(
             pady=20
         )
-        self.submit_survey.place(
+        self.submit_survey_button.place(
             relx=0.75, rely=0.6, anchor="center", width=300, height=30
         )
 
-        self.submit_feedback = tk.Button(
+        self.submit_feedback_button = tk.Button(
             self.employee_logo_canvas, text="View and Submit Feedback", command=lambda:self.submit_feedback(), font=("Helvetica", 14)
         )
-        self.submit_feedback.pack(
+        self.submit_feedback_button.pack(
             pady=20
         )
-        self.submit_feedback.place(
+        self.submit_feedback_button.place(
             relx=0.75, rely=0.7, anchor="center", width=300, height=30
         )
 
-        self.submit_complaint = tk.Button(
+        self.submit_complaint_button = tk.Button(
 
             self.employee_logo_canvas, text="Submit Complaint", command=lambda:self.submit_complaint(), font=("Helvetica", 14)
         )
-        self.submit_complaint.pack(
+        self.submit_complaint_button.pack(
             pady=20
         )
-        self.submit_complaint.place(
+        self.submit_complaint_button.place(
             relx=0.75, rely=0.8, anchor="center", width=300, height=30
         )
 
@@ -1132,7 +1132,40 @@ class CreativeLoginApp:
 
         # Run the main loop for the employee window
         employee_window.mainloop()
+       
+        #Show the details pulled from the db on the left side of the window
+        details_frame = tk.Frame(employee_window, bg="white", padx=20)
+        details_frame.pack(side=tk.LEFT, fill=tk.Y)
 
+        details_labels = [
+            ("Employee ID: ", emp_id),
+            ("Designation: ", designation),
+            ("Salary: ", salary),
+            ("Sick Days: ", sickdays),
+            ("Vacation Days: ", vacationdays),
+            ("Bonus: ", bonus),
+            ("Hours Attended: ", hours_attended),
+        ]
+
+        for label_text, detail_value in details_labels:
+            label = tk.Label(
+                details_frame,
+                text=label_text,
+                font=("Helvetica", 12, "bold"),
+                bg="white",
+            )
+            label.grid(sticky="w")
+            value_label = tk.Label(
+                details_frame, text=detail_value, font=("Helvetica", 12), bg="white"
+            )
+            value_label.grid(
+                row=details_labels.index((label_text, detail_value)),
+                column=1,
+                sticky="w",
+            )
+
+
+        
 
        # self.load_image_employee(username)
         # # Background image for the employee window
