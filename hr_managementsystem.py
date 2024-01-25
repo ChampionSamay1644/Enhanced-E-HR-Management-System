@@ -42,10 +42,10 @@ class CreativeLoginApp:
         self.company_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
         # bind window resize event to function
-        root.bind("<Configure>", self.on_window_resize)
+        root.bind("<Configure>", self.on_window_resize_main)
 
         # import the image as the background on the canvas
-        self.load_image(img_path)
+        self.load_image_main(img_path)
 
         # Label for Username
         username_label = tk.Label(
@@ -99,12 +99,12 @@ class CreativeLoginApp:
         # Bind the Escape key to the exit function
         root.bind("<Escape>", lambda event: root.destroy())
 
-    def load_image(self, img_path):
+    def load_image_main(self, img_path):
         # Load image and adjust canvas size
         self.original_company_logo_image = Image.open(img_path)
-        self.resize_canvas_and_image()
+        self.resize_canvas_and_image_main()
 
-    def resize_canvas_and_image(self):
+    def resize_canvas_and_image_main(self):
         # Get the current window size
         window_width = self.root.winfo_width()
         window_height = self.root.winfo_height()
@@ -137,9 +137,9 @@ class CreativeLoginApp:
             fill="white",
         )
 
-    def on_window_resize(self, event):
+    def on_window_resize_main(self, event):
         # Handle window resize event
-        self.resize_canvas_and_image()
+        self.resize_canvas_and_image_main()
 
     def show_credits(self):
         # Create a new Toplevel window for the credits
