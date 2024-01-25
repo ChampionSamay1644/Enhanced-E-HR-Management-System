@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 import os
 import firebase_admin
 from firebase_admin import db, credentials
+import threading
 
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate("credentials.json")  # Path: credentials.json
@@ -69,6 +70,9 @@ class CreativeLoginApp:
         self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
         self.password_entry.insert(0, "")  # Default text
 
+        # threading.Thread(target=self.load_image_main, args=(img_path,)).start()
+        #this is to fix our gui time consuming problem
+        
         # Login button
         self.login_button = tk.Button(
             root, text="Login", command=self.login, font=("Helvetica", 14)
@@ -1120,18 +1124,17 @@ class CreativeLoginApp:
         
         self.employee_details_text = self.employee_logo_canvas.create_text(
             #place it on the leftmost of the window
-            window_width / 6,
-            window_height -150,
+            10,
+            window_height-10,
             text=f"Employee ID: {emp_id}\nDesignation: {designation}\nSalary: {salary}\nSick Days: {sickdays}\nVacation Days: {vacationdays}\nBonus: {bonus}\nHours Attended: {hours_attended}",
             font=("Helvetica", 18, "bold"),
             fill="white",
+            anchor='sw',
         )
         
-
     def on_window_resize_employee(self, event,username):
         # Handle window resize event
         self.resize_canvas_and_image_employee(username)
-
 
     def apply_for_vacation_days(self):
         messagebox.showinfo("Employee Window", "Apply for Vacation Days Button Pressed")
