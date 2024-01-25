@@ -238,28 +238,40 @@ class CreativeLoginApp:
     def open_admin_window(self, role, username):
         self.root.destroy()  # Close the main login window
         admin_window = tk.Tk()  # Use Tk() to create a new window
-        admin_window.geometry("800x600")  # Set the window size
+        admin_window.geometry("900x600")  # Set the window size
         admin_window.title("Admin Window")
 
-        # Background image for the admin window
-        admin_img_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "HR_background.png"
-        )
-        admin_original_image = Image.open(admin_img_path)
-        admin_img = ImageTk.PhotoImage(admin_original_image)
+        
+         # create a canvas that resizes with the window
+        self.admin_logo_canvas = tk.Canvas(admin_window, bg="white", highlightthickness=0)
+        self.admin_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
-        admin_background_label = tk.Label(admin_window, image=admin_img, bg="white")
-        admin_background_label.place(x=0, y=0, relwidth=1, relheight=1)
+         # bind window resize event to function
+        admin_window.bind("<Configure>", lambda event: self.on_window_resize_admin(event))
 
-        # Welcome message for the admin
-        welcome_label = tk.Label(
-            admin_window,
-            text="Welcome Admin!",
-            font=("Helvetica", 18, "bold"),
-            fg="white",
-            bg="black",
-        )
-        welcome_label.pack(pady=20)
+
+         # import the image as the background on the canvas
+        self.load_image_admin()
+
+        # # Background image for the admin window
+        # admin_img_path = os.path.join(
+        #     os.path.dirname(os.path.realpath(__file__)), "HR_background.png"
+        # )
+        # admin_original_image = Image.open(admin_img_path)
+        # admin_img = ImageTk.PhotoImage(admin_original_image)
+
+        # admin_background_label = tk.Label(admin_window, image=admin_img, bg="white")
+        # admin_background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+        # # Welcome message for the admin
+        # welcome_label = tk.Label(
+        #     admin_window,
+        #     text="Welcome Admin!",
+        #     font=("Helvetica", 18, "bold"),
+        #     fg="white",
+        #     bg="black",
+        # )
+        # welcome_label.pack(pady=20)
 
         # Buttons for Admin window
         buttons1_info = [
@@ -341,16 +353,64 @@ class CreativeLoginApp:
         # Bind the Escape key to the exit function
         admin_window.bind("<Escape>", lambda event: admin_window.destroy())
 
-        # Bind the window resize event for the admin window
-        admin_window.bind(
-            "<Configure>",
-            lambda event, img=admin_img, label=admin_background_label: self.resize_image(
-                event, img, label
-            ),
-        )
+     
 
         # Run the main loop for the admin window
         admin_window.mainloop()
+
+
+
+    def load_image_admin(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_admin_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_admin()
+    # def load_image_admin(self,img_path,role,username):
+    #     # Load image and adjust canvas size
+    #     self.original_admin_logo_image = Image.open(img_path)
+    #     self.resize_canvas_and_image_admin()
+
+    def resize_canvas_and_image_admin(self):
+        # Get the admin window size
+        window_width = self.admin_logo_canvas.winfo_width()
+        window_height = self.admin_logo_canvas.winfo_height()
+       
+
+        # Resize the canvas to the current window size
+        self.admin_logo_canvas.config(width=window_width, height=window_height)
+
+
+        # Resize the image if needed
+        resized_image = self.original_company_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.admin_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.admin_logo_canvas.delete("all")
+        self.admin_logo_canvas.create_image(
+            0, 0, image=self.admin_logo_image, anchor="nw"
+        )
+
+        # Redraw the company name text
+        if hasattr(self, "admin_name_text"):
+            self.admin_logo_canvas.delete(
+                self.admin_name_text
+            )  # Remove the old text
+        self.admin_name_text = self.admin_logo_canvas.create_text(
+            window_width / 2,
+            100,
+            text="Welcome {username}!",
+            font=("Helvetica", 28, "bold"),
+            fill="white",
+        )
+    
+    def on_window_resize_admin(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_admin()
+
 
     def create_all_admin(self, button1):
         # create a new window
