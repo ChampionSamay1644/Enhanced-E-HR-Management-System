@@ -725,59 +725,59 @@ class CreativeLoginApp:
         self.load_image_boss(username)
 
         #buttons of Boss window
-        self.perform_review_approval = tk.Button(
+        self.perform_review_approval_button = tk.Button(
             self.boss_logo_canvas, text="Performance Review Approval", command=lambda:self.perform_review_approval(), font=("Helvetica", 14)
         )
-        self.perform_review_approval.pack(
+        self.perform_review_approval_button.pack(
             pady=20
         )
-        self.perform_review_approval.place(
-            relx=0.5, rely=0.5, anchor="center", width=200, height=30
+        self.perform_review_approval_button.place(
+            relx=0.5, rely=0.3, anchor="center", width=300, height=30
         )
-        self.approve_vacations_sick_leaves = tk.Button(
+        self.approve_vacations_sick_leaves_button = tk.Button(
             self.boss_logo_canvas, text="Approve Vacations and Sick Leaves", command=lambda:self.approve_vacations_sick_leaves(), font=("Helvetica", 14)
         )
-        self.approve_vacations_sick_leaves.pack(
+        self.approve_vacations_sick_leaves_button.pack(
             pady=20
         )
-        self.approve_vacations_sick_leaves.place(
-            relx=0.5, rely=0.6, anchor="center", width=200, height=30
+        self.approve_vacations_sick_leaves_button.place(
+            relx=0.5, rely=0.4, anchor="center", width=320, height=30
         )
-        self.progress_on_task = tk.Button(
+        self.progress_on_task_button = tk.Button(
             self.boss_logo_canvas, text="Progress on Task", command=lambda:self.progress_on_task(), font=("Helvetica", 14)
         )
-        self.progress_on_task.pack(
+        self.progress_on_task_button.pack(
             pady=20
         )
-        self.progress_on_task.place(
-          relx=0.5, rely=0.7, anchor="center", width=200, height=30
+        self.progress_on_task_button.place(
+          relx=0.5, rely=0.5, anchor="center", width=200, height=30
         )
-        self.approve_promotion = tk.Button(
+        self.approve_promotion_button = tk.Button(
             self.boss_logo_canvas, text="Approve Promotion", command=lambda:self.approve_promotion(), font=("Helvetica", 14)
         )
-        self.approve_promotion.pack(
+        self.approve_promotion_button.pack(
             pady=20
         )
-        self.approve_promotion.place(
-            relx=0.5, rely=0.8, anchor="center", width=200, height=30
+        self.approve_promotion_button.place(
+            relx=0.5, rely=0.6, anchor="center", width=200, height=30
         )
-        self.approve_resignation = tk.Button(
+        self.approve_resignation_button = tk.Button(
             self.boss_logo_canvas, text="Approve Resignation", command=lambda:self.approve_resignation(), font=("Helvetica", 14)
         )
-        self.approve_resignation.pack(
+        self.approve_resignation_button.pack(
             pady=20
         )
-        self.approve_resignation.place(
-            relx=0.5, rely=0.9, anchor="center", width=200, height=30
+        self.approve_resignation_button.place(
+            relx=0.5, rely=0.7, anchor="center", width=200, height=30
         )
-        self.request_bonus = tk.Button(
+        self.request_bonus_button = tk.Button(
             self.boss_logo_canvas, text="Request for Bonus", command=lambda:self.request_bonus(), font=("Helvetica", 14)
         )
-        self.request_bonus.pack(
+        self.request_bonus_button.pack(
             pady=20
         )
-        self.request_bonus.place(
-            relx=0.5, rely=1.0, anchor="center", width=200, height=30
+        self.request_bonus_button.place(
+            relx=0.5, rely=0.8, anchor="center", width=200, height=30
         )
 
 
@@ -936,8 +936,6 @@ class CreativeLoginApp:
     def on_window_resize_boss(self, event,username):
         # Handle window resize event
         self.resize_canvas_and_image_boss(username)
-
-
 
     def perform_review_approval(self):
         messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
