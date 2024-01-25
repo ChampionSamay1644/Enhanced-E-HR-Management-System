@@ -267,93 +267,13 @@ class CreativeLoginApp:
         )
          # bind window resize event to function
         admin_window.bind("<Configure>", lambda event: self.on_window_resize_admin(event,username))
-
-
+        
          # import the image as the background on the canvas
         self.load_image_admin(username)
-        
-        
-        
-        # # Background image for the admin window
-        # admin_img_path = os.path.join(
-        #     os.path.dirname(os.path.realpath(__file__)), "HR_background.png"
-        # )
-        # admin_original_image = Image.open(admin_img_path)
-        # admin_img = ImageTk.PhotoImage(admin_original_image)
 
-        # admin_background_label = tk.Label(admin_window, image=admin_img, bg="white")
-        # admin_background_label.place(x=0, y=0, relwidth=1, relheight=1)
-
-        # # Welcome message for the admin
-        # welcome_label = tk.Label(
-        #     admin_window,
-        #     text="Welcome Admin!",
-        #     font=("Helvetica", 18, "bold"),
-        #     fg="white",
-        #     bg="black",
-        # )
-        # welcome_label.pack(pady=20)
-
-        # # Buttons for Admin window
-        # buttons1_info = [
-        #     (
-        #         (
-        #             "Create HR Login",
-        #             lambda: self.create_all_admin(button_create_all_admin),
-        #         )
-        #     ),  # Use lambda to delay the method call
-        # ]
-
-        # admin_buttons_frame = tk.Frame(
-        #     admin_window, bg="black"
-        # )  # Define admin_buttons_frame
-        # admin_buttons_frame.pack(pady=20)
-
-        # for i, (button_text, button_command) in enumerate(buttons1_info):
-        #     button_create_all_admin = tk.Button(
-        #         admin_buttons_frame,
-        #         text=button_text,
-        #         command=button_command,
-        #         font=("Helvetica", 14),
-        #         width=20,
-        #         height=2,
-        #         bd=0,
-        #         fg="white",
-        #         bg="#2E4053",
-        #         activebackground="#566573",
-        #     )
-        #     button_create_all_admin.grid(row=i // 2, column=i % 2, padx=10, pady=10)
-
-        # # Create a 2nd button for remove HR login
-        # buttons2_info = [
-        #     (
-        #         (
-        #             "Remove HR Login",
-        #             lambda: self.remove_all_admin(button_remove_all_admin),
-        #         )
-        #     ),  # Use lambda to delay the method call
-        # ]
-
-        # for i, (button_text, button_command) in enumerate(buttons2_info):
-        #     button_remove_all_admin = tk.Button(
-        #         admin_buttons_frame,
-        #         text=button_text,
-        #         command=button_command,
-        #         font=("Helvetica", 14),
-        #         width=20,
-        #         height=2,
-        #         bd=0,
-        #         fg="white",
-        #         bg="#2E4053",
-        #         activebackground="#566573",
-        #     )
-        #     button_remove_all_admin.grid(
-        #         row=i // 2 + 1, column=i % 2, padx=10, pady=10
-        #     )  # Adjusted row value
-
-
+        #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
-        admin_window,
+        self.admin_logo_canvas,
         text="Exit",
         command=admin_window.destroy,
         font=("Helvetica", 14),
@@ -365,6 +285,20 @@ class CreativeLoginApp:
         activebackground="#FF6347",
     )
         exit_button.place(relx=0.5, rely=1.0, anchor="s")
+        
+    #     exit_button = tk.Button(
+    #     admin_window,
+    #     text="Exit",
+    #     command=admin_window.destroy,
+    #     font=("Helvetica", 14),
+    #     width=15,
+    #     height=2,
+    #     bd=0,
+    #     fg="white",
+    #     bg="#FF4500",
+    #     activebackground="#FF6347",
+    # )
+    #     exit_button.place(relx=0.5, rely=1.0, anchor="s")
 
 
         # focus on window
