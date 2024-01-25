@@ -245,14 +245,35 @@ class CreativeLoginApp:
          # create a canvas that resizes with the window
         self.admin_logo_canvas = tk.Canvas(admin_window, bg="white", highlightthickness=0)
         self.admin_logo_canvas.pack(fill=tk.BOTH, expand=True)
-
+        
+        #create a button on the canvas
+        self.create_all_admin_button = tk.Button(
+            self.admin_logo_canvas, text="Create HR Login", command=lambda:self.create_all_admin(), font=("Helvetica", 14)
+        )
+        self.create_all_admin_button.pack(
+            pady=20
+        )
+        self.create_all_admin_button.place(
+            relx=0.5, rely=0.5, anchor="center", width=200, height=30
+        )
+        self.remove_all_admin_button = tk.Button(
+            self.admin_logo_canvas, text="Remove HR Login", command=lambda:self.remove_all_admin(), font=("Helvetica", 14)
+        )
+        self.remove_all_admin_button.pack(
+            pady=20
+        )
+        self.remove_all_admin_button.place(
+            relx=0.5, rely=0.6, anchor="center", width=200, height=30
+        )
          # bind window resize event to function
         admin_window.bind("<Configure>", lambda event: self.on_window_resize_admin(event,username))
 
 
          # import the image as the background on the canvas
         self.load_image_admin(username)
-
+        
+        
+        
         # # Background image for the admin window
         # admin_img_path = os.path.join(
         #     os.path.dirname(os.path.realpath(__file__)), "HR_background.png"
@@ -360,8 +381,6 @@ class CreativeLoginApp:
         # Run the main loop for the admin window
         admin_window.mainloop()
 
-
-
     def load_image_admin(self,username):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -370,7 +389,6 @@ class CreativeLoginApp:
         self.original_admin_logo_image = Image.open(img_path)
         self.resize_canvas_and_image_admin(username)
     
-
     def resize_canvas_and_image_admin(self,username):
         username_admin = username
         # Get the admin window size
@@ -411,8 +429,7 @@ class CreativeLoginApp:
         # Handle window resize event
         self.resize_canvas_and_image_admin(username)
 
-
-    def create_all_admin(self, button1):
+    def create_all_admin(self):
         # create a new window
         create_remove_hr_window = tk.Toplevel()
         create_remove_hr_window.geometry("800x600")  # Set the window size
@@ -481,7 +498,7 @@ class CreativeLoginApp:
         # Run the main loop for the create_remove_hr_window
         create_remove_hr_window.mainloop()
 
-    def remove_all_admin(self, button2):
+    def remove_all_admin(self):
         # create a new window
         create_remove_hr_window = tk.Toplevel()
         create_remove_hr_window.geometry("800x600")  # Set the window size
@@ -1079,7 +1096,7 @@ class CreativeLoginApp:
                         "role": role,
                         "designnation: ": "",
                         "salary": "",
-                        "emp_id": emp_uni + 1,
+                        "emp_ids": emp_uni + 1,
                     }
                 )
                 emp_id_ref.child("emp_id").set(emp_uni + 1)
@@ -1138,13 +1155,11 @@ class CreativeLoginApp:
         # close the window
         create_remove_hr_window.destroy()
 
-
 def main():
     root = tk.Tk()
     root.geometry("900x600")  # Set the window size
     app = CreativeLoginApp(root)
     root.mainloop()
-
 
 if __name__ == "__main__":
     main()
