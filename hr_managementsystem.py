@@ -544,17 +544,25 @@ class CreativeLoginApp:
         self.survey_feedback_button.place(
             relx=0.75, rely=0.675, anchor="center", width=200, height=30
         )
-        self.addremovebe_button = tk.Button(
-            self.hr_logo_canvas, text="Add/Remove Boss/Employee", command=lambda:self.addremovebe(), font=("Helvetica", 14)
+        self.addbe_button = tk.Button(
+            self.hr_logo_canvas, text="Add Boss/Employee", command=lambda:self.create_all_hr(), font=("Helvetica", 14)
         )
-        self.addremovebe_button.pack(
+        self.addbe_button.pack(
             pady=20
         )
-        self.addremovebe_button.place(
+        self.addbe_button.place(
             relx=0.75, rely=0.750, anchor="center", width=300, height=30
         )
+        self.removebe_button = tk.Button(
+            self.hr_logo_canvas, text="Remove Boss/Employee", command=lambda:self.remove_all_hr(), font=("Helvetica", 14)
+        )
+        self.removebe_button.pack(
+            pady=20
+        )
+        self.removebe_button.place(
+            relx=0.75, rely=0.825, anchor="center", width=300, height=30
+        )
 
-    
         #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
         self.hr_logo_canvas,
@@ -570,71 +578,6 @@ class CreativeLoginApp:
     )
         exit_button.place(relx=0.5, rely=1.0, anchor="s")
 
-
-        # # Background image for the HR window
-        # hr_img_path = os.path.join(
-        #     os.path.dirname(os.path.realpath(__file__)), "HR_background.png"
-        # )
-        # hr_original_image = Image.open(hr_img_path)
-        # self.hr_img = ImageTk.PhotoImage(hr_original_image)
-
-        # hr_background_label = tk.Label(hr_window, image=self.hr_img, bg="white")
-        # hr_background_label.place(x=0, y=0, relwidth=1, relheight=1)
-
-        # # Welcome message for the HR
-        # welcome_label = tk.Label(
-        #     hr_window,
-        #     text="Welcome HR!",
-        #     font=("Helvetica", 18, "bold"),
-        #     fg="white",
-        #     bg="black",
-        # )
-        # welcome_label.pack(pady=20)
-
-        # buttons_info = [
-        #     ("Salary Management", self.salary_management),
-        #     ("Employee Add/Remove", self.employee_add_remove),
-        #     ("Approve Bonus", self.approve_bonus),
-        #     ("Approve Resignation", self.approve_resignation),
-        #     ("Check Employee Hours", self.check_hours_attended),
-        #     ("Survey/Feedback", self.survey_feedback),
-        #     ("Add Boss/Employees", self.create_all_hr),
-        #     ("Remove Boss/Employees", self.remove_all_hr),
-        # ]
-
-        # hr_buttons_frame = tk.Frame(hr_window, bg="black")  # Define hr_buttons_frame
-        # hr_buttons_frame.pack(pady=20)
-
-        # for i, (button_text, button_command) in enumerate(buttons_info):
-        #     button = tk.Button(
-        #         hr_buttons_frame,
-        #         text=button_text,
-        #         command=button_command,
-        #         font=("Helvetica", 14),
-        #         width=30,
-        #         height=2,
-        #         bd=0,
-        #         fg="white",
-        #         bg="#2E4053",
-        #         activebackground="#566573",
-        #     )
-        #     button.grid(row=i // 2, column=i % 2, padx=10, pady=10)
-
-        #     # Add an Exit button at the bottom
-        #     exit_button = tk.Button(
-        #         hr_window,
-        #         text="Exit",
-        #         command=hr_window.destroy,
-        #         font=("Helvetica", 14),
-        #         width=15,
-        #         height=2,
-        #         bd=0,
-        #         fg="white",
-        #         bg="#FF4500",
-        #         activebackground="#FF6347",
-        #     )
-        #     exit_button.place(relx=0.5, rely=0.95, anchor="center")
-
         # focus on window
         hr_window.focus_force()
 
@@ -643,14 +586,6 @@ class CreativeLoginApp:
 
         # Bind the Escape key to the exit function
         hr_window.bind("<Escape>", lambda event: hr_window.destroy())
-
-        # # Bind the window resize event for the HR window
-        # hr_window.bind(
-        #     "<Configure>",
-        #     lambda event, img=self.hr_img, label=hr_background_label: self.resize_image(
-        #         event, img, label
-        #     ),
-        # )
 
         #  Run the main loop for the HR window
         hr_window.mainloop()
@@ -720,9 +655,6 @@ class CreativeLoginApp:
 
     def survey_feedback(self):
         messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
-
-    def addremovebe(self):
-        messagebox.showinfo("HR Window", "Add/Remove Boss/Employee Button Pressed")
 
     def create_all_hr(self):
         # create a new window
