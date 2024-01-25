@@ -959,54 +959,6 @@ class CreativeLoginApp:
     def request_bonus(self):
         messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
 
-    def load_image_employee(self,username):
-            # Construct the full path to the image file based on role and username
-            img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-
-            # Load image and adjust canvas size
-            self.original_employee_logo_image = Image.open(img_path)
-            self.resize_canvas_and_image_employee(username)
-    
-    def on_window_resize_employee(self, event,username):
-        # Handle window resize event
-        self.resize_canvas_and_image_employee(username)
-    
-    def resize_canvas_and_image_employee(self,username):
-        username_employee = username
-        # Get the employee window size
-        window_width = self.employee_logo_canvas.winfo_width()
-        window_height = self.employee_logo_canvas.winfo_height()
-       
-
-        # Resize the canvas to the current window size
-        self.employee_logo_canvas.config(width=window_width, height=window_height)
-
-
-        # Resize the image if needed
-        resized_image = self.original_company_logo_image.resize(
-            (window_width, window_height)
-        )
-        self.employee_logo_image = ImageTk.PhotoImage(resized_image)
-
-        # Update the image on the canvas
-        self.employee_logo_canvas.delete("all")
-        self.employee_logo_canvas.create_image(
-            0, 0, image=self.employee_logo_image, anchor="nw"
-        )
-
-         #redraw the employee name text    
-        if hasattr(self, "employee_name_text"):
-            self.employee_logo_canvas.delete(
-                self.employee_name_text
-            )  # Remove the old text
-        self.employee_name_text = self.employee_logo_canvas.create_text(
-            window_width / 2,
-            100,
-            text=f"Welcome {username_employee}!",
-            font=("Helvetica", 28, "bold"),
-            fill="white",
-        )
-        
     def open_employee_window(self, role, username):
         self.root.destroy()  # Close the main login window
         employee_window = tk.Tk()  # Use Tk() to create a new window
@@ -1021,10 +973,110 @@ class CreativeLoginApp:
         bonus = employee_ref.child(username).child("bonus").get()
         hours_attended = employee_ref.child(username).child("hours_attended").get()
 
+       # create a canvas that resizes with the window
         self.employee_logo_canvas = tk.Canvas(employee_window, bg="white", highlightthickness=0)
         self.employee_logo_canvas.pack(fill=tk.BOTH, expand=True)
-        
+
+        # bind window resize event to function
+        employee_window.bind("<Configure>", lambda event: self.on_window_resize_employee(event,username))
+
+        # import the image as the background on the canvas
         self.load_image_employee(username)
+
+        #buttons of Employee window to the right side of the screen
+        self.apply_for_vacation_days = tk.Button(
+            self.employee_logo_canvas, text="Apply for Vacation Days", command=lambda:self.apply_for_vacation_days(), font=("Helvetica", 14)
+        )
+        self.apply_for_vacation_days.pack(
+            pady=20
+        )
+        self.apply_for_vacation_days.place(
+            relx=0.5, rely=0.5, anchor="center", width=200, height=30
+        )
+
+        self.apply_for_resignation = tk.Button(
+            self.employee_logo_canvas, text="Apply for Resignation", command=lambda:self.apply_for_resignation(), font=("Helvetica", 14)
+        )
+        self.apply_for_resignation.pack(
+            pady=20
+        )
+        self.apply_for_resignation.place(
+            relx=0.5, rely=0.6, anchor="center", width=200, height=30
+        )
+
+        self.check_progress_on_tasks = tk.Button(
+            self.employee_logo_canvas, text="Check and update Progress on Tasks", command=lambda:self.check_progress_on_tasks(), font=("Helvetica", 14)
+        )
+        self.check_progress_on_tasks.pack(
+            pady=20
+        )
+        self.check_progress_on_tasks.place(
+            relx=0.5, rely=0.7, anchor="center", width=200, height=30
+        )
+
+        self.submit_survey = tk.Button(
+            self.employee_logo_canvas, text="View and Submit Survey", command=lambda:self.submit_survey(), font=("Helvetica", 14)
+        )
+        self.submit_survey.pack(
+            pady=20
+        )
+        self.submit_survey.place(
+            relx=0.5, rely=0.8, anchor="center", width=200, height=30
+        )
+
+        self.submit_feedback = tk.Button(
+            self.employee_logo_canvas, text="View and Submit Feedback", command=lambda:self.submit_feedback(), font=("Helvetica", 14)
+        )
+        self.submit_feedback.pack(
+            pady=20
+        )
+        self.submit_feedback.place(
+            relx=0.5, rely=0.9, anchor="center", width=200, height=30
+        )
+
+        self.submit_complaint = tk.Button(
+
+            self.employee_logo_canvas, text="Submit Complaint", command=lambda:self.submit_complaint(), font=("Helvetica", 14)
+        )
+        self.submit_complaint.pack(
+            pady=20
+        )
+        self.submit_complaint.place(
+            relx=0.5, rely=1.0, anchor="center", width=200, height=30
+        )
+        
+        
+
+
+        #create an exit button in canvas and place at bottom middle
+        exit_button = tk.Button(
+        self.employee_logo_canvas,
+        text="Exit",
+        command=employee_window.destroy,
+        font=("Helvetica", 14),
+        width=15,
+        height=2,
+        bd=0,
+        fg="white",
+        bg="#FF4500",
+        activebackground="#FF6347",
+    )
+        exit_button.place(relx=0.5, rely=1.0, anchor="s")
+
+        # focus on window
+        employee_window.focus_force()
+
+        # Center the window with function center_window_test
+        self.center_window_all(employee_window)
+
+        # Bind the Escape key to the exit function
+        employee_window.bind("<Escape>", lambda event: employee_window.destroy())
+
+        # Run the main loop for the employee window
+        employee_window.mainloop()
+
+
+       # self.load_image_employee(username)
         # # Background image for the employee window
         # employee_img_path = os.path.join(
         #     os.path.dirname(os.path.realpath(__file__)), "HR_background.png"
@@ -1136,8 +1188,60 @@ class CreativeLoginApp:
         # # Run the main loop for the employee window
         # employee_window.mainloop()
 
+    def load_image_employee(self,username):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_employee_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_employee(username)
+
+    def resize_canvas_and_image_employee(self,username):
+        username_employee = username
+        # Get the employee window size
+        window_width = self.employee_logo_canvas.winfo_width()
+        window_height = self.employee_logo_canvas.winfo_height()
+       
+
+        # Resize the canvas to the current window size
+        self.employee_logo_canvas.config(width=window_width, height=window_height)
+
+
+        # Resize the image if needed
+        resized_image = self.original_employee_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.employee_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.employee_logo_canvas.delete("all")
+        self.employee_logo_canvas.create_image(
+            0, 0, image=self.employee_logo_image, anchor="nw"
+        )
+
+         #redraw the employee name text    
+        if hasattr(self, "employee_name_text"):
+            self.employee_logo_canvas.delete(
+                self.employee_name_text
+            )
+
+        self.employee_name_text = self.employee_logo_canvas.create_text(
+            window_width / 2,
+            100,
+            text=f"Welcome {username_employee}!",
+            font=("Helvetica", 28, "bold"),
+            fill="white",
+        )
+
+    def on_window_resize_employee(self, event,username):
+        # Handle window resize event
+        self.resize_canvas_and_image_employee(username)
+
+
     def apply_for_vacation_days(self):
         messagebox.showinfo("Employee Window", "Apply for Vacation Days Button Pressed")
+
+
 
     def apply_for_resignation(self):
         messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
