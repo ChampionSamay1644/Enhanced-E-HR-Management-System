@@ -1133,35 +1133,35 @@ class CreativeLoginApp:
         employee_window.mainloop()
        
         #Show the details pulled from the db on the left side of the window
-        details_frame = tk.Frame(employee_window, bg="white", padx=20)
-        details_frame.pack(side=tk.LEFT, fill=tk.Y)
+        # details_frame = tk.Frame(self.employee_logo_canvas, bg="white", padx=20)
+        # details_frame.pack(side=tk.LEFT, fill=tk.Y)
 
-        details_labels = [
-            ("Employee ID: ", emp_id),
-            ("Designation: ", designation),
-            ("Salary: ", salary),
-            ("Sick Days: ", sickdays),
-            ("Vacation Days: ", vacationdays),
-            ("Bonus: ", bonus),
-            ("Hours Attended: ", hours_attended),
-        ]
+        # details_labels = [
+        #     ("Employee ID: ", emp_id),
+        #     ("Designation: ", designation),
+        #     ("Salary: ", salary),
+        #     ("Sick Days: ", sickdays),
+        #     ("Vacation Days: ", vacationdays),
+        #     ("Bonus: ", bonus),
+        #     ("Hours Attended: ", hours_attended),
+        # ]
 
-        for label_text, detail_value in details_labels:
-            label = tk.Label(
-                details_frame,
-                text=label_text,
-                font=("Helvetica", 12, "bold"),
-                bg="white",
-            )
-            label.grid(sticky="w")
-            value_label = tk.Label(
-                details_frame, text=detail_value, font=("Helvetica", 12), bg="white"
-            )
-            value_label.grid(
-                row=details_labels.index((label_text, detail_value)),
-                column=1,
-                sticky="w",
-            )
+        # for label_text, detail_value in details_labels:
+        #     label = tk.Label(
+        #         details_frame,
+        #         text=label_text,
+        #         font=("Helvetica", 12, "bold"),
+        #         bg="white",
+        #     )
+        #     label.grid(sticky="w")
+        #     value_label = tk.Label(
+        #         details_frame, text=detail_value, font=("Helvetica", 12), bg="white"
+        #     )
+        #     value_label.grid(
+        #         row=details_labels.index((label_text, detail_value)),
+        #         column=1,
+        #         sticky="w",
+        #     )
 
 
         
@@ -1291,7 +1291,14 @@ class CreativeLoginApp:
         # Get the employee window size
         window_width = self.employee_logo_canvas.winfo_width()
         window_height = self.employee_logo_canvas.winfo_height()
-       
+        employee_ref = db.reference("/employee")
+        emp_id = employee_ref.child(username).child("emp_id").get()
+        designation = employee_ref.child(username).child("designation").get()
+        salary = employee_ref.child(username).child("salary").get()
+        sickdays = employee_ref.child(username).child("sick_days").get()
+        vacationdays = employee_ref.child(username).child("vacation_days").get()
+        bonus = employee_ref.child(username).child("bonus").get()
+        hours_attended = employee_ref.child(username).child("hours_attended").get()
 
         # Resize the canvas to the current window size
         self.employee_logo_canvas.config(width=window_width, height=window_height)
@@ -1309,7 +1316,7 @@ class CreativeLoginApp:
             0, 0, image=self.employee_logo_image, anchor="nw"
         )
 
-         #redraw the employee name text    
+        #redraw the employee name text    
         if hasattr(self, "employee_name_text"):
             self.employee_logo_canvas.delete(
                 self.employee_name_text
@@ -1322,6 +1329,21 @@ class CreativeLoginApp:
             font=("Helvetica", 28, "bold"),
             fill="white",
         )
+        #redraw the employee details text
+        if hasattr(self, "employee_details_text"):
+            self.employee_logo_canvas.delete(
+                self.employee_details_text
+            )
+        
+        self.employee_details_text = self.employee_logo_canvas.create_text(
+            #place it on the leftmost of the window
+            window_width / 6,
+            window_height -150,
+            text=f"Employee ID: {emp_id}\nDesignation: {designation}\nSalary: {salary}\nSick Days: {sickdays}\nVacation Days: {vacationdays}\nBonus: {bonus}\nHours Attended: {hours_attended}",
+            font=("Helvetica", 18, "bold"),
+            fill="white",
+        )
+        
 
     def on_window_resize_employee(self, event,username):
         # Handle window resize event
