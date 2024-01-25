@@ -1034,9 +1034,6 @@ class CreativeLoginApp:
             relx=0.75, rely=0.8, anchor="center", width=300, height=30
         )
 
-        
-
-
         #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
         self.employee_logo_canvas,
@@ -1064,152 +1061,6 @@ class CreativeLoginApp:
         # Run the main loop for the employee window
         employee_window.mainloop()
        
-        #Show the details pulled from the db on the left side of the window
-        # details_frame = tk.Frame(self.employee_logo_canvas, bg="white", padx=20)
-        # details_frame.pack(side=tk.LEFT, fill=tk.Y)
-
-        # details_labels = [
-        #     ("Employee ID: ", emp_id),
-        #     ("Designation: ", designation),
-        #     ("Salary: ", salary),
-        #     ("Sick Days: ", sickdays),
-        #     ("Vacation Days: ", vacationdays),
-        #     ("Bonus: ", bonus),
-        #     ("Hours Attended: ", hours_attended),
-        # ]
-
-        # for label_text, detail_value in details_labels:
-        #     label = tk.Label(
-        #         details_frame,
-        #         text=label_text,
-        #         font=("Helvetica", 12, "bold"),
-        #         bg="white",
-        #     )
-        #     label.grid(sticky="w")
-        #     value_label = tk.Label(
-        #         details_frame, text=detail_value, font=("Helvetica", 12), bg="white"
-        #     )
-        #     value_label.grid(
-        #         row=details_labels.index((label_text, detail_value)),
-        #         column=1,
-        #         sticky="w",
-        #     )
-
-
-        
-
-       # self.load_image_employee(username)
-        # # Background image for the employee window
-        # employee_img_path = os.path.join(
-        #     os.path.dirname(os.path.realpath(__file__)), "HR_background.png"
-        # )
-        # self.employee_original_image = Image.open(employee_img_path)
-        # self.employee_img = ImageTk.PhotoImage(self.employee_original_image)
-
-        # employee_background_label = tk.Label(
-        #     employee_window, image=self.employee_img, bg="white"
-        # )
-        # employee_background_label.place(x=0, y=0, relwidth=1, relheight=1)
-
-        # # Welcome message for the employee along with username
-        # welcome_label = tk.Label(
-        #     employee_window,
-        #     text=f"Welcome Employee, {username}!",
-        #     font=("Helvetica", 18, "bold"),
-        #     fg="white",
-        #     bg="black",
-        # )
-        # welcome_label.pack(pady=20)
-
-        # # Show the details pulled from the db on the left side of the window
-        # details_frame = tk.Frame(employee_window, bg="white", padx=20)
-        # details_frame.pack(side=tk.LEFT, fill=tk.Y)
-
-        # details_labels = [
-        #     ("Employee ID: ", emp_id),
-        #     ("Designation: ", designation),
-        #     ("Salary: ", salary),
-        #     ("Sick Days: ", sickdays),
-        #     ("Vacation Days: ", vacationdays),
-        #     ("Bonus: ", bonus),
-        #     ("Hours Attended: ", hours_attended),
-        # ]
-
-        # for label_text, detail_value in details_labels:
-        #     label = tk.Label(
-        #         details_frame,
-        #         text=label_text,
-        #         font=("Helvetica", 12, "bold"),
-        #         bg="white",
-        #     )
-        #     label.grid(sticky="w")
-        #     value_label = tk.Label(
-        #         details_frame, text=detail_value, font=("Helvetica", 12), bg="white"
-        #     )
-        #     value_label.grid(
-        #         row=details_labels.index((label_text, detail_value)),
-        #         column=1,
-        #         sticky="w",
-        #     )
-
-        # # Buttons on the right side of the window
-        # buttons_frame = tk.Frame(employee_window, bg="black", padx=20)
-        # buttons_frame.pack(side=tk.RIGHT, fill=tk.Y)
-
-        # buttons_info = [
-        #     ("Apply for Vacation Days", self.apply_for_vacation_days),
-        #     ("Apply for Resignation", self.apply_for_resignation),
-        #     ("Check and update Progress on Tasks", self.check_progress_on_tasks),
-        #     ("View and Submit Survey", self.submit_survey),
-        #     ("View and Submit Feedback", self.submit_feedback),
-        #     ("Submit Complaint", self.submit_complaint),
-        # ]
-
-        # for i, (button_text, button_command) in enumerate(buttons_info):
-        #     button = tk.Button(
-        #         self.employee_logo_canvas,
-        #         text=button_text,
-        #         command=button_command,
-        #         font=("Helvetica", 14),
-        #         width=30,
-        #         height=2,
-        #         bd=0,
-        #         fg="white",
-        #         bg="#2E4053",
-        #         activebackground="#566573",
-        #     )
-        #     button.grid(row=i, column=0, pady=10)
-
-        # # Add an Exit button at the bottom
-        # exit_button = tk.Button(
-        #     self.employee_logo_canvas,
-        #     text="Exit",
-        #     command=employee_window.destroy,
-        #     font=("Helvetica", 14),
-        #     width=15,
-        #     height=2,
-        #     bd=0,
-        #     fg="white",
-        #     bg="#FF4500",
-        #     activebackground="#FF6347",
-        # )
-        # exit_button.place(relx=0.5, rely=0.95, anchor="center")
-
-        # # focus on window
-        # employee_window.focus_force()
-
-        # # Center the window with function center_window_test
-        # self.center_window_all(employee_window)
-
-        # # Bind the Escape key to the exit function
-        # employee_window.bind("<Escape>", lambda event: employee_window.destroy())
-
-        # # # Bind the window resize event for the employee window
-        # # employee_window.bind("<Configure>", lambda event, img=self.employee_img, label=employee_background_label: self.resize_image(event, img, label))
-
-        # # Run the main loop for the employee window
-        # employee_window.mainloop()
-
     def load_image_employee(self,username):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -1284,8 +1135,6 @@ class CreativeLoginApp:
 
     def apply_for_vacation_days(self):
         messagebox.showinfo("Employee Window", "Apply for Vacation Days Button Pressed")
-
-
 
     def apply_for_resignation(self):
         messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
