@@ -126,7 +126,6 @@ class CreativeLoginApp:
         text_content = f"Hello, {username}"
         text_position = (window_width // 2, 20)  # Top center of the canvas
         self.common_canvas.create_text(text_position, text=text_content, anchor="center")
-        #text color white
         self.common_canvas.itemconfig(self.common_canvas.find_all()[-1], fill="white")
 
     def on_window_resize_common(self,username, event=None):
@@ -1103,21 +1102,26 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_remove_be()
 
     def open_boss_window(self, role, username):
-        self.root.destroy()  # Close the main login window
-        boss_window = tk.Tk()  # Use Tk() to create a new window
-        boss_window.geometry("800x600")  # Set the window size
-        boss_window.title("Boss Window")
+        # self.root.destroy()  # Close the main login window
+        # boss_window = tk.Tk()  # Use Tk() to create a new window
+        # boss_window.geometry("800x600")  # Set the window size
+        # boss_window.title("Boss Window")
+
+        if hasattr(self, "root") and self.root.winfo_exists():
+           self.root.destroy()  # Close the main login window
+
+        boss_window,self.boss_logo_canvas=self.create_common_window("Boss Window",username)
 
 
         # create a canvas that resizes with the window
-        self.boss_logo_canvas = tk.Canvas(boss_window, bg="white", highlightthickness=0)
-        self.boss_logo_canvas.pack(fill=tk.BOTH, expand=True)
+        # self.boss_logo_canvas = tk.Canvas(boss_window, bg="white", highlightthickness=0)
+        # self.boss_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
         # bind window resize event to function
-        boss_window.bind("<Configure>", lambda event: self.on_window_resize_boss(event,username))
+       # boss_window.bind("<Configure>", lambda event: self.on_window_resize_boss(event,username))
 
         # import the image as the background on the canvas
-        self.load_image_boss(username)
+        #self.load_image_boss(username)
 
         #buttons of Boss window
         self.perform_review_approval_button = tk.Button(
@@ -1270,28 +1274,34 @@ class CreativeLoginApp:
         messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
 
     def open_employee_window(self, role, username):
-        self.root.destroy()  # Close the main login window
-        employee_window = tk.Tk()  # Use Tk() to create a new window
-        employee_window.geometry("800x600")  # Set the window size
-        employee_window.title("Employee Window")
+        # self.root.destroy()  # Close the main login window
+        # employee_window = tk.Tk()  # Use Tk() to create a new window
+        # employee_window.geometry("800x600")  # Set the window size
+        # employee_window.title("Employee Window")
+
+        if hasattr(self, "root") and self.root.winfo_exists():
+           self.root.destroy()  # Close the main login window
+
+        employee_window,self.employee_logo_canvas=self.create_common_window("Employee Window",username)
+
         employee_ref = db.reference("/employee")
-        emp_id = employee_ref.child(username).child("emp_id").get()
-        designation = employee_ref.child(username).child("designation").get()
-        salary = employee_ref.child(username).child("salary").get()
-        sickdays = employee_ref.child(username).child("sick_days").get()
-        vacationdays = employee_ref.child(username).child("vacation_days").get()
-        bonus = employee_ref.child(username).child("bonus").get()
-        hours_attended = employee_ref.child(username).child("hours_attended").get()
+        # emp_id = employee_ref.child(username).child("emp_id").get()
+        # designation = employee_ref.child(username).child("designation").get()
+        # salary = employee_ref.child(username).child("salary").get()
+        # sickdays = employee_ref.child(username).child("sick_days").get()
+        # vacationdays = employee_ref.child(username).child("vacation_days").get()
+        # bonus = employee_ref.child(username).child("bonus").get()
+        # hours_attended = employee_ref.child(username).child("hours_attended").get()
 
-       # create a canvas that resizes with the window
-        self.employee_logo_canvas = tk.Canvas(employee_window, bg="white", highlightthickness=0)
-        self.employee_logo_canvas.pack(fill=tk.BOTH, expand=True)
+    #    # create a canvas that resizes with the window
+    #     self.employee_logo_canvas = tk.Canvas(employee_window, bg="white", highlightthickness=0)
+    #     self.employee_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
-        # bind window resize event to function
-        employee_window.bind("<Configure>", lambda event: self.on_window_resize_employee(event,username))
+    #     # bind window resize event to function
+    #     employee_window.bind("<Configure>", lambda event: self.on_window_resize_employee(event,username))
 
-        # import the image as the background on the canvas
-        self.load_image_employee(username)
+    #     # import the image as the background on the canvas
+    #     self.load_image_employee(username)
 
         #buttons of Employee window to the right side of the screen
         self.apply_for_vacation_days_button = tk.Button(
