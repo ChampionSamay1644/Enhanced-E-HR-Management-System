@@ -16,7 +16,6 @@ firebase_admin.initialize_app(
     },
 )
 
-
 class CreativeLoginApp:
     def __init__(self, root):
         self.root = root
@@ -108,6 +107,46 @@ class CreativeLoginApp:
         self.original_company_logo_image = Image.open(img_path)
         self.resize_canvas_and_image_main()
 
+    def load_image_common(self):
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+        self.original_common_image = Image.open(img_path)
+        
+    def resize_canvas_and_image_common(self):
+            window_width = self.common_canvas.winfo_width()
+            window_height = self.common_canvas.winfo_height()
+            self.common_canvas.config(width=window_width, height=window_height)
+
+            resized_image = self.original_common_image.resize((window_width, window_height))
+            self.common_image = ImageTk.PhotoImage(resized_image)
+
+            self.common_canvas.delete("all")
+            self.common_canvas.create_image(0, 0, image=self.common_image, anchor="nw")
+            
+    def on_window_resize_common(self, event=None):
+        self.resize_canvas_and_image_common()
+    
+    def create_common_window(self, title,):
+        common_window = tk.Tk()
+        common_window.geometry("800x600")
+        common_window.title(title)
+
+        self.common_canvas = tk.Canvas(common_window, bg="white", highlightthickness=0)
+        self.common_canvas.pack(fill=tk.BOTH, expand=True)
+
+        common_window.bind("<Configure>",lambda event:self.on_window_resize_common())
+
+        self.load_image_common()
+        self.resize_canvas_and_image_common()
+        
+        return common_window, self.common_canvas
+
+    def center_window_all(self, window):
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+        x = (screen_width / 2) - (900 / 2)
+        y = (screen_height / 2) - (600 / 2)
+        window.geometry("%dx%d+%d+%d" % (900, 600, x, y))
+        
     def resize_canvas_and_image_main(self):
         # Get the current window size
         window_width = self.root.winfo_width()
@@ -240,16 +279,37 @@ class CreativeLoginApp:
         )
 
     def open_admin_window(self, role, username):
-        self.root.destroy()  # Close the main login window
-        admin_window = tk.Tk()  # Use Tk() to create a new window
-        admin_window.geometry("900x600")  # Set the window size
-        admin_window.title("Admin Window")
-
-        
+        if hasattr(self, "root") and self.root.winfo_exists():
+            self.root.destroy()  # Close the main login window
+        text=None
+        # admin_window = tk.Tk()  # Use Tk() to create a new window
+        # admin_window.geometry("900x600")  # Set the window size
+        # admin_window.title("Admin Window")
+        admin_window,self.admin_logo_canvas=self.create_common_window("Admin Window")
+        window_width = self.admin_logo_canvas.winfo_width()
+        window_height = self.admin_logo_canvas.winfo_height()
          # create a canvas that resizes with the window
-        self.admin_logo_canvas = tk.Canvas(admin_window, bg="white", highlightthickness=0)
-        self.admin_logo_canvas.pack(fill=tk.BOTH, expand=True)
+        # self.admin_logo_canvas = tk.Canvas(admin_window, bg="white", highlightthickness=0)
+        # self.admin_logo_canvas.pack(fill=tk.BOTH, expand=True)
         
+        #put a text onto the canvas and redraw the canvas
+        self.admin_logo_canvas.create_text(
+            window_width / 2,
+            100,
+            text=f"Welcome {username}!",
+            font=("Helvetica", 28, "bold"),
+            fill="white",
+            tag="welcome_text"
+        )
+    # Raise the text to make sure it's on top
+        self.admin_logo_canvas.tag_raise("welcome_text")
+        # Force an immediate redraw
+        self.admin_logo_canvas.update_idletasks()
+        self.admin_logo_canvas.update()
+        
+        # bind window resize event to function
+        admin_window.bind("<Configure>", lambda event: self.on_window_resize_common(event))
+
         #create a button on the canvas
         self.create_all_admin_button = tk.Button(
             self.admin_logo_canvas, text="Create HR Login", command=lambda:self.create_all_admin(), font=("Helvetica", 14)
@@ -270,10 +330,10 @@ class CreativeLoginApp:
             relx=0.5, rely=0.6, anchor="center", width=200, height=30
         )
          # bind window resize event to function
-        admin_window.bind("<Configure>", lambda event: self.on_window_resize_admin(event,username))
+        admin_window.bind("<Configure>", lambda event: self.on_window_resize_common(event))
         
          # import the image as the background on the canvas
-        self.load_image_admin(username)
+        # self.load_image_admin(username)
 
         #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
@@ -451,8 +511,6 @@ class CreativeLoginApp:
         # Run the main loop for the create_remove_hr_window
         create_remove_hr_window.mainloop()
 
-
-
     def load_image_create_hr(self):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -484,8 +542,6 @@ class CreativeLoginApp:
     def on_window_resize_create_hr(self, event):
         # Handle window resize event
         self.resize_canvas_and_image_create_hr()
-
-
 
     def remove_all_admin(self):
         # create a new window
@@ -568,7 +624,6 @@ class CreativeLoginApp:
         # Center the window with function center_window_test
         self.center_window_all(create_remove_hr_window)
 
-
     def load_image_remove_hr(self):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -600,8 +655,6 @@ class CreativeLoginApp:
     def on_window_resize_remove_hr(self, event):
         # Handle window resize event
         self.resize_canvas_and_image_remove_hr()
-
-
 
     def open_hr_window(self, role, username):
         self.root.destroy()  # Close the main login window
@@ -922,7 +975,6 @@ class CreativeLoginApp:
         # Handle window resize event
         self.resize_canvas_and_image_create_be()
 
-
     def remove_all_hr(self):
         # create a new window
         create_remove_hr_window = tk.Toplevel()
@@ -1233,7 +1285,7 @@ class CreativeLoginApp:
 
         #buttons of Employee window to the right side of the screen
         self.apply_for_vacation_days_button = tk.Button(
-            self.employee_logo_canvas, text="Apply for Vacation Days", command=lambda:self.apply_for_vacation_days(), font=("Helvetica", 14)
+            self.employee_logo_canvas, text="Apply for Vacation Days", command=lambda:self.apply_for_vacation_days(username), font=("Helvetica", 14)
         )
         self.apply_for_vacation_days_button.pack(
             pady=20
@@ -1391,9 +1443,13 @@ class CreativeLoginApp:
         # Handle window resize event
         self.resize_canvas_and_image_employee(username)
 
-    def apply_for_vacation_days(self):
+    def apply_for_vacation_days(self,username):
         messagebox.showinfo("Employee Window", "Apply for Vacation Days Button Pressed")
-
+        #create a new window over the employee window
+        # apply_vacation_window = tk.Toplevel()
+        # apply_vacation_window.geometry("800x600")  # Set the window size
+        # apply_vacation_window.title("Apply for Vacation Days")
+        
     def apply_for_resignation(self):
         messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
 
