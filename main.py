@@ -111,7 +111,7 @@ class CreativeLoginApp:
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
         self.original_common_image = Image.open(img_path)
         
-    def resize_canvas_and_image_common(self):
+    def resize_canvas_and_image_common(self,username):
         window_width = self.common_canvas.winfo_width()
         window_height = self.common_canvas.winfo_height()
         self.common_canvas.config(width=window_width, height=window_height)
@@ -123,17 +123,17 @@ class CreativeLoginApp:
         self.common_canvas.create_image(0, 0, image=self.common_image, anchor="nw")
 
         # Add text to the top center of the canvas
-        text_content = "Hello, World!"
+        text_content = f"Hello, {username}"
         text_position = (window_width // 2, 20)  # Top center of the canvas
         self.common_canvas.create_text(text_position, text=text_content, anchor="center")
         #text color white
         self.common_canvas.itemconfig(self.common_canvas.find_all()[-1], fill="white")
 
             
-    def on_window_resize_common(self, event=None):
-        self.resize_canvas_and_image_common()
+    def on_window_resize_common(self,username, event=None):
+        self.resize_canvas_and_image_common(username)
     
-    def create_common_window(self, title,):
+    def create_common_window(self, title,username):
         common_window = tk.Tk()
         common_window.geometry("800x600")
         common_window.title(title)
@@ -141,10 +141,10 @@ class CreativeLoginApp:
         self.common_canvas = tk.Canvas(common_window, bg="white", highlightthickness=0)
         self.common_canvas.pack(fill=tk.BOTH, expand=True)
 
-        common_window.bind("<Configure>",lambda event:self.on_window_resize_common())
+        common_window.bind("<Configure>",lambda event,username=username:self.on_window_resize_common(username))
 
         self.load_image_common()
-        self.resize_canvas_and_image_common()
+        self.resize_canvas_and_image_common(username)
         
         return common_window, self.common_canvas
 
@@ -293,7 +293,7 @@ class CreativeLoginApp:
         # admin_window = tk.Tk()  # Use Tk() to create a new window
         # admin_window.geometry("900x600")  # Set the window size
         # admin_window.title("Admin Window")
-        admin_window,self.admin_logo_canvas=self.create_common_window("Admin Window")
+        admin_window,self.admin_logo_canvas=self.create_common_window("Admin Window",username)
         window_width = self.admin_logo_canvas.winfo_width()
         window_height = self.admin_logo_canvas.winfo_height()
          # create a canvas that resizes with the window
@@ -301,22 +301,22 @@ class CreativeLoginApp:
         # self.admin_logo_canvas.pack(fill=tk.BOTH, expand=True)
         
         #put a text onto the canvas and redraw the canvas
-        self.admin_logo_canvas.create_text(
-            window_width / 2,
-            100,
-            text=f"Welcome {username}!",
-            font=("Helvetica", 28, "bold"),
-            fill="white",
-            tag="welcome_text"
-        )
-    # Raise the text to make sure it's on top
-        self.admin_logo_canvas.tag_raise("welcome_text")
-        # Force an immediate redraw
-        self.admin_logo_canvas.update_idletasks()
-        self.admin_logo_canvas.update()
+    #     self.admin_logo_canvas.create_text(
+    #         window_width / 2,
+    #         100,
+    #         text=f"Welcome {username}!",
+    #         font=("Helvetica", 28, "bold"),
+    #         fill="white",
+    #         tag="welcome_text"
+    #     )
+    # # Raise the text to make sure it's on top
+    #     self.admin_logo_canvas.tag_raise("welcome_text")
+    #     # Force an immediate redraw
+    #     self.admin_logo_canvas.update_idletasks()
+    #     self.admin_logo_canvas.update()
         
         # bind window resize event to function
-        admin_window.bind("<Configure>", lambda event: self.on_window_resize_common(event))
+        # admin_window.bind("<Configure>", lambda event: self.on_window_resize_common(event))
 
         #create a button on the canvas
         self.create_all_admin_button = tk.Button(
@@ -338,7 +338,7 @@ class CreativeLoginApp:
             relx=0.5, rely=0.6, anchor="center", width=200, height=30
         )
          # bind window resize event to function
-        admin_window.bind("<Configure>", lambda event: self.on_window_resize_common(event))
+        #admin_window.bind("<Configure>", lambda event: self.on_window_resize_common(event,username))
         
          # import the image as the background on the canvas
         # self.load_image_admin(username)
