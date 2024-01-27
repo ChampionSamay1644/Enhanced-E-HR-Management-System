@@ -112,15 +112,23 @@ class CreativeLoginApp:
         self.original_common_image = Image.open(img_path)
         
     def resize_canvas_and_image_common(self):
-            window_width = self.common_canvas.winfo_width()
-            window_height = self.common_canvas.winfo_height()
-            self.common_canvas.config(width=window_width, height=window_height)
+        window_width = self.common_canvas.winfo_width()
+        window_height = self.common_canvas.winfo_height()
+        self.common_canvas.config(width=window_width, height=window_height)
 
-            resized_image = self.original_common_image.resize((window_width, window_height))
-            self.common_image = ImageTk.PhotoImage(resized_image)
+        resized_image = self.original_common_image.resize((window_width, window_height))
+        self.common_image = ImageTk.PhotoImage(resized_image)
 
-            self.common_canvas.delete("all")
-            self.common_canvas.create_image(0, 0, image=self.common_image, anchor="nw")
+        self.common_canvas.delete("all")
+        self.common_canvas.create_image(0, 0, image=self.common_image, anchor="nw")
+
+        # Add text to the top center of the canvas
+        text_content = "Hello, World!"
+        text_position = (window_width // 2, 20)  # Top center of the canvas
+        self.common_canvas.create_text(text_position, text=text_content, anchor="center")
+        #text color white
+        self.common_canvas.itemconfig(self.common_canvas.find_all()[-1], fill="white")
+
             
     def on_window_resize_common(self, event=None):
         self.resize_canvas_and_image_common()
