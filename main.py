@@ -129,7 +129,6 @@ class CreativeLoginApp:
         #text color white
         self.common_canvas.itemconfig(self.common_canvas.find_all()[-1], fill="white")
 
-            
     def on_window_resize_common(self,username, event=None):
         self.resize_canvas_and_image_common(username)
     
@@ -289,13 +288,12 @@ class CreativeLoginApp:
     def open_admin_window(self, role, username):
         if hasattr(self, "root") and self.root.winfo_exists():
             self.root.destroy()  # Close the main login window
-        text=None
         # admin_window = tk.Tk()  # Use Tk() to create a new window
         # admin_window.geometry("900x600")  # Set the window size
         # admin_window.title("Admin Window")
         admin_window,self.admin_logo_canvas=self.create_common_window("Admin Window",username)
-        window_width = self.admin_logo_canvas.winfo_width()
-        window_height = self.admin_logo_canvas.winfo_height()
+        # window_width = self.admin_logo_canvas.winfo_width()
+        # window_height = self.admin_logo_canvas.winfo_height()
          # create a canvas that resizes with the window
         # self.admin_logo_canvas = tk.Canvas(admin_window, bg="white", highlightthickness=0)
         # self.admin_logo_canvas.pack(fill=tk.BOTH, expand=True)
@@ -665,20 +663,24 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_remove_hr()
 
     def open_hr_window(self, role, username):
-        self.root.destroy()  # Close the main login window
-        hr_window = tk.Tk()  # Use Tk() to create a new window
-        hr_window.geometry("800x600")  # Set the window size
-        hr_window.title("HR Window")
-
+        # self.root.destroy()  # Close the main login window
+        # hr_window = tk.Tk()  # Use Tk() to create a new window
+        # hr_window.geometry("800x600")  # Set the window size
+        # hr_window.title("HR Window")
+        if hasattr(self, "root") and self.root.winfo_exists():
+            self.root.destroy()  # Close the main login window
+        
+        hr_window,self.hr_logo_canvas=self.create_common_window("HR Window",username)
+        
         # create a canvas that resizes with the window
-        self.hr_logo_canvas = tk.Canvas(hr_window, bg="white", highlightthickness=0)
-        self.hr_logo_canvas.pack(fill=tk.BOTH, expand=True)
+        # self.hr_logo_canvas = tk.Canvas(hr_window, bg="white", highlightthickness=0)
+        # self.hr_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
         # bind window resize event to function
-        hr_window.bind("<Configure>", lambda event: self.on_window_resize_hr(event,username))
+        # hr_window.bind("<Configure>", lambda event: self.on_window_resize_hr(event,username))
 
         # import the image as the background on the canvas
-        self.load_image_hr(username)
+        # self.load_image_hr(username)
 
 
         #buttons of HR window
