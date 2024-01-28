@@ -1301,10 +1301,6 @@ class CreativeLoginApp:
         # employee_window = tk.Tk()  # Use Tk() to create a new window
         # employee_window.geometry("800x600")  # Set the window size
         # employee_window.title("Employee Window")
-
-        #thread the getdata function
-        threading.Thread(target=self.getdata,args=(username,)).start()
-        
         if hasattr(self, "root") and self.root.winfo_exists():
            self.root.destroy()  # Close the main login window
 
