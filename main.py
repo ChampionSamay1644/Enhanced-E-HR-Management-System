@@ -111,7 +111,7 @@ class CreativeLoginApp:
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
         self.original_common_image = Image.open(img_path)
         
-    def resize_canvas_and_image_common(self,username):
+    def resize_canvas_and_image_common(self,username,role):
         window_width = self.common_canvas.winfo_width()
         window_height = self.common_canvas.winfo_height()
         self.common_canvas.config(width=window_width, height=window_height)
@@ -127,11 +127,34 @@ class CreativeLoginApp:
         text_position = (window_width // 2, 20)  # Top center of the canvas
         self.common_canvas.create_text(text_position, text=text_content, anchor="center")
         self.common_canvas.itemconfig(self.common_canvas.find_all()[-1], fill="white")
-
-    def on_window_resize_common(self,username, event=None):
-        self.resize_canvas_and_image_common(username)
+        
+        if role=="employee":
+            list=self.getdata(username)
+            self.common_canvas.create_text(
+                10,  # X-coordinate (left)
+                self.common_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
+                font=("Helvetica", 15, "bold"),
+                text=f"Name: {list[0]}\nID: {list[1]}\nSalary: {list[2]}\nHours: {list[3]}\nBonus: {list[4]}\nResignation: {list[5]}\nSurvey: {list[6]}\nFeedback: {list[7]}",
+                fill="white",
+                anchor="sw"  # Anchor to bottom left
+            )
     
-    def create_common_window(self, title,username):
+    def getdata(self,username):
+        emp_ref = db.reference("/employee")
+        emp_name=emp_ref.child(username).child("name").get()
+        emp_id=emp_ref.child(username).child("id").get()
+        emp_salary=emp_ref.child(username).child("salary").get()
+        emp_hours=emp_ref.child(username).child("hours").get()
+        emp_bonus=emp_ref.child(username).child("bonus").get()
+        emp_resignation=emp_ref.child(username).child("resignation").get()
+        emp_survey=emp_ref.child(username).child("survey").get()
+        emp_feedback=emp_ref.child(username).child("feedback").get()
+        return emp_name,emp_id,emp_salary,emp_hours,emp_bonus,emp_resignation,emp_survey,emp_feedback
+            
+    def on_window_resize_common(self,username,role, event=None):
+        self.resize_canvas_and_image_common(username,role)
+    
+    def create_common_window(self, title,username,role):
         common_window = tk.Tk()
         common_window.geometry("800x600")
         common_window.title(title)
@@ -139,10 +162,10 @@ class CreativeLoginApp:
         self.common_canvas = tk.Canvas(common_window, bg="white", highlightthickness=0)
         self.common_canvas.pack(fill=tk.BOTH, expand=True)
 
-        common_window.bind("<Configure>",lambda event,username=username:self.on_window_resize_common(username))
+        common_window.bind("<Configure>",lambda event,username=username,role=role:self.on_window_resize_common(username,role))
 
         self.load_image_common()
-        self.resize_canvas_and_image_common(username)
+        self.resize_canvas_and_image_common(username,role)
         
         return common_window, self.common_canvas
 
@@ -1279,19 +1302,13 @@ class CreativeLoginApp:
         # employee_window.geometry("800x600")  # Set the window size
         # employee_window.title("Employee Window")
 
+        #thread the getdata function
+        threading.Thread(target=self.getdata,args=(username,)).start()
+        
         if hasattr(self, "root") and self.root.winfo_exists():
            self.root.destroy()  # Close the main login window
 
-        employee_window,self.employee_logo_canvas=self.create_common_window("Employee Window",username)
-
-        employee_ref = db.reference("/employee")
-        # emp_id = employee_ref.child(username).child("emp_id").get()
-        # designation = employee_ref.child(username).child("designation").get()
-        # salary = employee_ref.child(username).child("salary").get()
-        # sickdays = employee_ref.child(username).child("sick_days").get()
-        # vacationdays = employee_ref.child(username).child("vacation_days").get()
-        # bonus = employee_ref.child(username).child("bonus").get()
-        # hours_attended = employee_ref.child(username).child("hours_attended").get()
+        employee_window,self.employee_logo_canvas=self.create_common_window("Employee Window",username,role)
 
     #    # create a canvas that resizes with the window
     #     self.employee_logo_canvas = tk.Canvas(employee_window, bg="white", highlightthickness=0)
