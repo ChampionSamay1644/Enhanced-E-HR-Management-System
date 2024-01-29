@@ -130,27 +130,29 @@ class CreativeLoginApp:
         
         if role=="employee":
             list=self.getdata(username)
+            text1=f"EID: {list[0]}\nName: {username}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}\nSurvey: {list[7]}"
             self.common_canvas.create_text(
                 10,  # X-coordinate (left)
                 self.common_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
                 font=("Helvetica", 15, "bold"),
-                text=f"Name: {list[0]}\nID: {list[1]}\nSalary: {list[2]}\nHours: {list[3]}\nBonus: {list[4]}\nResignation: {list[5]}\nSurvey: {list[6]}\nFeedback: {list[7]}",
+                text=text1,
                 fill="white",
                 anchor="sw"  # Anchor to bottom left
             )
     
     def getdata(self,username):
         emp_ref = db.reference("/employee")
-        emp_name=emp_ref.child(username).child("name").get()
-        emp_id=emp_ref.child(username).child("id").get()
-        emp_salary=emp_ref.child(username).child("salary").get()
-        emp_hours=emp_ref.child(username).child("hours").get()
-        emp_bonus=emp_ref.child(username).child("bonus").get()
-        emp_resignation=emp_ref.child(username).child("resignation").get()
-        emp_survey=emp_ref.child(username).child("survey").get()
-        emp_feedback=emp_ref.child(username).child("feedback").get()
-        return emp_name,emp_id,emp_salary,emp_hours,emp_bonus,emp_resignation,emp_survey,emp_feedback
-            
+        list=[]
+        list.append(emp_ref.child(username).child("emp_id").get())
+        list.append(emp_ref.child(username).child("designation").get())
+        list.append(emp_ref.child(username).child("salary").get())
+        list.append(emp_ref.child(username).child("hours_attended").get())
+        list.append(emp_ref.child(username).child("bonus").get())
+        list.append(emp_ref.child(username).child("sick_days").get())
+        list.append(emp_ref.child(username).child("vacation_days").get())
+        list.append(emp_ref.child(username).child("survey").get())
+        
+        return list
     def on_window_resize_common(self,username,role, event=None):
         self.resize_canvas_and_image_common(username,role)
     
@@ -1318,7 +1320,7 @@ class CreativeLoginApp:
 
         #buttons of Employee window to the right side of the screen
         self.apply_for_vacation_days_button = tk.Button(
-            self.employee_logo_canvas, text="Apply for Vacation Days", command=lambda:self.apply_for_vacation_days(username), font=("Helvetica", 14)
+            self.employee_logo_canvas, text="Apply for Vacation Days", command=lambda:self.apply_for_vacation_days(username,role), font=("Helvetica", 14)
         )
         self.apply_for_vacation_days_button.pack(
             pady=20
@@ -1476,12 +1478,54 @@ class CreativeLoginApp:
         # Handle window resize event
         self.resize_canvas_and_image_employee(username)
 
-    def apply_for_vacation_days(self,username):
-        messagebox.showinfo("Employee Window", "Apply for Vacation Days Button Pressed")
-        #create a new window over the employee window
-        # apply_vacation_window = tk.Toplevel()
-        # apply_vacation_window.geometry("800x600")  # Set the window size
-        # apply_vacation_window.title("Apply for Vacation Days")
+    def apply_for_vacation_days(self, username,role):
+        # Create the common window and canvas
+        apply_for_vacation_days_window, self.apply_for_vacation_days_canvas = self.create_common_window("Apply for Vacation Days", username,role)
+
+        apply_for_vacation_days_window.focus_force()
+        
+        # Display existing used up vacation days
+        existing_vacation_days = db.reference("/employee").child(username).child("vacation_days").get()
+        existing_text = f"Existing Vacation Days: {existing_vacation_days}"
+        self.apply_for_vacation_days_canvas.create_text(
+            10,  # X-coordinate (left)
+            self.apply_for_vacation_days_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
+            font=("Helvetica", 15, "bold"),
+            anchor="sw",
+            text=existing_text,
+            fill="white",
+        )
+
+        # Create entry widgets for number of days and reason
+        self.number_of_days_entry = tk.Entry(apply_for_vacation_days_window)
+        self.number_of_days_entry.pack(pady=10)
+        self.number_of_days_entry.insert(0, "0")  # Default value
+
+        self.reason_entry = tk.Entry(apply_for_vacation_days_window)
+        self.reason_entry.pack(pady=10)
+        self.reason_entry.insert(0, "Vacation reason")  # Default value
+
+        # Create a button to submit the vacation request
+        submit_button = tk.Button(apply_for_vacation_days_window, text="Submit", command=self.submit_vacation_request(username))
+        submit_button.pack(pady=10)
+
+    def submit_vacation_request(self,username):
+        # Retrieve the entered values
+        number_of_days = self.number_of_days_entry.get()
+        reason = self.reason_entry.get()
+
+        # Check if the number of days is valid
+        if number_of_days>db.reference("/employee").child(username).child("vacation_days").get():
+            messagebox.showinfo("Employee Window", "You do not have enough vacation days.")
+        else:
+            # Add the vacation request to the database
+            db.reference("/employee").child(username).child("vacation_days").set(number_of_days)
+            db.reference("/employee").child(username).child("vacation_reason").set(reason)
+            messagebox.showinfo("Employee Window", "Vacation request submitted successfully.")
+        self.apply_for_vacation_days_canvas.destroy()
+
+        
+        
         
     def apply_for_resignation(self):
         messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
