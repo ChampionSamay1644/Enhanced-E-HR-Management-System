@@ -139,7 +139,6 @@ class CreativeLoginApp:
                 fill="white",
                 anchor="sw"  # Anchor to bottom left
             )
-        
     
     def getdata(self,username):
         emp_ref = db.reference("/employee")
@@ -154,6 +153,7 @@ class CreativeLoginApp:
         list.append(emp_ref.child(username).child("survey").get())
         
         return list
+    
     def on_window_resize_common(self,username,role, event=None):
         self.resize_canvas_and_image_common(username,role)
     
@@ -1482,20 +1482,21 @@ class CreativeLoginApp:
 
     def apply_for_vacation_days(self, username,role):
         # Create the common window and canvas
-        apply_for_vacation_days_window, self.apply_for_vacation_days_canvas = self.create_common_window_button("Apply for Vacation Days", username)
+        apply_for_vacation_days_window, self.apply_for_vacation_days_canvas = self.create_common_window_button("Apply for Vacation Days")
 
         # Create entry widgets for number of days and reason
-        self.number_of_days_entry = tk.Entry(apply_for_vacation_days_window)
-        self.number_of_days_entry.pack(pady=10)
+        self.number_of_days_entry = tk.Entry(self.apply_for_vacation_days_canvas)
+        self.number_of_days_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
         self.number_of_days_entry.insert(0, "0")  # Default value
 
-        self.reason_entry = tk.Entry(apply_for_vacation_days_window)
-        self.reason_entry.pack(pady=10)
+        self.reason_entry = tk.Entry(self.apply_for_vacation_days_canvas)
+        self.reason_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
         self.reason_entry.insert(0, "Vacation reason")  # Default value
 
         # Create a button to submit the vacation request
-        submit_button = tk.Button(apply_for_vacation_days_window, text="Submit", command=self.submit_vacation_request(username))
-        submit_button.pack(pady=10)
+        submit_button = tk.Button(self.apply_for_vacation_days_canvas, text="Submit", command=lambda: self.submit_vacation_request(username))
+        submit_button.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+
 
     def submit_vacation_request(self,username):
         # Retrieve the entered values
@@ -1510,10 +1511,7 @@ class CreativeLoginApp:
             db.reference("/employee").child(username).child("vacation_days").set(number_of_days)
             db.reference("/employee").child(username).child("vacation_reason").set(reason)
             messagebox.showinfo("Employee Window", "Vacation request submitted successfully.")
-        self.apply_for_vacation_days_canvas.destroy()
-
-        
-        
+        self.apply_for_vacation_days_canvas.destroy()        
         
     def apply_for_resignation(self):
         messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
@@ -1646,7 +1644,7 @@ class CreativeLoginApp:
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
         self.original_common_image_button = Image.open(img_path)
         
-    def resize_canvas_and_image_common_button(self,username):
+    def resize_canvas_and_image_common_button(self):
         window_width = self.common_canvas_button.winfo_width()
         window_height = self.common_canvas_button.winfo_height()
         self.common_canvas.config(width=window_width, height=window_height)
@@ -1655,12 +1653,12 @@ class CreativeLoginApp:
         self.common_image_button = ImageTk.PhotoImage(resized_image)
 
         self.common_canvas_button.delete("all")
-        self.common_canvas_button.create_image(0, 0, image=self.common_image, anchor="nw")
+        self.common_canvas_button.create_image(0, 0, image=self.common_image_button, anchor="nw")
         
-    def on_window_resize_common_button(self,username,event=None):
-        self.resize_canvas_and_image_common_button(username)
+    def on_window_resize_common_button(self,event=None):
+        self.resize_canvas_and_image_common_button()
 
-    def create_common_window_button(self, title,username):
+    def create_common_window_button(self, title,):
     
         common_window_button = tk.Toplevel()
         common_window_button.geometry("800x600")
@@ -1669,12 +1667,12 @@ class CreativeLoginApp:
         self.common_canvas_button = tk.Canvas(common_window_button, bg="white", highlightthickness=0)
         self.common_canvas_button.pack(fill=tk.BOTH, expand=True)
 
-        common_window_button.bind("<Configure>",lambda event,username=username,:self.on_window_resize_common_button(username))
+        common_window_button.bind("<Configure>",lambda event,:self.on_window_resize_common_button())
 
         self.load_image_common_button()
-        self.resize_canvas_and_image_common_button(username)
+        self.resize_canvas_and_image_common_button()
         
-        return common_window_button, self.common_canvas
+        return common_window_button, self.common_canvas_button
 def main():
     root = tk.Tk()
     root.geometry("900x600")  # Set the window size
