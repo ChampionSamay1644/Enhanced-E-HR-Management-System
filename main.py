@@ -1488,30 +1488,50 @@ class CreativeLoginApp:
         self.number_of_days_entry = tk.Entry(self.apply_for_vacation_days_canvas)
         self.number_of_days_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
         self.number_of_days_entry.insert(0, "0")  # Default value
+        self.number_of_days_entry.bind("<FocusIn>", lambda event:self.days_entry_del())  # Delete the default value when the user clicks on the entry widget
 
         self.reason_entry = tk.Entry(self.apply_for_vacation_days_canvas)
         self.reason_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
         self.reason_entry.insert(0, "Vacation reason")  # Default value
+        self.reason_entry.bind("<FocusIn>", lambda event:self.reason_entry_del())  # Delete the default value when the user clicks on the entry widget
 
         # Create a button to submit the vacation request
-        submit_button = tk.Button(self.apply_for_vacation_days_canvas, text="Submit", command=lambda: self.submit_vacation_request(username))
+        submit_button = tk.Button(self.apply_for_vacation_days_canvas, text="Submit", command=lambda: self.submit_vacation_request(username,apply_for_vacation_days_window))
         submit_button.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+        
+        # Bind the Escape key to the exit function
+        apply_for_vacation_days_window.bind("<Escape>", lambda event: apply_for_vacation_days_window.destroy())
+        
+        # focus on window
+        apply_for_vacation_days_window.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(apply_for_vacation_days_window)
+        
+        # Run the main loop for the apply_for_vacation_days_window
+        apply_for_vacation_days_window.mainloop()
 
-
-    def submit_vacation_request(self,username):
+    def submit_vacation_request(self,username,apply_for_vacation_days_window):
         # Retrieve the entered values
         number_of_days = self.number_of_days_entry.get()
         reason = self.reason_entry.get()
 
         # Check if the number of days is valid
-        if number_of_days>int(db.reference("/employee").child(username).child("vacation_days").get()):
+        if not number_of_days.isdigit():
+            messagebox.showinfo("Employee Window", "Please enter a valid number of days.")
+        elif number_of_days == None or reason == None:
+            messagebox.showinfo("Employee Window", "Please enter a number of days and a reason.")
+        elif number_of_days == 0 or reason == "Vacation reason":
+            messagebox.showinfo("Employee Window", "Please enter a number of days and a reason.")
+        elif int(number_of_days)>(db.reference('vacation_uni').get())-(db.reference("/employee").child(username).child("vacation_days").get()):
             messagebox.showinfo("Employee Window", "You do not have enough vacation days.")
         else:
             # Add the vacation request to the database
-            db.reference("/employee").child(username).child("vacation_days").set(number_of_days)
+            db.reference("/employee").child(username).child("vacation_days").set((db.reference("/employee").child(username).child("vacation_days").get())+int(number_of_days))
             db.reference("/employee").child(username).child("vacation_reason").set(reason)
             messagebox.showinfo("Employee Window", "Vacation request submitted successfully.")
-        self.apply_for_vacation_days_canvas.destroy()        
+            
+        apply_for_vacation_days_window.destroy()        
         
     def apply_for_resignation(self):
         messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
@@ -1667,12 +1687,21 @@ class CreativeLoginApp:
         self.common_canvas_button = tk.Canvas(common_window_button, bg="white", highlightthickness=0)
         self.common_canvas_button.pack(fill=tk.BOTH, expand=True)
 
-        common_window_button.bind("<Configure>",lambda event,:self.on_window_resize_common_button())
+        common_window_button.bind("<Configure>",lambda event:self.on_window_resize_common_button())
 
         self.load_image_common_button()
         self.resize_canvas_and_image_common_button()
         
         return common_window_button, self.common_canvas_button
+    
+    def days_entry_del(self):
+        if self.number_of_days_entry.get() == "0":
+            self.number_of_days_entry.delete(0, tk.END)
+
+    def reason_entry_del(self):
+        if self.reason_entry.get() == "Vacation reason":
+            self.reason_entry.delete(0, tk.END)
+            
 def main():
     root = tk.Tk()
     root.geometry("900x600")  # Set the window size
