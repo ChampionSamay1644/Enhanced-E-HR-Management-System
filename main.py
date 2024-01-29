@@ -139,6 +139,7 @@ class CreativeLoginApp:
                 fill="white",
                 anchor="sw"  # Anchor to bottom left
             )
+        
     
     def getdata(self,username):
         emp_ref = db.reference("/employee")
@@ -157,6 +158,7 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_common(username,role)
     
     def create_common_window(self, title,username,role):
+    
         common_window = tk.Tk()
         common_window.geometry("800x600")
         common_window.title(title)
@@ -170,7 +172,7 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_common(username,role)
         
         return common_window, self.common_canvas
-
+        
     def center_window_all(self, window):
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
@@ -1480,21 +1482,7 @@ class CreativeLoginApp:
 
     def apply_for_vacation_days(self, username,role):
         # Create the common window and canvas
-        apply_for_vacation_days_window, self.apply_for_vacation_days_canvas = self.create_common_window("Apply for Vacation Days", username,role)
-
-        apply_for_vacation_days_window.focus_force()
-        
-        # Display existing used up vacation days
-        existing_vacation_days = db.reference("/employee").child(username).child("vacation_days").get()
-        existing_text = f"Existing Vacation Days: {existing_vacation_days}"
-        self.apply_for_vacation_days_canvas.create_text(
-            10,  # X-coordinate (left)
-            self.apply_for_vacation_days_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
-            font=("Helvetica", 15, "bold"),
-            anchor="sw",
-            text=existing_text,
-            fill="white",
-        )
+        apply_for_vacation_days_window, self.apply_for_vacation_days_canvas = self.create_common_window_button("Apply for Vacation Days", username)
 
         # Create entry widgets for number of days and reason
         self.number_of_days_entry = tk.Entry(apply_for_vacation_days_window)
@@ -1515,7 +1503,7 @@ class CreativeLoginApp:
         reason = self.reason_entry.get()
 
         # Check if the number of days is valid
-        if number_of_days>db.reference("/employee").child(username).child("vacation_days").get():
+        if number_of_days>int(db.reference("/employee").child(username).child("vacation_days").get()):
             messagebox.showinfo("Employee Window", "You do not have enough vacation days.")
         else:
             # Add the vacation request to the database
@@ -1654,6 +1642,39 @@ class CreativeLoginApp:
         # close the window
         create_remove_hr_window.destroy()
 
+    def load_image_common_button(self):
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+        self.original_common_image_button = Image.open(img_path)
+        
+    def resize_canvas_and_image_common_button(self,username):
+        window_width = self.common_canvas_button.winfo_width()
+        window_height = self.common_canvas_button.winfo_height()
+        self.common_canvas.config(width=window_width, height=window_height)
+
+        resized_image = self.original_common_image_button.resize((window_width, window_height))
+        self.common_image_button = ImageTk.PhotoImage(resized_image)
+
+        self.common_canvas_button.delete("all")
+        self.common_canvas_button.create_image(0, 0, image=self.common_image, anchor="nw")
+        
+    def on_window_resize_common_button(self,username,event=None):
+        self.resize_canvas_and_image_common_button(username)
+
+    def create_common_window_button(self, title,username):
+    
+        common_window_button = tk.Toplevel()
+        common_window_button.geometry("800x600")
+        common_window_button.title(title)
+
+        self.common_canvas_button = tk.Canvas(common_window_button, bg="white", highlightthickness=0)
+        self.common_canvas_button.pack(fill=tk.BOTH, expand=True)
+
+        common_window_button.bind("<Configure>",lambda event,username=username,:self.on_window_resize_common_button(username))
+
+        self.load_image_common_button()
+        self.resize_canvas_and_image_common_button(username)
+        
+        return common_window_button, self.common_canvas
 def main():
     root = tk.Tk()
     root.geometry("900x600")  # Set the window size
