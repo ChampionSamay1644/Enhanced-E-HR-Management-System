@@ -317,7 +317,7 @@ class CreativeLoginApp:
         # admin_window = tk.Tk()  # Use Tk() to create a new window
         # admin_window.geometry("900x600")  # Set the window size
         # admin_window.title("Admin Window")
-        admin_window,self.admin_logo_canvas=self.create_common_window("Admin Window",username)
+        admin_window,self.admin_logo_canvas=self.create_common_window("Admin Window",username,role)
         # window_width = self.admin_logo_canvas.winfo_width()
         # window_height = self.admin_logo_canvas.winfo_height()
          # create a canvas that resizes with the window
@@ -1613,15 +1613,16 @@ class CreativeLoginApp:
                         "designation": "",
                         "emp_id": emp_uni + 1,
                         "salary": "",
-                        "sick days": "",
-                        "vacation days": "",
+                        "sick_days": "",
+                        "vacation_days": "",
                         "bonus": "",
-                        "hours attended": "",
-                        "apply for resignation": "",
-                        "apply for vacation": "",
-                        "progress on task": "",
+                        "hours_attended": "",
+                        "apply_for_resignation": "",
+                        "apply_for_vacation": "",
+                        "progress_on_task": "",
                         "survey": "",
                         "feedback": "",
+                        "vacation_reason": "",
                     }
                 )
                 emp_id_ref.child("emp_id").set(emp_uni + 1)
