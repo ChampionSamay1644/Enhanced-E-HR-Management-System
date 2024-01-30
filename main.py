@@ -1623,6 +1623,8 @@ class CreativeLoginApp:
                         "survey": "",
                         "feedback": "",
                         "vacation_reason": "",
+                        "vacation_approved": "",
+                        "sick_approved": "",
                     }
                 )
                 emp_id_ref.child("emp_id").set(emp_uni + 1)
