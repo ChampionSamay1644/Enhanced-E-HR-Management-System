@@ -1596,7 +1596,7 @@ class CreativeLoginApp:
             messagebox.showinfo("Employee Window", "Please enter a number of days and a reason.")
         elif number_of_days == 0 or reason == "Vacation reason":
             messagebox.showinfo("Employee Window", "Please enter a number of days and a reason.")
-        elif int(number_of_days)>(db.reference('vacation_uni').get())-(db.reference("/employee").child(username).child("vacation_days").get()):
+        elif int(number_of_days)>(db.reference('vacation_uni').get())-(db.reference("/employee").child(username).child("vacation_approved").get()):
             messagebox.showinfo("Employee Window", "You do not have enough vacation days.")
         else:
             # Add the vacation request to the database
