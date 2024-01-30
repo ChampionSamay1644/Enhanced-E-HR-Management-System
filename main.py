@@ -1527,7 +1527,7 @@ class CreativeLoginApp:
             messagebox.showinfo("Employee Window", "You do not have enough vacation days.")
         else:
             # Add the vacation request to the database
-            db.reference("/employee").child(username).child("vacation_days").set((db.reference("/employee").child(username).child("vacation_days").get())+int(number_of_days))
+            db.reference("/employee").child(username).child("vacation_days_prov").set((db.reference("/employee").child(username).child("vacation_days_prov").get())+int(number_of_days))
             db.reference("/employee").child(username).child("vacation_reason").set(reason)
             messagebox.showinfo("Employee Window", "Vacation request submitted successfully.")
             
@@ -1625,6 +1625,7 @@ class CreativeLoginApp:
                         "vacation_reason": "",
                         "vacation_approved": "",
                         "sick_approved": "",
+                        "vacation_days_prov": "",
                     }
                 )
                 emp_id_ref.child("emp_id").set(emp_uni + 1)
