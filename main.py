@@ -1338,7 +1338,7 @@ class CreativeLoginApp:
         # Create a label on the canvas for displaying the list
         employees_label = tk.Label(
             canvas,
-            text="Employees with Provisional Vacation > 0:",
+            text="Employees with Vacation approvals:",
             font=("Helvetica", 12, "bold"),
             bg="white",
         )
