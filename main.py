@@ -1290,20 +1290,20 @@ class CreativeLoginApp:
 
     def approve_vacations_sick_leaves(self,role,username):
        # Create the common window and canvas
-        vacations_sick_leaves_window, self.approve_vacation_days_canvas = self.create_common_window_button("Approve Vacation Days")
+        approve_vacations_sick_leaves_window, self.approve_vacation_days_canvas = self.create_common_window_button("Approve Vacation Days")
 
         
         # Bind the Escape key to the exit function
-        vacations_sick_leaves_window.bind("<Escape>", lambda event:  vacations_sick_leaves_window.destroy())
+        approve_vacations_sick_leaves_window.bind("<Escape>", lambda event:  approve_vacations_sick_leaves_window.destroy())
         
         # focus on window
-        vacations_sick_leaves_window.focus_force()
+        approve_vacations_sick_leaves_window.focus_force()
         
         # Center the window with function center_window_test
-        self.center_window_all( vacations_sick_leaves_window)
+        self.center_window_all( approve_vacations_sick_leaves_window)
         
         # Run the main loop for the apply_for_vacation_days_window
-        vacations_sick_leaves_window.mainloop()
+        approve_vacations_sick_leaves_window.mainloop()
 
 
        
