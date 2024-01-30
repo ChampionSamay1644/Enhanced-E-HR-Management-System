@@ -109,7 +109,12 @@ class CreativeLoginApp:
 
     def load_image_common(self):
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-        self.original_common_image = Image.open(img_path)
+
+        try:
+            self.original_common_image = Image.open(img_path)
+        except Exception as e:
+            print(f"Error loading image: {e}")
+
         
     def resize_canvas_and_image_common(self,username,role):
         window_width = self.common_canvas.winfo_width()
@@ -1161,7 +1166,7 @@ class CreativeLoginApp:
             relx=0.5, rely=0.3, anchor="center", width=300, height=30
         )
         self.approve_vacations_sick_leaves_button = tk.Button(
-            self.boss_logo_canvas, text="Approve Vacations and Sick Leaves", command=lambda:self.approve_vacations_sick_leaves(), font=("Helvetica", 14)
+            self.boss_logo_canvas, text="Approve Vacations and Sick Leaves", command=lambda:self.approve_vacations_sick_leaves(username,role), font=("Helvetica", 14)
         )
         self.approve_vacations_sick_leaves_button.pack(
             pady=20
@@ -1283,10 +1288,26 @@ class CreativeLoginApp:
     def perform_review_approval(self):
         messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
 
-    def approve_vacations_sick_leaves(self):
-        messagebox.showinfo(
-            "Boss Window", "Approve Vacations and Sick Leaves Button Pressed"
-        )
+    def approve_vacations_sick_leaves(self,role,username):
+       # Create the common window and canvas
+        vacations_sick_leaves_window, self.approve_vacation_days_canvas = self.create_common_window_button("Approve Vacation Days")
+
+        
+        # Bind the Escape key to the exit function
+        vacations_sick_leaves_window.bind("<Escape>", lambda event:  vacations_sick_leaves_window.destroy())
+        
+        # focus on window
+        vacations_sick_leaves_window.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all( vacations_sick_leaves_window)
+        
+        # Run the main loop for the apply_for_vacation_days_window
+        vacations_sick_leaves_window.mainloop()
+
+
+       
+        
 
     def progress_on_task(self):
         messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
