@@ -696,7 +696,7 @@ class CreativeLoginApp:
         if hasattr(self, "root") and self.root.winfo_exists():
             self.root.destroy()  # Close the main login window
         
-        hr_window,self.hr_logo_canvas=self.create_common_window("HR Window",username)
+        hr_window,self.hr_logo_canvas=self.create_common_window("HR Window",username,role)
         
         # create a canvas that resizes with the window
         # self.hr_logo_canvas = tk.Canvas(hr_window, bg="white", highlightthickness=0)
@@ -1137,7 +1137,7 @@ class CreativeLoginApp:
         if hasattr(self, "root") and self.root.winfo_exists():
            self.root.destroy()  # Close the main login window
 
-        boss_window,self.boss_logo_canvas=self.create_common_window("Boss Window",username)
+        boss_window,self.boss_logo_canvas=self.create_common_window("Boss Window",username,role)
 
 
         # create a canvas that resizes with the window
