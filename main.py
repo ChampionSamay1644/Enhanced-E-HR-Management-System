@@ -6,6 +6,7 @@ import os
 import firebase_admin
 from firebase_admin import db, credentials
 import threading
+from tkinter import Label
 
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate("credentials.json")  # Path: credentials.json
@@ -1289,72 +1290,60 @@ class CreativeLoginApp:
         messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
 
     def approve_vacations_sick_leaves(self, role, username):
-        # Create the common window and canvas
-        approve_vacations_sick_leaves_window, approve_vacation_days_canvas = self.create_common_window_button("Approve Vacation Days")
+        approve_window, approve_canvas = self.create_common_window_button("Approve Vacation and Sick Days")
 
-        # Fetch data from the database
-        employee_data = self.get_employee_data_with_provisional_vacation_above_zero(username)
+        vacation_data = self.get_employee_data_with_provisional_vacation_above_zero(username)
+        sick_data = self.get_employee_data_with_sick_days_above_zero(username)
 
-        # Display the list on the canvas
-        if employee_data:
-            self.display_employee_list_on_canvas(approve_vacation_days_canvas, employee_data)
-        else:
-            # If no employees meet the criteria, display a message on the canvas
-            no_employee_label = tk.Label(
-                approve_vacation_days_canvas,
-                text="No employees with provisional vacation above 0",
-                font=("Helvetica", 12, "bold"),
-                bg="white",
-            )
-            no_employee_label.pack(pady=20)
-            no_employee_label.place(relx=0.5, rely=0.5, anchor="center")
+        #vacations days should be above, sick days should be below, its overlapping right now
 
-        # Bind the Escape key to the exit function
-        approve_vacations_sick_leaves_window.bind("<Escape>", lambda event: approve_vacations_sick_leaves_window.destroy())
+        self.display_employee_list_on_canvas(approve_canvas, vacation_data, "Employees with Vacation Days",0.1)
+        self.display_employee_list_on_canvas(approve_canvas, sick_data, "Employees with Sick Days",0.6)
 
-        # Focus on window
-        approve_vacations_sick_leaves_window.focus_force()
+        approve_window.bind("<Escape>", lambda event: approve_window.destroy())
+        approve_window.focus_force()
+        self.center_window_all(approve_window)
+        approve_window.mainloop()
 
-        # Center the window
-        self.center_window_all(approve_vacations_sick_leaves_window)
-
-        # Run the main loop for the window
-        approve_vacations_sick_leaves_window.mainloop()
-
-    def get_employee_data_with_provisional_vacation_above_zero(self,username):
-        # Fetch data from the database
+    def get_employee_data_with_provisional_vacation_above_zero(self, username):
         emp_ref = db.reference("/employee")
-        employee_data = []
-
-        # Iterate through employees and filter based on the condition
-        for username in emp_ref.get():
-            provisional_vacation = emp_ref.child(username).child("vacation_days").get()
-            if provisional_vacation is not None and provisional_vacation > 0:
-                employee_data.append(username)
-
+        employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "vacation_days") > 0]
         return employee_data
 
-    def display_employee_list_on_canvas(self, canvas, employee_data):
-        # Create a label on the canvas for displaying the list
-        employees_label = tk.Label(
-            canvas,
-            text="Employees with Vacation approvals:",
-            font=("Helvetica", 12, "bold"),
-            bg="white",
-        )
-        employees_label.pack(pady=20)
-        employees_label.place(relx=0.5, rely=0.1, anchor="center")
+    def get_employee_data_with_sick_days_above_zero(self, username):
+        emp_ref = db.reference("/employee")
+        employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "sick_days") > 0]
+        return employee_data
 
-        # Display the list of employees on the canvas
-        for i, username in enumerate(employee_data):
-            employee_label = tk.Label(
-                canvas,
-                text=username,
-                font=("Helvetica", 12),
-                bg="white",
-            )
-            employee_label.pack(pady=10)
-            employee_label.place(relx=0.5, rely=0.2 + i * 0.1, anchor="center")
+    def display_employee_list_on_canvas(self, canvas, employee_data, message, rely):
+        if len(employee_data) > 0:
+            employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
+            employee_label.pack(pady=20)
+            employee_label.place(relx=0.5, rely=rely, anchor="center")
+
+            for i, employee in enumerate(employee_data):
+                employee_name = Label(canvas, text=employee, font=("Helvetica", 12, "bold"), bg="white")
+                employee_name.pack(pady=20)
+                employee_name.place(relx=0.5, rely=rely + 0.1 + i * 0.05, anchor="center")
+        else:
+            self.display_no_employee_message(canvas, f"No Employee with {message}")
+
+
+
+
+
+
+
+    def display_no_employee_message(self, canvas, message):
+        no_employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
+        no_employee_label.pack(pady=20)
+        no_employee_label.place(relx=0.5, rely=0.5, anchor="center")
+
+    def get_employee_data(self, username, data_type):
+        emp_ref = db.reference("/employee")
+        data = emp_ref.child(username).child(data_type).get()
+        return data if data is not None else 0
+
 
 
 
