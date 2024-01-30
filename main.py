@@ -1288,22 +1288,74 @@ class CreativeLoginApp:
     def perform_review_approval(self):
         messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
 
-    def approve_vacations_sick_leaves(self,role,username):
-       # Create the common window and canvas
-        approve_vacations_sick_leaves_window, self.approve_vacation_days_canvas = self.create_common_window_button("Approve Vacation Days")
+    def approve_vacations_sick_leaves(self, role, username):
+        # Create the common window and canvas
+        approve_vacations_sick_leaves_window, approve_vacation_days_canvas = self.create_common_window_button("Approve Vacation Days")
 
-        
+        # Fetch data from the database
+        employee_data = self.get_employee_data_with_provisional_vacation_above_zero(username)
+
+        # Display the list on the canvas
+        if employee_data:
+            self.display_employee_list_on_canvas(approve_vacation_days_canvas, employee_data)
+        else:
+            # If no employees meet the criteria, display a message on the canvas
+            no_employee_label = tk.Label(
+                approve_vacation_days_canvas,
+                text="No employees with provisional vacation above 0",
+                font=("Helvetica", 12, "bold"),
+                bg="white",
+            )
+            no_employee_label.pack(pady=20)
+            no_employee_label.place(relx=0.5, rely=0.5, anchor="center")
+
         # Bind the Escape key to the exit function
-        approve_vacations_sick_leaves_window.bind("<Escape>", lambda event:  approve_vacations_sick_leaves_window.destroy())
-        
-        # focus on window
+        approve_vacations_sick_leaves_window.bind("<Escape>", lambda event: approve_vacations_sick_leaves_window.destroy())
+
+        # Focus on window
         approve_vacations_sick_leaves_window.focus_force()
-        
-        # Center the window with function center_window_test
-        self.center_window_all( approve_vacations_sick_leaves_window)
-        
-        # Run the main loop for the apply_for_vacation_days_window
+
+        # Center the window
+        self.center_window_all(approve_vacations_sick_leaves_window)
+
+        # Run the main loop for the window
         approve_vacations_sick_leaves_window.mainloop()
+
+    def get_employee_data_with_provisional_vacation_above_zero(self,username):
+        # Fetch data from the database
+        emp_ref = db.reference("/employee")
+        employee_data = []
+
+        # Iterate through employees and filter based on the condition
+        for username in emp_ref.get():
+            provisional_vacation = emp_ref.child(username).child("vacation_days_prov").get()
+            if provisional_vacation is not None and provisional_vacation > 0:
+                employee_data.append(username)
+
+        return employee_data
+
+    def display_employee_list_on_canvas(self, canvas, employee_data):
+        # Create a label on the canvas for displaying the list
+        employees_label = tk.Label(
+            canvas,
+            text="Employees with Provisional Vacation > 0:",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        employees_label.pack(pady=20)
+        employees_label.place(relx=0.5, rely=0.1, anchor="center")
+
+        # Display the list of employees on the canvas
+        for i, username in enumerate(employee_data):
+            employee_label = tk.Label(
+                canvas,
+                text=username,
+                font=("Helvetica", 12),
+                bg="white",
+            )
+            employee_label.pack(pady=10)
+            employee_label.place(relx=0.5, rely=0.2 + i * 0.1, anchor="center")
+
 
 
        
