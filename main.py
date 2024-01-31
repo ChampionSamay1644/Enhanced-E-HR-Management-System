@@ -1350,24 +1350,10 @@ class CreativeLoginApp:
         messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
 
     def open_employee_window(self, role, username):
-        # self.root.destroy()  # Close the main login window
-        # employee_window = tk.Tk()  # Use Tk() to create a new window
-        # employee_window.geometry("800x600")  # Set the window size
-        # employee_window.title("Employee Window")
         if hasattr(self, "root") and self.root.winfo_exists():
            self.root.destroy()  # Close the main login window
 
         employee_window,self.employee_logo_canvas=self.create_common_window("Employee Window",username,role)
-
-    #    # create a canvas that resizes with the window
-    #     self.employee_logo_canvas = tk.Canvas(employee_window, bg="white", highlightthickness=0)
-    #     self.employee_logo_canvas.pack(fill=tk.BOTH, expand=True)
-
-    #     # bind window resize event to function
-    #     employee_window.bind("<Configure>", lambda event: self.on_window_resize_employee(event,username))
-
-    #     # import the image as the background on the canvas
-    #     self.load_image_employee(username)
 
         #buttons of Employee window to the right side of the screen
         self.apply_for_vacation_days_button = tk.Button(
