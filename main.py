@@ -1379,7 +1379,7 @@ class CreativeLoginApp:
         )
 
         self.check_progress_on_tasks_button = tk.Button(
-            self.employee_logo_canvas, text="Check and update Progress on Tasks", command=lambda:self.check_progress_on_tasks(), font=("Helvetica", 14)
+            self.employee_logo_canvas, text="Check and update Progress on Tasks", command=lambda:self.check_progress_on_tasks(username), font=("Helvetica", 14)
         )
         self.check_progress_on_tasks_button.pack(
             pady=20
@@ -1642,10 +1642,72 @@ class CreativeLoginApp:
 
                 apply_for_resignation_window.destroy()
 
-        
-    def check_progress_on_tasks(self):
-        messagebox.showinfo("Employee Window", "Check Progress on Tasks Button Pressed")
+    def check_progress_on_tasks(self, username):
+        check_progress_on_tasks_window, self.check_progress_on_tasks_canvas = self.create_common_window_button(
+            "Check and Update Progress on Tasks"
+        )
 
+        labels_info = [
+            ("Project ID", db.reference("/employee").child(username).child("project").child("id").get()),
+            ("Project Name", db.reference("/employee").child(username).child("project").child("name").get()),
+            ("Project Description", db.reference("/employee").child(username).child("project").child("description").get()),
+            ("Project Progress", str(db.reference("/employee").child(username).child("project").child("progress").get()) + "%"),
+            ("Project Deadline", db.reference("/employee").child(username).child("project").child("deadline").get()),
+            ("Task Description", db.reference("/employee").child(username).child("project").child("task").child("description").get()),
+            ("Task Status", db.reference("/employee").child(username).child("project").child("task").child("status").get()),
+        ]
+
+        for i, (label_text, value) in enumerate(labels_info):
+            label = tk.Label(
+                self.check_progress_on_tasks_canvas,
+                text=f"{label_text}: {value}",
+                font=("Helvetica", 12, "bold"),
+                bg="white",
+            )
+            label.pack(pady=20)
+            label.place(relx=0.5, rely=(i + 1) * 0.1, anchor="center")
+
+        # Members label
+        members_list = db.reference("/employee").child(username).child("project").child("members").get()
+        members = "\n".join([f"{key}: {value}" for key, value in members_list.items()])
+
+        members_label = tk.Label(
+            self.check_progress_on_tasks_canvas,
+            text="Members:\n" + members,
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        members_label.pack(pady=20)
+        #place the members label top left
+        members_label.place(relx=0.1, rely=0.1, anchor="nw")
+
+        # Button to set task status to completed
+        completed_button = tk.Button(
+            self.check_progress_on_tasks_canvas,
+            text="Completed",
+            command=lambda: self.set_task_status_to_completed(username),
+            font=("Helvetica", 14),
+        )
+        completed_button.pack(pady=20)
+        completed_button.place(relx=0.5, rely=0.9, anchor="center", width=100, height=30)
+
+        # Bind the escape key to the exit function
+        check_progress_on_tasks_window.bind("<Escape>", lambda event: check_progress_on_tasks_window.destroy())
+
+        # Focus on window
+        check_progress_on_tasks_window.focus_force()
+
+        # Center the window
+        self.center_window_all(check_progress_on_tasks_window)
+
+        # Run the main loop for the check_progress_on_tasks_window
+        check_progress_on_tasks_window.mainloop()
+ 
+    def set_task_status_to_completed(self,username):
+        db.reference("/employee").child(username).child("project").child("task").child("status").set("Completed")
+        db.reference("/employee").child(username).child("project").child("progress").set(db.reference("/employee").child(username).child("project").child("progress").get()+10)
+        messagebox.showinfo("Employee Window", "Task Status set to Completed")
+        
     def submit_survey(self):
         messagebox.showinfo("Employee Window", "Submit Survey Button Pressed")
 
