@@ -1596,7 +1596,7 @@ class CreativeLoginApp:
         #show the username of the employee using label on the canvas
         username_label = tk.Label(
             self.employee_details_logo_canvas,
-            text="Username",
+            text=f"Username",
             font=("Helvetica", 12, "bold"),
             bg="white",
         )
@@ -1636,10 +1636,12 @@ class CreativeLoginApp:
        #show the reason for vacation days of the employee using label on the canvas
         reason_for_vacation_days_label = tk.Label(
 
+            #show data pulled from db
             self.employee_details_logo_canvas,
-            text="Reason for Vacation Days",
+            text=("Reason for Vacation Days"),
             font=("Helvetica", 12, "bold"),
             bg="white",
+
         )
         reason_for_vacation_days_label.pack(
             pady=20
@@ -1658,7 +1660,7 @@ class CreativeLoginApp:
         approve_button = tk.Button(
             self.employee_details_logo_canvas,
             text="Approve",
-            command=lambda:self.approve_vacation_days(employee_data),
+            command=lambda:self.approve_sick_days(employee_data),
             font=("Helvetica", 14),
         )
         approve_button.pack(
@@ -1668,13 +1670,13 @@ class CreativeLoginApp:
         # store the values in 2 variables when the button is pressed
         approve_button.bind(
             "<Button-1>",
-            lambda event: self.approve_vacation_days(employee_data),
+            lambda event: self.approve_sick_days(employee_data),
         )
         # create a new button for denying the vacation days on canvas
         deny_button = tk.Button(
             self.employee_details_logo_canvas,
             text="Deny",
-            command=lambda:self.deny_vacation_days(employee_data),
+            command=lambda:self.deny_sick_days(employee_data),
             font=("Helvetica", 14),
         )
         deny_button.pack(
@@ -1684,7 +1686,7 @@ class CreativeLoginApp:
         # store the values in 2 variables when the button is pressed
         deny_button.bind(
             "<Button-1>",
-            lambda event: self.deny_vacation_days(employee_data),
+            lambda event: self.deny_sick_days(employee_data),
         )
         # Bind the Escape key to the exit function
         employee_details_window.bind(
