@@ -1647,6 +1647,7 @@ class CreativeLoginApp:
             "Check and Update Progress on Tasks"
         )
 
+        # Information labels
         labels_info = [
             ("Project ID", db.reference("/employee").child(username).child("project").child("id").get()),
             ("Project Name", db.reference("/employee").child(username).child("project").child("name").get()),
