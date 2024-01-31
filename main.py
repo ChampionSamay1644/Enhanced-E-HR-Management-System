@@ -115,7 +115,6 @@ class CreativeLoginApp:
             self.original_common_image = Image.open(img_path)
         except Exception as e:
             print(f"Error loading image: {e}")
-
         
     def resize_canvas_and_image_common(self,username,role):
         window_width = self.common_canvas.winfo_width()
@@ -1328,12 +1327,6 @@ class CreativeLoginApp:
         else:
             self.display_no_employee_message(canvas, f"No Employee with {message}")
 
-
-
-
-
-
-
     def display_no_employee_message(self, canvas, message):
         no_employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
         no_employee_label.pack(pady=20)
@@ -1343,13 +1336,7 @@ class CreativeLoginApp:
         emp_ref = db.reference("/employee")
         data = emp_ref.child(username).child(data_type).get()
         return data if data is not None else 0
-
-
-
-
-       
-        
-
+    
     def progress_on_task(self):
         messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
 
