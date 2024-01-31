@@ -1426,19 +1426,6 @@ class CreativeLoginApp:
             self.display_no_employee_message(canvas, "No employees to approve")
 
 
-    # def display_employee_list_on_canvas(self, canvas, employee_data, rely):
-    #     if len(employee_data) > 0:
-    #         employee_list = Listbox(canvas, font=("Helvetica", 12, "bold"), bg="white", fg="black", width=30, height=5)
-    #         employee_list.pack(pady=20)
-    #         employee_list.place(relx=0.5, rely=rely+0.09, anchor="center")
-    #         for employee in employee_data:
-    #             employee_list.insert(END, employee)
-    #              # Bind click event to show additional information
-    #             employee_list.bind("<ButtonRelease-1>", lambda event, emp_info=employee_data:
-    #                            self.show_employee_details(emp_info))
-    #     else:
-    #         self.display_no_employee_message(canvas, "No employees to approve")
-
     def display_no_employee_message(self, canvas, message):
         no_employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
         no_employee_label.pack(pady=20)
@@ -1453,7 +1440,7 @@ class CreativeLoginApp:
      # create a new window to show employee details along with 2 radio buttons to approve or deny the request
         employee_details_window = tk.Toplevel()
         employee_details_window.geometry("800x600")  # Set the window size
-        employee_details_window.title("Employee Details")
+        employee_details_window.title("Vacation Approve/Deny")
 
         #create a canvas that resizes with the window
         self.employee_details_logo_canvas = tk.Canvas(employee_details_window, bg="white", highlightthickness=0)
@@ -1613,7 +1600,7 @@ class CreativeLoginApp:
         # update the reason for vacation days in the database for the employee
         emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
         # update the vacation days in the database for the employee
-        emp_ref.child(employee_data).update({"vacation_days": provisional_vacation_days})
+        emp_ref.child(employee_data).update({"vacation_approved": provisional_vacation_days})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been approved
@@ -1634,6 +1621,35 @@ class CreativeLoginApp:
         # show a message that the vacation days have been denied
         messagebox.showinfo("Deny Vacation Days", "Vacation Days Denied")
 
+    def approve_sick_days(self, employee_data):
+        # get the username, provisional vacation days and reason for vacation days from the employee details window
+        username = self.username_entry.get()
+        provisional_vacation_days = self.provisional_vacation_days_entry.get()
+        reason_for_vacation_days = self.reason_for_vacation_days_entry.get()
+        # update the provisional vacation days in the database for the employee
+        emp_ref = db.reference("/employee")
+        emp_ref.child(employee_data).update({"vacation_days": 0})
+        # update the reason for vacation days in the database for the employee
+        emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
+        # close the employee details window
+        self.employee_details_logo_canvas.destroy()
+        # show a message that the vacation days have been approved
+        messagebox.showinfo("Approve Vacation Days", "Vacation Days Approved")
+
+    def deny_sick_days(self, employee_data):
+        # get the username, provisional vacation days and reason for vacation days from the employee details window
+        username = self.username_entry.get()
+        provisional_vacation_days = self.provisional_vacation_days_entry.get()
+        reason_for_vacation_days = self.reason_for_vacation_days_entry.get()
+        # update the provisional vacation days in the database for the employee
+        emp_ref = db.reference("/employee")
+        emp_ref.child(employee_data).update({"vacation_days": 0})
+        # update the reason for vacation days in the database for the employee
+        emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
+        # close the employee details window
+        self.employee_details_logo_canvas.destroy()
+        # show a message that the vacation days have been denied
+        messagebox.showinfo("Deny Vacation Days", "Vacation Days Denied")
 
 
         
