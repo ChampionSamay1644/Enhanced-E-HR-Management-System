@@ -1399,13 +1399,13 @@ class CreativeLoginApp:
 
     def get_employee_data_with_provisional_vacation_above_zero(self, username):
         emp_ref = db.reference("/employee")
-        employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "vacation_days") > 0]
-        return employee_data
+        employee_data_1 = [user for user in emp_ref.get() if self.get_employee_data(user, "vacation_days") > 0]
+        return employee_data_1
 
     def get_employee_data_with_sick_days_above_zero(self, username):
         emp_ref = db.reference("/employee")
-        employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "sick_days") > 0]
-        return employee_data
+        employee_data_2 = [user for user in emp_ref.get() if self.get_employee_data(user, "sick_days") > 0]
+        return employee_data_2
 
 
 
@@ -1439,14 +1439,7 @@ class CreativeLoginApp:
         else:
             self.display_no_employee_message(canvas, "No employees to approve")
 
-   
-
-
-   
-
-
-
-    
+      
     def display_no_employee_message(self, canvas, message):
         no_employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
         no_employee_label.pack(pady=20)
@@ -1457,7 +1450,7 @@ class CreativeLoginApp:
         data = emp_ref.child(username).child(data_type).get()
         return data if data is not None else 0
     
-    def show_employee_details_vacation(self, employee_data):
+    def show_employee_details_vacation(self, employee_data_1):
      # create a new window to show employee details along with 2 radio buttons to approve or deny the request
         employee_details_window = tk.Toplevel()
         employee_details_window.geometry("800x600")  # Set the window size
@@ -1491,7 +1484,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
-        self.username_entry.insert(0, employee_data)
+        self.username_entry.insert(0, employee_data_1)
         # show the reason of vacation days of the employee using label on the canvas
         provisional_vacation_days_label = tk.Label(
             self.employee_details_logo_canvas,
@@ -1511,7 +1504,7 @@ class CreativeLoginApp:
         )
         self.provisional_vacation_days_entry.place(relx=0.5, rely=0.55, anchor="center")
 
-        provisional_vacation_days = self.get_employee_data(employee_data, "vacation_days")
+        provisional_vacation_days = self.get_employee_data(employee_data_1, "vacation_days")
         self.provisional_vacation_days_entry.insert(0, provisional_vacation_days)
        #show the reason for vacation days of the employee using label on the canvas
         reason_for_vacation_days_label = tk.Label(
@@ -1538,7 +1531,7 @@ class CreativeLoginApp:
         approve_button = tk.Button(
             self.employee_details_logo_canvas,
             text="Approve",
-            command=lambda:self.approve_vacation_days(employee_data),
+            command=lambda:self.approve_vacation_days(employee_data_1),
             font=("Helvetica", 14),
         )
         approve_button.pack(
@@ -1548,13 +1541,13 @@ class CreativeLoginApp:
         # store the values in 2 variables when the button is pressed
         approve_button.bind(
             "<Button-1>",
-            lambda event: self.approve_vacation_days(employee_data),
+            lambda event: self.approve_vacation_days(employee_data_1),
         )
         # create a new button for denying the vacation days on canvas
         deny_button = tk.Button(
             self.employee_details_logo_canvas,
             text="Deny",
-            command=lambda:self.deny_vacation_days(employee_data),
+            command=lambda:self.deny_vacation_days(employee_data_1),
             font=("Helvetica", 14),
         )
         deny_button.pack(
@@ -1564,7 +1557,7 @@ class CreativeLoginApp:
         # store the values in 2 variables when the button is pressed
         deny_button.bind(
             "<Button-1>",
-            lambda event: self.deny_vacation_days(employee_data),
+            lambda event: self.deny_vacation_days(employee_data_1),
         )
         # Bind the Escape key to the exit function
         employee_details_window.bind(
@@ -1577,7 +1570,7 @@ class CreativeLoginApp:
         # Run the main loop for the create_remove_hr_window
         employee_details_window.mainloop()
 
-    def show_employee_details_sick(self, employee_data):
+    def show_employee_details_sick(self, employee_data_2):
      # create a new window to show employee details along with 2 radio buttons to approve or deny the request
         employee_details_window = tk.Toplevel()
         employee_details_window.geometry("800x600")  # Set the window size
@@ -1611,7 +1604,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
-        self.username_entry.insert(0, employee_data)
+        self.username_entry.insert(0, employee_data_2)
         # show the reason of vacation days of the employee using label on the canvas
         provisional_vacation_days_label = tk.Label(
             self.employee_details_logo_canvas,
@@ -1631,7 +1624,7 @@ class CreativeLoginApp:
         )
         self.provisional_vacation_days_entry.place(relx=0.5, rely=0.55, anchor="center")
 
-        provisional_vacation_days = self.get_employee_data(employee_data, "vacation_days")
+        provisional_vacation_days = self.get_employee_data(employee_data_2, "sick_days")
         self.provisional_vacation_days_entry.insert(0, provisional_vacation_days)
        #show the reason for vacation days of the employee using label on the canvas
         reason_for_vacation_days_label = tk.Label(
@@ -1660,7 +1653,7 @@ class CreativeLoginApp:
         approve_button = tk.Button(
             self.employee_details_logo_canvas,
             text="Approve",
-            command=lambda:self.approve_sick_days(employee_data),
+            command=lambda:self.approve_sick_days(employee_data_2),
             font=("Helvetica", 14),
         )
         approve_button.pack(
@@ -1670,13 +1663,13 @@ class CreativeLoginApp:
         # store the values in 2 variables when the button is pressed
         approve_button.bind(
             "<Button-1>",
-            lambda event: self.approve_sick_days(employee_data),
+            lambda event: self.approve_sick_days(employee_data_2),
         )
         # create a new button for denying the vacation days on canvas
         deny_button = tk.Button(
             self.employee_details_logo_canvas,
             text="Deny",
-            command=lambda:self.deny_sick_days(employee_data),
+            command=lambda:self.deny_sick_days(employee_data_2),
             font=("Helvetica", 14),
         )
         deny_button.pack(
@@ -1686,7 +1679,7 @@ class CreativeLoginApp:
         # store the values in 2 variables when the button is pressed
         deny_button.bind(
             "<Button-1>",
-            lambda event: self.deny_sick_days(employee_data),
+            lambda event: self.deny_sick_days(employee_data_2),
         )
         # Bind the Escape key to the exit function
         employee_details_window.bind(
