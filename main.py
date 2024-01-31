@@ -1615,7 +1615,7 @@ class CreativeLoginApp:
         # show the reason of vacation days of the employee using label on the canvas
         provisional_vacation_days_label = tk.Label(
             self.employee_details_logo_canvas,
-            text="Provisional Vacation Days",
+            text="Sick Days",
             font=("Helvetica", 12, "bold"),
             bg="white",
         )
@@ -1638,7 +1638,7 @@ class CreativeLoginApp:
 
             #show data pulled from db
             self.employee_details_logo_canvas,
-            text=("Reason for Vacation Days"),
+            text=("Reason for Sick Days"),
             font=("Helvetica", 12, "bold"),
             bg="white",
 
