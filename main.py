@@ -1,4 +1,6 @@
+import datetime
 import tkinter as tk
+from tkcalendar import Calendar, DateEntry
 from tkinter import messagebox
 from tkinter import simpledialog, ttk
 from PIL import Image, ImageTk
@@ -1367,7 +1369,7 @@ class CreativeLoginApp:
         )
 
         self.apply_for_resignation_button = tk.Button(
-            self.employee_logo_canvas, text="Apply for Resignation", command=lambda:self.apply_for_resignation(), font=("Helvetica", 14)
+            self.employee_logo_canvas, text="Apply for Resignation", command=lambda:self.apply_for_resignation(username), font=("Helvetica", 14)
         )
         self.apply_for_resignation_button.pack(
             pady=20
@@ -1515,7 +1517,7 @@ class CreativeLoginApp:
         # Handle window resize event
         self.resize_canvas_and_image_employee(username)
 
-    def apply_for_vacation_days(self, username,role):
+    def apply_for_vacation_days(self, username):
         # Create the common window and canvas
         apply_for_vacation_days_window, self.apply_for_vacation_days_canvas = self.create_common_window_button("Apply for Vacation Days")
 
@@ -1568,9 +1570,79 @@ class CreativeLoginApp:
             
         apply_for_vacation_days_window.destroy()        
         
-    def apply_for_resignation(self):
-        messagebox.showinfo("Employee Window", "Apply for Resignation Button Pressed")
+    def apply_for_resignation(self,username):
+        
+        apply_for_resignation_window, self.apply_for_resignation_canvas = self.create_common_window_button("Apply for Resignation")
+        
+        # Create entry widget for reason of resignation (bigger size)
+        self.reason_entry = tk.Entry(self.apply_for_resignation_canvas, width=50, font=("Helvetica", 14))
+        self.reason_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        self.reason_entry.insert(0, "Reason for resignation")  # Default value
+        self.reason_entry.bind("<FocusIn>", lambda event: self.reason_entry_del())  # Delete the default value when the user clicks on the entry widget
 
+        # Create a DateEntry widget for the resignation date (bigger size)
+        self.date_entry = DateEntry(
+        self.apply_for_resignation_canvas,
+        width=15,
+        background="darkblue",
+        foreground="white",
+        borderwidth=2,
+        year=2024,
+        font=("Helvetica", 14),
+        date_pattern='dd/mm/yyyy'  # Set the date format here
+        )
+        self.date_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        self.date_entry.bind("<FocusIn>", lambda event: self.date_entry_del())  # Delete the default value when the user clicks on the entry widget
+
+        # Create a button to submit the resignation request
+        submit_button = tk.Button(self.apply_for_resignation_canvas, text="Submit", command=lambda: self.submit_resignation_request(apply_for_resignation_window, username))
+        submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+
+        
+        # Bind the Escape key to the exit function
+        apply_for_resignation_window.bind("<Escape>", lambda event: apply_for_resignation_window.destroy())
+        
+        # focus on window
+        apply_for_resignation_window.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(apply_for_resignation_window)
+        
+        # Run the main loop for the apply_for_resignation_window
+        apply_for_resignation_window.mainloop()
+        
+    def submit_resignation_request(self, apply_for_resignation_window, username):
+        # Retrieve the entered values
+        reason = self.reason_entry.get()
+        date = self.date_entry.get()
+
+        # Check if the date is at least 2 weeks from now
+        if not reason:
+            messagebox.showinfo("Employee Window", "Please enter a reason.")
+        elif date == "Date of resignation":
+            messagebox.showinfo("Employee Window", "Please enter a date.")
+        elif db.reference("/employee").child(username).child("apply_for_resignation").get() != None:
+            messagebox.showinfo("Employee Window", "You have already applied for resignation.")
+        else:
+            # Convert date string to datetime object
+            date_format = "%d/%m/%Y"
+            date_obj = datetime.datetime.strptime(date, date_format)
+
+            # Convert datetime object back to string in the desired format
+            date_str_formatted = date_obj.strftime("%d/%m/%Y")
+
+            # Check if the date is at least 2 weeks from now
+            if date_obj < datetime.datetime.now() + datetime.timedelta(weeks=2):
+                messagebox.showinfo("Employee Window", "Please enter a date at least 2 weeks from now.")
+            else:
+                # Add the resignation request to the database
+                db.reference("/employee").child(username).child("apply_for_resignation").set(date_str_formatted)
+                db.reference("/employee").child(username).child("resignation_reason").set(reason)
+                messagebox.showinfo("Employee Window", "Resignation request submitted successfully.")
+
+                apply_for_resignation_window.destroy()
+
+        
     def check_progress_on_tasks(self):
         messagebox.showinfo("Employee Window", "Check Progress on Tasks Button Pressed")
 
@@ -1739,7 +1811,13 @@ class CreativeLoginApp:
     def reason_entry_del(self):
         if self.reason_entry.get() == "Vacation reason":
             self.reason_entry.delete(0, tk.END)
-            
+        if self.reason_entry.get() == "Reason for resignation":
+            self.reason_entry.delete(0, tk.END)
+    
+    def date_entry_del(self):
+        if self.date_entry.get() == "mm/dd/yyyy":
+            self.date_entry.delete(0, tk.END)
+        
 def main():
     root = tk.Tk()
     root.geometry("900x600")  # Set the window size
