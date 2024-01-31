@@ -1,7 +1,7 @@
 import datetime
 import tkinter as tk
 from tkcalendar import Calendar, DateEntry
-from tkinter import messagebox
+from tkinter import END, Listbox, messagebox
 from tkinter import simpledialog, ttk
 from PIL import Image, ImageTk
 import os
@@ -1306,87 +1306,27 @@ class CreativeLoginApp:
        # import the image as the background on the canvas
         self.load_image_approve_leaves(username)
 
+
+        # #display the employee list of sick days and provisional vacation days which was pulled from the db on the approve leaves canvas
+        employee_data_with_provisional_vacation_above_zero = self.get_employee_data_with_provisional_vacation_above_zero(username)
+        self.display_employee_list_on_canvas(self.approve_leaves_logo_canvas, employee_data_with_provisional_vacation_above_zero, 0.2)
+        employee_data_with_sick_days_above_zero = self.get_employee_data_with_sick_days_above_zero(username)
+        self.display_employee_list_on_canvas(self.approve_leaves_logo_canvas, employee_data_with_sick_days_above_zero, 0.7)
+
+
+        # Bind the Escape key to the exit function
+        approve_window.bind(
+            "<Escape>", lambda event: approve_window.destroy()
+        )
+        # focus on window
+        approve_window.focus_force()
+        # Center the window with function center_window_test
+        self.center_window_all(approve_window)
+        # Run the main loop for the create_remove_hr_window
+        approve_window.mainloop()
         
 
-       # approve_window, approve_canvas = self.create_common_window_button("Approve Vacation and Sick Days")
-
-        # vacation_data = self.get_employee_data_with_provisional_vacation_above_zero(username)
-        # sick_data = self.get_employee_data_with_sick_days_above_zero(username)
-
-        # self.display_employee_list_on_canvas(approve_canvas, vacation_data, "Employees with Vacation Days",0.1)
-        # self.display_employee_list_on_canvas(approve_canvas, sick_data, "Employees with Sick Days",0.4)
-
-        
-
-
-        # approve_window, approve_canvas = self.create_common_window_button("Approve Vacation and Sick Days")
-
-        # vacation_data = self.get_employee_data_with_provisional_vacation_above_zero(username)
-        # sick_data = self.get_employee_data_with_sick_days_above_zero(username)
-
-        # self.display_employee_list_on_canvas(approve_canvas, vacation_data, "Employees with Vacation Days",0.1)
-        # self.display_employee_list_on_canvas(approve_canvas, sick_data, "Employees with Sick Days",0.4)
-
-        # #give a textbox in canvas to enter the username
-        # username_label = tk.Label(
-        #     approve_canvas,
-        #     text="Username",
-        #     font=("Helvetica", 12, "bold"),
-        #     bg="white",
-        # )   
-        # username_label.pack(
-        #     pady=20
-        # )
-        # username_label.place(relx=0.5, rely=0.8, anchor="center")
-        # self.username_entry = tk.Entry(
-        #     approve_canvas, font=("Helvetica", 12, "bold")
-        # )
-        # self.username_entry.pack(
-
-        #     pady=20
-        # )
-        # self.username_entry.place(relx=0.5, rely=0.85, anchor="center")
-        # self.username_entry.insert(0, "")
-
-        
-
-
-        # approve_window.bind("<Escape>", lambda event: approve_window.destroy())
-        # approve_window.focus_force()
-        # self.center_window_all(approve_window)
-        # approve_window.mainloop()
-
-    # def load_image_approve_leaves(self):
-    #     # Construct the full path to the image file based on role and username
-    #     img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-
-    #     # Load image and adjust canvas size
-    #     self.original_approve_leaves_logo_image = Image.open(img_path)
-    #     self.resize_canvas_and_image_approve_leaves()
-
-    # def resize_canvas_and_image_approve_leaves(self):
-    #     # Get the approve_leaves window size
-    #     window_width = self.approve_leaves_logo_canvas.winfo_width()
-    #     window_height = self.approve_leaves_logo_canvas.winfo_height()
-
-    #     # Resize the canvas to the current window size
-    #     self.approve_leaves_logo_canvas.config(width=window_width, height=window_height)
-
-    #     # Resize the image if needed
-    #     resized_image = self.original_approve_leaves_logo_image.resize(
-    #         (window_width, window_height)
-    #     )
-    #     self.approve_leaves_logo_image = ImageTk.PhotoImage(resized_image)
-
-    #     # Update the image on the canvas
-    #     self.approve_leaves_logo_canvas.delete("all")
-    #     self.approve_leaves_logo_canvas.create_image(
-    #         0, 0, image=self.approve_leaves_logo_image, anchor="nw"
-    #     )
-
-    # def on_window_resize_approve_leaves(self, event):
-    #     # Handle window resize event
-    #     self.resize_canvas_and_image_approve_leaves()
+     
         
     def load_image_approve_leaves(self,username):
         # Construct the full path to the image file based on role and username
@@ -1416,19 +1356,31 @@ class CreativeLoginApp:
             0, 0, image=self.approve_leaves_logo_image, anchor="nw"
         )
 
-        #  #redraw the boss name text    
-        # if hasattr(self, "boss_name_text"):
-        #     self.approve_leaves_logo_canvas.delete(
-        #         self.boss_name_text
-        #     )  # Remove the old text
+        #redraw the text vacation days and sick days
+        if hasattr(self, "vacation_days_text"):
+            self.approve_leaves_logo_canvas.delete(
+                self.vacation_days_text
+            )
+        self.vacation_days_text = self.approve_leaves_logo_canvas.create_text(
+            window_width / 2,
+            100,
+            text=f"Vacation Days",
+            font=("Helvetica", 18, "bold"),
+            fill="white",
+        )
+        if hasattr(self, "sick_days_text"):
+            self.approve_leaves_logo_canvas.delete(
+                self.sick_days_text
+            )
+        self.sick_days_text = self.approve_leaves_logo_canvas.create_text(
+            window_width / 2,
+            400,
+            text=f"Sick Days",
+            font=("Helvetica", 18, "bold"),
+            fill="white",
+        )
 
-        # self.boss_name_text = self.approve_leaves_logo_canvas.create_text(
-        #     window_width / 2,
-        #     100,
-        #     text=f"Welcome {username}!",
-        #     font=("Helvetica", 28, "bold"),
-        #     fill="white",
-        # )
+
 
     def on_window_resize_approve_leaves(self, event,username):
         # Handle window resize event
@@ -1437,38 +1389,35 @@ class CreativeLoginApp:
 
 
 
-    # def get_employee_data_with_provisional_vacation_above_zero(self, username):
-    #     emp_ref = db.reference("/employee")
-    #     employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "vacation_days") > 0]
-    #     return employee_data
+    def get_employee_data_with_provisional_vacation_above_zero(self, username):
+        emp_ref = db.reference("/employee")
+        employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "vacation_days") > 0]
+        return employee_data
 
-    # def get_employee_data_with_sick_days_above_zero(self, username):
-    #     emp_ref = db.reference("/employee")
-    #     employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "sick_days") > 0]
-    #     return employee_data
+    def get_employee_data_with_sick_days_above_zero(self, username):
+        emp_ref = db.reference("/employee")
+        employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "sick_days") > 0]
+        return employee_data
 
-    # def display_employee_list_on_canvas(self, canvas, employee_data, message, rely):
-    #     if len(employee_data) > 0:
-    #         employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
-    #         employee_label.pack(pady=20)
-    #         employee_label.place(relx=0.5, rely=rely, anchor="center")
+    def display_employee_list_on_canvas(self, canvas, employee_data, rely):
+        if len(employee_data) > 0:
+            employee_list = Listbox(canvas, font=("Helvetica", 12, "bold"), bg="white", fg="black", width=30, height=5)
+            employee_list.pack(pady=20)
+            employee_list.place(relx=0.5, rely=rely+0.09, anchor="center")
+            for employee in employee_data:
+                employee_list.insert(END, employee)
+        else:
+            self.display_no_employee_message(canvas, "No employees to approve")
 
-    #         for i, employee in enumerate(employee_data):
-    #             employee_name = Label(canvas, text=employee, font=("Helvetica", 12, "bold"), bg="white")
-    #             employee_name.pack(pady=20)
-    #             employee_name.place(relx=0.5, rely=rely + 0.1 + i * 0.05, anchor="center")
-    #     else:
-    #         self.display_no_employee_message(canvas, f"No Employee with {message}")
+    def display_no_employee_message(self, canvas, message):
+        no_employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
+        no_employee_label.pack(pady=20)
+        no_employee_label.place(relx=0.5, rely=0.5, anchor="center")
 
-    # def display_no_employee_message(self, canvas, message):
-    #     no_employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
-    #     no_employee_label.pack(pady=20)
-    #     no_employee_label.place(relx=0.5, rely=0.5, anchor="center")
-
-    # def get_employee_data(self, username, data_type):
-    #     emp_ref = db.reference("/employee")
-    #     data = emp_ref.child(username).child(data_type).get()
-    #     return data if data is not None else 0
+    def get_employee_data(self, username, data_type):
+        emp_ref = db.reference("/employee")
+        data = emp_ref.child(username).child(data_type).get()
+        return data if data is not None else 0
     
     def progress_on_task(self):
         messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
