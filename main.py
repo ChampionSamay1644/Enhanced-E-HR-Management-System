@@ -1141,12 +1141,6 @@ class CreativeLoginApp:
         boss_window.geometry("800x600")  # Set the window size
         boss_window.title("Boss Window")
 
-        # if hasattr(self, "root") and self.root.winfo_exists():
-        #    self.root.destroy()  # Close the main login window
-
-        # boss_window,self.boss_logo_canvas=self.create_common_window("Boss Window",username,role)
-
-
         #create a canvas that resizes with the window
         self.boss_logo_canvas = tk.Canvas(boss_window, bg="white", highlightthickness=0)
         self.boss_logo_canvas.pack(fill=tk.BOTH, expand=True)
@@ -1399,15 +1393,51 @@ class CreativeLoginApp:
         employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "sick_days") > 0]
         return employee_data
 
+
+
     def display_employee_list_on_canvas(self, canvas, employee_data, rely):
         if len(employee_data) > 0:
             employee_list = Listbox(canvas, font=("Helvetica", 12, "bold"), bg="white", fg="black", width=30, height=5)
             employee_list.pack(pady=20)
-            employee_list.place(relx=0.5, rely=rely+0.09, anchor="center")
-            for employee in employee_data:
-                employee_list.insert(END, employee)
+            employee_list.place(relx=0.5, rely=rely + 0.09, anchor="center")
+
+            def on_employee_click(event):
+                # Clear previous selection
+                employee_list.selection_clear(0, tk.END)
+
+                # Get the selected item
+                selected_index = employee_list.nearest(event.y)
+                employee_info = employee_data[selected_index]
+
+                # Set the selection to the clicked item
+                employee_list.selection_set(selected_index)
+
+                # Bind click event to show additional information
+                self.show_employee_details(employee_info)
+
+            # Bind the click event to the custom function
+            employee_list.bind("<ButtonRelease-1>", on_employee_click)
+
+            # Insert employee names into the listbox
+            for employee_info in employee_data:
+                employee_list.insert(tk.END, employee_info)
+
         else:
             self.display_no_employee_message(canvas, "No employees to approve")
+
+
+    # def display_employee_list_on_canvas(self, canvas, employee_data, rely):
+    #     if len(employee_data) > 0:
+    #         employee_list = Listbox(canvas, font=("Helvetica", 12, "bold"), bg="white", fg="black", width=30, height=5)
+    #         employee_list.pack(pady=20)
+    #         employee_list.place(relx=0.5, rely=rely+0.09, anchor="center")
+    #         for employee in employee_data:
+    #             employee_list.insert(END, employee)
+    #              # Bind click event to show additional information
+    #             employee_list.bind("<ButtonRelease-1>", lambda event, emp_info=employee_data:
+    #                            self.show_employee_details(emp_info))
+    #     else:
+    #         self.display_no_employee_message(canvas, "No employees to approve")
 
     def display_no_employee_message(self, canvas, message):
         no_employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
@@ -1418,6 +1448,197 @@ class CreativeLoginApp:
         emp_ref = db.reference("/employee")
         data = emp_ref.child(username).child(data_type).get()
         return data if data is not None else 0
+    
+    def show_employee_details(self, employee_data):
+     # create a new window to show employee details along with 2 radio buttons to approve or deny the request
+        employee_details_window = tk.Toplevel()
+        employee_details_window.geometry("800x600")  # Set the window size
+        employee_details_window.title("Employee Details")
+
+        #create a canvas that resizes with the window
+        self.employee_details_logo_canvas = tk.Canvas(employee_details_window, bg="white", highlightthickness=0)
+        self.employee_details_logo_canvas.pack(fill=tk.BOTH, expand=True)
+
+        # bind window resize event to function
+        employee_details_window.bind("<Configure>", lambda event: self.on_window_resize_employee_details(event))
+
+        # import the image as the background on the canvas
+        self.load_image_employee_details()
+
+        #show the username of the employee using label on the canvas
+        username_label = tk.Label(
+            self.employee_details_logo_canvas,
+            text="Username",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        username_label.pack(
+            pady=20
+        )
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
+        self.username_entry = tk.Entry(
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.username_entry.pack(
+            pady=20
+        )
+        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.username_entry.insert(0, employee_data)
+        # show the provisional vacation days of the employee using label on the canvas
+        provisional_vacation_days_label = tk.Label(
+            self.employee_details_logo_canvas,
+            text="Provisional Vacation Days",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        provisional_vacation_days_label.pack(
+            pady=20
+        )
+        provisional_vacation_days_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.provisional_vacation_days_entry = tk.Entry(
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.provisional_vacation_days_entry.pack(
+            pady=20
+        )
+        self.provisional_vacation_days_entry.place(relx=0.5, rely=0.55, anchor="center")
+
+        provisional_vacation_days = self.get_employee_data(employee_data, "vacation_days")
+        self.provisional_vacation_days_entry.insert(0, provisional_vacation_days)
+       #show the reason for vacation days of the employee using label on the canvas
+        reason_for_vacation_days_label = tk.Label(
+
+            self.employee_details_logo_canvas,
+            text="Reason for Vacation Days",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        reason_for_vacation_days_label.pack(
+            pady=20
+        )
+        reason_for_vacation_days_label.place(relx=0.5, rely=0.65, anchor="center")
+        self.reason_for_vacation_days_entry = tk.Entry(
+                
+                self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+            )
+        self.reason_for_vacation_days_entry.pack(
+            pady=20
+        )
+        self.reason_for_vacation_days_entry.place(relx=0.5, rely=0.7, anchor="center")
+        self.reason_for_vacation_days_entry.insert(0, "")
+        # create a new button for approving the vacation days on canvas
+        approve_button = tk.Button(
+            self.employee_details_logo_canvas,
+            text="Approve",
+            command=lambda:self.approve_vacation_days(employee_data),
+            font=("Helvetica", 14),
+        )
+        approve_button.pack(
+            pady=20
+        )
+        approve_button.place(relx=0.5, rely=0.8, anchor="center", width=100, height=30)
+        # store the values in 2 variables when the button is pressed
+        approve_button.bind(
+            "<Button-1>",
+            lambda event: self.approve_vacation_days(employee_data),
+        )
+        # create a new button for denying the vacation days on canvas
+        deny_button = tk.Button(
+            self.employee_details_logo_canvas,
+            text="Deny",
+            command=lambda:self.deny_vacation_days(employee_data),
+            font=("Helvetica", 14),
+        )
+        deny_button.pack(
+            pady=20
+        )
+        deny_button.place(relx=0.5, rely=0.9, anchor="center", width=100, height=30)
+        # store the values in 2 variables when the button is pressed
+        deny_button.bind(
+            "<Button-1>",
+            lambda event: self.deny_vacation_days(employee_data),
+        )
+        # Bind the Escape key to the exit function
+        employee_details_window.bind(
+            "<Escape>", lambda event: employee_details_window.destroy()
+        )
+        # focus on window
+        employee_details_window.focus_force()
+        # Center the window with function center_window_test
+        self.center_window_all(employee_details_window)
+        # Run the main loop for the create_remove_hr_window
+        employee_details_window.mainloop()
+
+    def load_image_employee_details(self):
+
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_employee_details_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_employee_details()
+
+    def resize_canvas_and_image_employee_details(self):
+        # Get the employee_details window size
+        window_width = self.employee_details_logo_canvas.winfo_width()
+        window_height = self.employee_details_logo_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.employee_details_logo_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_employee_details_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.employee_details_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.employee_details_logo_canvas.delete("all")
+        self.employee_details_logo_canvas.create_image(
+            0, 0, image=self.employee_details_logo_image, anchor="nw"
+        )
+
+    def on_window_resize_employee_details(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_employee_details()
+
+    def approve_vacation_days(self, employee_data):
+        # get the username, provisional vacation days and reason for vacation days from the employee details window
+        username = self.username_entry.get()
+        provisional_vacation_days = self.provisional_vacation_days_entry.get()
+        reason_for_vacation_days = self.reason_for_vacation_days_entry.get()
+        # update the provisional vacation days in the database for the employee
+        emp_ref = db.reference("/employee")
+        emp_ref.child(employee_data).update({"vacation_days": 0})
+        # update the reason for vacation days in the database for the employee
+        emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
+        # update the vacation days in the database for the employee
+        emp_ref.child(employee_data).update({"vacation_days": provisional_vacation_days})
+        # close the employee details window
+        self.employee_details_logo_canvas.destroy()
+        # show a message that the vacation days have been approved
+        messagebox.showinfo("Approve Vacation Days", "Vacation Days Approved")
+
+    def deny_vacation_days(self, employee_data):
+        # get the username, provisional vacation days and reason for vacation days from the employee details window
+        username = self.username_entry.get()
+        provisional_vacation_days = self.provisional_vacation_days_entry.get()
+        reason_for_vacation_days = self.reason_for_vacation_days_entry.get()
+        # update the provisional vacation days in the database for the employee
+        emp_ref = db.reference("/employee")
+        emp_ref.child(employee_data).update({"vacation_days": 0})
+        # update the reason for vacation days in the database for the employee
+        emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
+        # close the employee details window
+        self.employee_details_logo_canvas.destroy()
+        # show a message that the vacation days have been denied
+        messagebox.showinfo("Deny Vacation Days", "Vacation Days Denied")
+
+
+
+        
+
+
     
     def progress_on_task(self):
         messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
