@@ -1310,14 +1310,14 @@ class CreativeLoginApp:
             self.approve_leaves_logo_canvas,
             employee_data_with_provisional_vacation_above_zero,
             rely=0.2,
-            click_handler=self.show_employee_details
+            click_handler=self.show_employee_details_vacation
         )
 
         self.display_employee_list_on_canvas(
             self.approve_leaves_logo_canvas,
             employee_data_with_sick_days_above_zero,
             rely=0.7,
-            click_handler=self.show_employee_details
+            click_handler=self.show_employee_details_sick
         )
 
 
@@ -1457,11 +1457,131 @@ class CreativeLoginApp:
         data = emp_ref.child(username).child(data_type).get()
         return data if data is not None else 0
     
-    def show_employee_details(self, employee_data):
+    def show_employee_details_vacation(self, employee_data):
      # create a new window to show employee details along with 2 radio buttons to approve or deny the request
         employee_details_window = tk.Toplevel()
         employee_details_window.geometry("800x600")  # Set the window size
         employee_details_window.title("Vacation Approve/Deny")
+
+        #create a canvas that resizes with the window
+        self.employee_details_logo_canvas = tk.Canvas(employee_details_window, bg="white", highlightthickness=0)
+        self.employee_details_logo_canvas.pack(fill=tk.BOTH, expand=True)
+
+        # bind window resize event to function
+        employee_details_window.bind("<Configure>", lambda event: self.on_window_resize_employee_details(event))
+
+        # import the image as the background on the canvas
+        self.load_image_employee_details()
+
+        #show the username of the employee using label on the canvas
+        username_label = tk.Label(
+            self.employee_details_logo_canvas,
+            text="Username",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        username_label.pack(
+            pady=20
+        )
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
+        self.username_entry = tk.Entry(
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.username_entry.pack(
+            pady=20
+        )
+        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.username_entry.insert(0, employee_data)
+        # show the reason of vacation days of the employee using label on the canvas
+        provisional_vacation_days_label = tk.Label(
+            self.employee_details_logo_canvas,
+            text="Provisional Vacation Days",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        provisional_vacation_days_label.pack(
+            pady=20
+        )
+        provisional_vacation_days_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.provisional_vacation_days_entry = tk.Entry(
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.provisional_vacation_days_entry.pack(
+            pady=20
+        )
+        self.provisional_vacation_days_entry.place(relx=0.5, rely=0.55, anchor="center")
+
+        provisional_vacation_days = self.get_employee_data(employee_data, "vacation_days")
+        self.provisional_vacation_days_entry.insert(0, provisional_vacation_days)
+       #show the reason for vacation days of the employee using label on the canvas
+        reason_for_vacation_days_label = tk.Label(
+
+            self.employee_details_logo_canvas,
+            text="Reason for Vacation Days",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        reason_for_vacation_days_label.pack(
+            pady=20
+        )
+        reason_for_vacation_days_label.place(relx=0.5, rely=0.65, anchor="center")
+        self.reason_for_vacation_days_entry = tk.Entry(
+                
+                self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+            )
+        self.reason_for_vacation_days_entry.pack(
+            pady=20
+        )
+        self.reason_for_vacation_days_entry.place(relx=0.5, rely=0.7, anchor="center")
+        self.reason_for_vacation_days_entry.insert(0, "")
+        # create a new button for approving the vacation days on canvas
+        approve_button = tk.Button(
+            self.employee_details_logo_canvas,
+            text="Approve",
+            command=lambda:self.approve_vacation_days(employee_data),
+            font=("Helvetica", 14),
+        )
+        approve_button.pack(
+            pady=20
+        )
+        approve_button.place(relx=0.5, rely=0.8, anchor="center", width=100, height=30)
+        # store the values in 2 variables when the button is pressed
+        approve_button.bind(
+            "<Button-1>",
+            lambda event: self.approve_vacation_days(employee_data),
+        )
+        # create a new button for denying the vacation days on canvas
+        deny_button = tk.Button(
+            self.employee_details_logo_canvas,
+            text="Deny",
+            command=lambda:self.deny_vacation_days(employee_data),
+            font=("Helvetica", 14),
+        )
+        deny_button.pack(
+            pady=20
+        )
+        deny_button.place(relx=0.5, rely=0.9, anchor="center", width=100, height=30)
+        # store the values in 2 variables when the button is pressed
+        deny_button.bind(
+            "<Button-1>",
+            lambda event: self.deny_vacation_days(employee_data),
+        )
+        # Bind the Escape key to the exit function
+        employee_details_window.bind(
+            "<Escape>", lambda event: employee_details_window.destroy()
+        )
+        # focus on window
+        employee_details_window.focus_force()
+        # Center the window with function center_window_test
+        self.center_window_all(employee_details_window)
+        # Run the main loop for the create_remove_hr_window
+        employee_details_window.mainloop()
+
+    def show_employee_details_sick(self, employee_data):
+     # create a new window to show employee details along with 2 radio buttons to approve or deny the request
+        employee_details_window = tk.Toplevel()
+        employee_details_window.geometry("800x600")  # Set the window size
+        employee_details_window.title("Sick Approve/Deny")
 
         #create a canvas that resizes with the window
         self.employee_details_logo_canvas = tk.Canvas(employee_details_window, bg="white", highlightthickness=0)
