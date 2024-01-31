@@ -1359,7 +1359,7 @@ class CreativeLoginApp:
 
         #buttons of Employee window to the right side of the screen
         self.apply_for_vacation_days_button = tk.Button(
-            self.employee_logo_canvas, text="Apply for Vacation Days", command=lambda:self.apply_for_vacation_days(username,role), font=("Helvetica", 14)
+            self.employee_logo_canvas, text="Apply for Vacation Days", command=lambda:self.apply_for_vacation_days(username), font=("Helvetica", 14)
         )
         self.apply_for_vacation_days_button.pack(
             pady=20
@@ -1389,7 +1389,7 @@ class CreativeLoginApp:
         )
 
         self.submit_survey_button = tk.Button(
-            self.employee_logo_canvas, text="View and Submit Survey", command=lambda:self.submit_survey(), font=("Helvetica", 14)
+            self.employee_logo_canvas, text="View and Submit Survey", command=lambda:self.submit_survey(username), font=("Helvetica", 14)
         )
         self.submit_survey_button.pack(
             pady=20
@@ -1517,10 +1517,51 @@ class CreativeLoginApp:
         # Handle window resize event
         self.resize_canvas_and_image_employee(username)
 
-    def apply_for_vacation_days(self, username):
-        # Create the common window and canvas
-        apply_for_vacation_days_window, self.apply_for_vacation_days_canvas = self.create_common_window_button("Apply for Vacation Days")
+    def apply_for_vacation_days_load_image(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
+        # Load image and adjust canvas size
+        self.original_apply_for_vacation_days_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_apply_for_vacation_days()
+    
+    def resize_canvas_and_image_apply_for_vacation_days(self):
+        # Get the apply_for_vacation_days window size
+        window_width = self.apply_for_vacation_days_canvas.winfo_width()
+        window_height = self.apply_for_vacation_days_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.apply_for_vacation_days_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_apply_for_vacation_days_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.apply_for_vacation_days_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.apply_for_vacation_days_canvas.delete("all")
+        self.apply_for_vacation_days_canvas.create_image(
+            0, 0, image=self.apply_for_vacation_days_logo_image, anchor="nw"
+        )
+    
+    def on_window_resize_apply_for_vacation_days(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_apply_for_vacation_days()
+
+    def apply_for_vacation_days(self, username):
+        # Create a new window for the apply_for_vacation_days top level
+        apply_for_vacation_days_window = tk.Toplevel()
+        apply_for_vacation_days_window.geometry("800x600")  # Set the window size
+        apply_for_vacation_days_window.title("Apply for Vacation Days")
+    
+        #create the canvas
+        self.apply_for_vacation_days_canvas = tk.Canvas(apply_for_vacation_days_window, bg="white", highlightthickness=0)
+        self.apply_for_vacation_days_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        #load the image
+        self.apply_for_vacation_days_load_image()
+        
         # Create entry widgets for number of days and reason
         self.number_of_days_entry = tk.Entry(self.apply_for_vacation_days_canvas)
         self.number_of_days_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
@@ -1538,6 +1579,9 @@ class CreativeLoginApp:
         
         # Bind the Escape key to the exit function
         apply_for_vacation_days_window.bind("<Escape>", lambda event: apply_for_vacation_days_window.destroy())
+        
+        # bind window resize event to function
+        apply_for_vacation_days_window.bind("<Configure>", lambda event: self.on_window_resize_apply_for_vacation_days(event))
         
         # focus on window
         apply_for_vacation_days_window.focus_force()
@@ -1571,9 +1615,18 @@ class CreativeLoginApp:
         apply_for_vacation_days_window.destroy()        
         
     def apply_for_resignation(self,username):
+        # Create a new window for the apply_for_resignation top level
+        apply_for_resignation_window = tk.Toplevel()
+        apply_for_resignation_window.geometry("800x600")  # Set the window size
+        apply_for_resignation_window.title("Apply for Resignation")
         
-        apply_for_resignation_window, self.apply_for_resignation_canvas = self.create_common_window_button("Apply for Resignation")
+        #create the canvas
+        self.apply_for_resignation_canvas = tk.Canvas(apply_for_resignation_window, bg="white", highlightthickness=0)
+        self.apply_for_resignation_canvas.pack(fill=tk.BOTH, expand=True)
         
+        #load the image
+        self.apply_for_resignation_load_image()
+                
         # Create entry widget for reason of resignation (bigger size)
         self.reason_entry = tk.Entry(self.apply_for_resignation_canvas, width=50, font=("Helvetica", 14))
         self.reason_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
@@ -1598,6 +1651,8 @@ class CreativeLoginApp:
         submit_button = tk.Button(self.apply_for_resignation_canvas, text="Submit", command=lambda: self.submit_resignation_request(apply_for_resignation_window, username))
         submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
 
+        # bind window resize event to function
+        apply_for_resignation_window.bind("<Configure>", lambda event: self.on_window_resize_apply_for_resignation(event))
         
         # Bind the Escape key to the exit function
         apply_for_resignation_window.bind("<Escape>", lambda event: apply_for_resignation_window.destroy())
@@ -1610,7 +1665,39 @@ class CreativeLoginApp:
         
         # Run the main loop for the apply_for_resignation_window
         apply_for_resignation_window.mainloop()
-        
+    
+    def apply_for_resignation_load_image(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_apply_for_resignation_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_apply_for_resignation()
+    
+    def resize_canvas_and_image_apply_for_resignation(self):
+        # Get the apply_for_resignation window size
+        window_width = self.apply_for_resignation_canvas.winfo_width()
+        window_height = self.apply_for_resignation_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.apply_for_resignation_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_apply_for_resignation_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.apply_for_resignation_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.apply_for_resignation_canvas.delete("all")
+        self.apply_for_resignation_canvas.create_image(
+            0, 0, image=self.apply_for_resignation_logo_image, anchor="nw"
+        )
+    
+    def on_window_resize_apply_for_resignation(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_apply_for_resignation()
+         
     def submit_resignation_request(self, apply_for_resignation_window, username):
         # Retrieve the entered values
         reason = self.reason_entry.get()
@@ -1643,10 +1730,61 @@ class CreativeLoginApp:
                 apply_for_resignation_window.destroy()
 
     def check_progress_on_tasks(self, username):
-        check_progress_on_tasks_window, self.check_progress_on_tasks_canvas = self.create_common_window_button(
-            "Check and Update Progress on Tasks"
-        )
+        # Create a new window for the check_progress_on_tasks top level
+        check_progress_on_tasks_window = tk.Toplevel()
+        check_progress_on_tasks_window.geometry("800x600")  # Set the window size
+        check_progress_on_tasks_window.title("Check Progress on Tasks")
+        
+        #create the canvas
+        self.check_progress_on_tasks_canvas = tk.Canvas(check_progress_on_tasks_window, bg="white", highlightthickness=0)
+        self.check_progress_on_tasks_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        #load the image
+        self.check_progress_on_tasks_load_image(username)
 
+        # bind window resize event to function
+        check_progress_on_tasks_window.bind("<Configure>", lambda event: self.on_window_resize_check_progress_on_tasks(username,event))
+        
+        # Bind the escape key to the exit function
+        check_progress_on_tasks_window.bind("<Escape>", lambda event: check_progress_on_tasks_window.destroy())
+
+        # Focus on window
+        check_progress_on_tasks_window.focus_force()
+
+        # Center the window
+        self.center_window_all(check_progress_on_tasks_window)
+
+        # Run the main loop for the check_progress_on_tasks_window
+        check_progress_on_tasks_window.mainloop()
+        
+    def check_progress_on_tasks_load_image(self,username):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_check_progress_on_tasks_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_check_progress_on_tasks(username)
+    
+    def resize_canvas_and_image_check_progress_on_tasks(self,username):
+        # Get the check_progress_on_tasks window size
+        window_width = self.check_progress_on_tasks_canvas.winfo_width()
+        window_height = self.check_progress_on_tasks_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.check_progress_on_tasks_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_check_progress_on_tasks_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.check_progress_on_tasks_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.check_progress_on_tasks_canvas.delete("all")
+        self.check_progress_on_tasks_canvas.create_image(
+            0, 0, image=self.check_progress_on_tasks_logo_image, anchor="nw"
+        )
+        
         # Information labels
         labels_info = [
             ("Project ID", db.reference("/employee").child(username).child("project").child("id").get()),
@@ -1659,65 +1797,260 @@ class CreativeLoginApp:
         ]
 
         for i, (label_text, value) in enumerate(labels_info):
-            label = tk.Label(
-                self.check_progress_on_tasks_canvas,
+            #create text onto the canvas
+            text_label=self.check_progress_on_tasks_canvas.create_text(
+                window_width / 2,
+                100 + i * 50,
                 text=f"{label_text}: {value}",
-                font=("Helvetica", 12, "bold"),
-                bg="white",
+                font=("Helvetica", 14, "bold"),
+                fill="white",
             )
-            label.pack(pady=20)
-            label.place(relx=0.5, rely=(i + 1) * 0.1, anchor="center")
-
+            if label_text == "Task Status" and value == "In Progress":
+                set_task_status_to_completed_button = tk.Button(self.check_progress_on_tasks_canvas, text="Set Task Status to Completed", command=lambda: self.set_task_status_to_completed(username))
+                set_task_status_to_completed_button.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+                set_task_status_to_completed_button.place(relx=0.5, rely=0.5, anchor="center", width=300, height=30)
+                # Place the button next to the current label_text
+                button_relx = self.check_progress_on_tasks_canvas.bbox(text_label)[2] + 10  # Get the right boundary of the text
+                set_task_status_to_completed_button.place(relx=button_relx, rely=0.5, anchor="w", width=300, height=30)
+            
         # Members label
         members_list = db.reference("/employee").child(username).child("project").child("members").get()
         members = "\n".join([f"{key}: {value}" for key, value in members_list.items()])
 
-        members_label = tk.Label(
-            self.check_progress_on_tasks_canvas,
-            text="Members:\n" + members,
-            font=("Helvetica", 12, "bold"),
-            bg="white",
+        self.check_progress_on_tasks_canvas.create_text(
+            10,
+            10,
+            text=f"Members:\n{members}",
+            font=("Helvetica", 14, "bold"),
+            fill="white",
+            anchor="nw",
         )
-        members_label.pack(pady=20)
-        #place the members label top left
-        members_label.place(relx=0.1, rely=0.1, anchor="nw")
+     
+    def on_window_resize_check_progress_on_tasks(self,username, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_check_progress_on_tasks(username)
 
-        # Button to set task status to completed
-        completed_button = tk.Button(
-            self.check_progress_on_tasks_canvas,
-            text="Completed",
-            command=lambda: self.set_task_status_to_completed(username),
-            font=("Helvetica", 14),
-        )
-        completed_button.pack(pady=20)
-        completed_button.place(relx=0.5, rely=0.9, anchor="center", width=100, height=30)
-
-        # Bind the escape key to the exit function
-        check_progress_on_tasks_window.bind("<Escape>", lambda event: check_progress_on_tasks_window.destroy())
-
-        # Focus on window
-        check_progress_on_tasks_window.focus_force()
-
-        # Center the window
-        self.center_window_all(check_progress_on_tasks_window)
-
-        # Run the main loop for the check_progress_on_tasks_window
-        check_progress_on_tasks_window.mainloop()
- 
     def set_task_status_to_completed(self,username):
         db.reference("/employee").child(username).child("project").child("task").child("status").set("Completed")
         db.reference("/employee").child(username).child("project").child("progress").set(db.reference("/employee").child(username).child("project").child("progress").get()+10)
         messagebox.showinfo("Employee Window", "Task Status set to Completed")
         
-    def submit_survey(self):
-        messagebox.showinfo("Employee Window", "Submit Survey Button Pressed")
+    def survey_load_image(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
+        # Load image and adjust canvas size
+        self.original_survey_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_survey()
+
+    def resize_canvas_and_image_survey(self):
+        # Get the survey window size
+        window_width = self.survey_canvas.winfo_width()
+        window_height = self.survey_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.survey_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_survey_logo_image.resize((window_width, window_height))
+        self.survey_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.survey_canvas.delete("all")
+        self.survey_canvas.create_image(0, 0, image=self.survey_logo_image, anchor="nw")
+
+    def on_window_resize_survey(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_survey()
+
+    def create_survey_frame(self, survey_window):
+        # Create a frame at the center to contain the survey questions
+        survey_frame = tk.Frame(survey_window, bg="white")
+        survey_frame.pack(pady=20)
+        survey_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        # Create a scrollable canvas for the questions
+        scroll_canvas = tk.Canvas(survey_frame, bg="white", highlightthickness=0)
+        scroll_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Create a scroll bar
+        scroll_bar = ttk.Scrollbar(survey_frame, command=scroll_canvas.yview)
+        scroll_bar.pack(side=tk.RIGHT, fill=tk.Y)
+        scroll_canvas.configure(yscrollcommand=scroll_bar.set)
+
+        # Create a frame to contain the survey questions
+        survey_question_frame = tk.Frame(scroll_canvas, bg="white")
+        scroll_canvas.create_window((0, 0), window=survey_question_frame, anchor="nw")
+
+        # Populate the survey questions with tick boxes
+        for i, question in enumerate(self.questions):
+            label = tk.Label(survey_question_frame, text=f"{question}", font=("Helvetica", 12, "bold"), bg="white")
+            label.grid(row=i, column=0, padx=10, pady=10, sticky="w")
+
+            # Create a scale (tick box) for each question
+            scale_var = tk.IntVar()
+            scale = ttk.Scale(survey_question_frame, orient=tk.HORIZONTAL, length=150, from_=1, to=5, variable=scale_var)
+            scale.grid(row=i, column=1, padx=10, pady=10, sticky="w")
+
+            # Save the scale variable in the answers dictionary
+            self.answers[question] = scale_var
+
+        return survey_frame
+
+    def submit_survey(self,username):
+        # List of survey questions
+        self.questions = [
+            "How satisfied are you with your work environment?",
+            "Do you feel your skills are utilized effectively in your current role?",
+            "How would you rate the communication within the team?",
+            "How would you rate the communication with your manager?",
+            "How would you rate the communication with your colleagues?",
+            "How would you rate your work-life balance?",
+            "How would you rate your overall job satisfaction?",
+            "How would you rate your stress level at work?",
+            "How would you rate your stress level outside of work?",
+            "How would you rate your overall health?",
+            "How would you rate your overall happiness?",
+            "How would you rate your overall productivity?",
+            "How would you rate your overall performance?",
+            "How would you rate your overall motivation?",
+        ]
+
+        self.answers = {}  # Dictionary to store survey responses
+
+        # Create a new window for the survey top level
+        survey_window = tk.Toplevel()
+        survey_window.geometry("800x600")  # Set the window size
+        survey_window.title("Survey")
+
+        # Create the survey frame
+        survey_frame = self.create_survey_frame(survey_window)
+
+        # Load the image
+        self.survey_load_image()
+
+        # Create a button to submit the survey
+        submit_button = tk.Button(survey_frame, text="Submit", command=self.submit_feedback)
+        submit_button.pack(pady=10)
+
+        # Bind the Escape key to the exit function
+        survey_window.bind("<Escape>", lambda event: survey_window.destroy())
+
+        # Bind window resize event to function
+        survey_window.bind("<Configure>", lambda event: self.on_window_resize_survey(event))
+
+        # Focus on window
+        survey_window.focus_force()
+
+        # Center the window
+        self.center_window_all(survey_window)
+
+        # Run the main loop for the survey_window
+        survey_window.mainloop()
+        
     def submit_feedback(self):
         messagebox.showinfo("Employee Window", "Submit Feedback Button Pressed")
 
     def submit_complaint(self):
-        messagebox.showinfo("Employee Window", "Submit Complaint Button Pressed")
+       # Create a new window for the submit_complaint top level
+        submit_complaint_window = tk.Toplevel()
+        submit_complaint_window.geometry("800x600")
+        submit_complaint_window.title("Submit Complaint")
+        
+        #create the canvas
+        self.submit_complaint_canvas = tk.Canvas(submit_complaint_window, bg="white", highlightthickness=0)
+        self.submit_complaint_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        #load the image
+        self.submit_complaint_load_image()
+        
+        #create an entry to take the employees name whose complaint is being submitted
+        self.employee_name_entry = tk.Entry(self.submit_complaint_canvas)
+        self.employee_name_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+        self.employee_name_entry.insert(0, "Employee Name")  # Default value
+        self.employee_name_entry.bind("<FocusIn>", lambda event:self.employee_name_entry_del())
+        
+        # Create entry widget for complaint
+        self.complaint_entry = tk.Entry(self.submit_complaint_canvas, width=50, font=("Helvetica", 14))
+        self.complaint_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        self.complaint_entry.insert(0, "Complaint")
+        self.complaint_entry.bind("<FocusIn>", lambda event: self.complaint_entry_del())  # Delete the default value when the user clicks on the entry widget
+        
+        # Create a button to submit the complaint
+        submit_button = tk.Button(self.submit_complaint_canvas, text="Submit", command=lambda: self.submit_complaint_request(submit_complaint_window))
+        submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        
+        # Bind the Escape key to the exit function
+        submit_complaint_window.bind("<Escape>", lambda event: submit_complaint_window.destroy())
+        
+        # bind window resize event to function
+        submit_complaint_window.bind("<Configure>", lambda event: self.on_window_resize_submit_complaint(event))
+        
+        # focus on window
+        submit_complaint_window.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(submit_complaint_window)
+        
+        # Run the main loop for the submit_complaint_window
+        submit_complaint_window.mainloop()
+        
+    def submit_complaint_load_image(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
+        # Load image and adjust canvas size
+        self.original_submit_complaint_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_submit_complaint()
+        
+    def resize_canvas_and_image_submit_complaint(self):
+        # Get the submit_complaint window size
+        window_width = self.submit_complaint_canvas.winfo_width()
+        window_height = self.submit_complaint_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.submit_complaint_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_submit_complaint_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.submit_complaint_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.submit_complaint_canvas.delete("all")
+        self.submit_complaint_canvas.create_image(
+            0, 0, image=self.submit_complaint_logo_image, anchor="nw"
+        )
+        
+    def on_window_resize_submit_complaint(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_submit_complaint()
+        
+    def submit_complaint_request(self, submit_complaint_window):
+        # Retrieve the entered values
+        employee_name = self.employee_name_entry.get()
+        complaint = self.complaint_entry.get()
+
+        # Check if the complaint is valid
+        if not employee_name:
+            messagebox.showinfo("Employee Window", "Please enter an employee name.")
+        elif not complaint:
+            messagebox.showinfo("Employee Window", "Please enter a complaint.")
+        else:
+            # Add the complaint to the database
+            db.reference("/employee").child(employee_name).child("complaint").set(complaint)
+            messagebox.showinfo("Employee Window", "Complaint submitted successfully.")
+            submit_complaint_window.destroy()
+        
+    def employee_name_entry_del(self):
+        if self.employee_name_entry.get() == "Employee Name":
+            self.employee_name_entry.delete(0, tk.END)
+            
+    def complaint_entry_del(self):
+        if self.complaint_entry.get() == "Complaint":
+            self.complaint_entry.delete(0, tk.END)
+        
     def center_window_all(self, window):
         # Get the width and height of the screen
         screen_width = window.winfo_screenwidth()
@@ -1833,40 +2166,6 @@ class CreativeLoginApp:
         # close the window
         create_remove_hr_window.destroy()
 
-    def load_image_common_button(self):
-        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-        self.original_common_image_button = Image.open(img_path)
-        
-    def resize_canvas_and_image_common_button(self):
-        window_width = self.common_canvas_button.winfo_width()
-        window_height = self.common_canvas_button.winfo_height()
-        self.common_canvas.config(width=window_width, height=window_height)
-
-        resized_image = self.original_common_image_button.resize((window_width, window_height))
-        self.common_image_button = ImageTk.PhotoImage(resized_image)
-
-        self.common_canvas_button.delete("all")
-        self.common_canvas_button.create_image(0, 0, image=self.common_image_button, anchor="nw")
-        
-    def on_window_resize_common_button(self,event=None):
-        self.resize_canvas_and_image_common_button()
-
-    def create_common_window_button(self, title,):
-    
-        common_window_button = tk.Toplevel()
-        common_window_button.geometry("800x600")
-        common_window_button.title(title)
-
-        self.common_canvas_button = tk.Canvas(common_window_button, bg="white", highlightthickness=0)
-        self.common_canvas_button.pack(fill=tk.BOTH, expand=True)
-
-        common_window_button.bind("<Configure>",lambda event:self.on_window_resize_common_button())
-
-        self.load_image_common_button()
-        self.resize_canvas_and_image_common_button()
-        
-        return common_window_button, self.common_canvas_button
-    
     def days_entry_del(self):
         if self.number_of_days_entry.get() == "0":
             self.number_of_days_entry.delete(0, tk.END)
