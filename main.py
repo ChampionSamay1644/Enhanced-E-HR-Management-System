@@ -1301,11 +1301,25 @@ class CreativeLoginApp:
         self.load_image_approve_leaves(username)
 
 
-        # #display the employee list of sick days and provisional vacation days which was pulled from the db on the approve leaves canvas
+     # Assuming you have values for the employee data
         employee_data_with_provisional_vacation_above_zero = self.get_employee_data_with_provisional_vacation_above_zero(username)
-        self.display_employee_list_on_canvas(self.approve_leaves_logo_canvas, employee_data_with_provisional_vacation_above_zero, 0.2)
         employee_data_with_sick_days_above_zero = self.get_employee_data_with_sick_days_above_zero(username)
-        self.display_employee_list_on_canvas(self.approve_leaves_logo_canvas, employee_data_with_sick_days_above_zero, 0.7)
+
+     # Call the method with different rely values and click handlers for each list
+        self.display_employee_list_on_canvas(
+            self.approve_leaves_logo_canvas,
+            employee_data_with_provisional_vacation_above_zero,
+            rely=0.2,
+            click_handler=self.show_employee_details
+        )
+
+        self.display_employee_list_on_canvas(
+            self.approve_leaves_logo_canvas,
+            employee_data_with_sick_days_above_zero,
+            rely=0.7,
+            click_handler=self.show_employee_details
+        )
+
 
 
         # Bind the Escape key to the exit function
@@ -1395,7 +1409,7 @@ class CreativeLoginApp:
 
 
 
-    def display_employee_list_on_canvas(self, canvas, employee_data, rely):
+    def display_employee_list_on_canvas(self, canvas, employee_data, rely, click_handler=None):
         if len(employee_data) > 0:
             employee_list = Listbox(canvas, font=("Helvetica", 12, "bold"), bg="white", fg="black", width=30, height=5)
             employee_list.pack(pady=20)
@@ -1412,8 +1426,9 @@ class CreativeLoginApp:
                 # Set the selection to the clicked item
                 employee_list.selection_set(selected_index)
 
-                # Bind click event to show additional information
-                self.show_employee_details(employee_info)
+                # Bind click event to the provided handler function, if available
+                if click_handler:
+                    click_handler(employee_info)
 
             # Bind the click event to the custom function
             employee_list.bind("<ButtonRelease-1>", on_employee_click)
@@ -1421,11 +1436,17 @@ class CreativeLoginApp:
             # Insert employee names into the listbox
             for employee_info in employee_data:
                 employee_list.insert(tk.END, employee_info)
-
         else:
             self.display_no_employee_message(canvas, "No employees to approve")
 
+   
 
+
+   
+
+
+
+    
     def display_no_employee_message(self, canvas, message):
         no_employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
         no_employee_label.pack(pady=20)
@@ -1471,7 +1492,7 @@ class CreativeLoginApp:
         )
         self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
         self.username_entry.insert(0, employee_data)
-        # show the provisional vacation days of the employee using label on the canvas
+        # show the reason of vacation days of the employee using label on the canvas
         provisional_vacation_days_label = tk.Label(
             self.employee_details_logo_canvas,
             text="Provisional Vacation Days",
