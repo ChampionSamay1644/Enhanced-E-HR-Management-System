@@ -2004,13 +2004,13 @@ class CreativeLoginApp:
         #create a tickbox for sick days
         self.sick = tk.IntVar()
         self.sick.set(0)
-        sick_checkbox = tk.Checkbutton(self.apply_for_vacation_days_canvas, text="Sick Days", variable=self.sick_or_vacation, onvalue=1, offvalue=0)
+        sick_checkbox = tk.Checkbutton(self.apply_for_vacation_days_canvas, text="Sick Days", variable=self.sick, onvalue=1, offvalue=0)
         sick_checkbox.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
         
         #create a tickbox for vacation days
         self.vacation = tk.IntVar()
         self.vacation.set(0)
-        vacation_checkbox = tk.Checkbutton(self.apply_for_vacation_days_canvas, text="Vacation Days", variable=self.sick_or_vacation, onvalue=2, offvalue=0)
+        vacation_checkbox = tk.Checkbutton(self.apply_for_vacation_days_canvas, text="Vacation Days", variable=self.vacation, onvalue=2, offvalue=0)
         vacation_checkbox.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
                
         # Create entry widgets for number of days and reason
