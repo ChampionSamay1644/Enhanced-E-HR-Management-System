@@ -2,7 +2,7 @@ import datetime
 import tkinter as tk
 from tkcalendar import Calendar, DateEntry
 from tkinter import END, Listbox, messagebox
-from tkinter import simpledialog, ttk
+from tkinter import simpledialog, ttk,scrolledtext
 from PIL import Image, ImageTk
 import os
 import firebase_admin
@@ -2337,44 +2337,27 @@ class CreativeLoginApp:
         # Update the image on the canvas
         self.survey_canvas.delete("all")
         self.survey_canvas.create_image(0, 0, image=self.survey_logo_image, anchor="nw")
+        
+        #make it into scrollable canvas
+        self.survey_canvas.config(scrollregion=self.survey_canvas.bbox("all"))
+        
+        # Create a scrolled text widget
+        self.scrolled_text = scrolledtext.ScrolledText(self.survey_canvas, wrap=tk.WORD, width=80, height=20)
+        self.scrolled_text.pack(pady=20)
+        #add all the questions as text onto the canvas along with radio buttons for answers
+        for i, question in enumerate(self.questions):
+            self.scrolled_text.insert(tk.END, f"{question}\n")
+            for j, answer in enumerate(["Very Dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very Satisfied"]):
+                radio_button = tk.Radiobutton(self.survey_canvas, text=answer, value=j+1, variable=self.answers.get(question, tk.IntVar()))
+                radio_button.pack(pady=5, anchor=tk.W)
+        
+        # Create a button to submit the survey
+        submit_button = tk.Button(self.survey_canvas, text="Submit", command=lambda: self.submit_survey_request())
+        submit_button.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
 
     def on_window_resize_survey(self, event):
         # Handle window resize event
         self.resize_canvas_and_image_survey()
-
-    def create_survey_frame(self, survey_window):
-        # Create a frame at the center to contain the survey questions
-        survey_frame = tk.Frame(survey_window, bg="white")
-        survey_frame.pack(pady=20)
-        survey_frame.place(relx=0.5, rely=0.5, anchor="center")
-
-        # Create a scrollable canvas for the questions
-        scroll_canvas = tk.Canvas(survey_frame, bg="white", highlightthickness=0)
-        scroll_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-        # Create a scroll bar
-        scroll_bar = ttk.Scrollbar(survey_frame, command=scroll_canvas.yview)
-        scroll_bar.pack(side=tk.RIGHT, fill=tk.Y)
-        scroll_canvas.configure(yscrollcommand=scroll_bar.set)
-
-        # Create a frame to contain the survey questions
-        survey_question_frame = tk.Frame(scroll_canvas, bg="white")
-        scroll_canvas.create_window((0, 0), window=survey_question_frame, anchor="nw")
-
-        # Populate the survey questions with tick boxes
-        for i, question in enumerate(self.questions):
-            label = tk.Label(survey_question_frame, text=f"{question}", font=("Helvetica", 12, "bold"), bg="white")
-            label.grid(row=i, column=0, padx=10, pady=10, sticky="w")
-
-            # Create a scale (tick box) for each question
-            scale_var = tk.IntVar()
-            scale = ttk.Scale(survey_question_frame, orient=tk.HORIZONTAL, length=150, from_=1, to=5, variable=scale_var)
-            scale.grid(row=i, column=1, padx=10, pady=10, sticky="w")
-
-            # Save the scale variable in the answers dictionary
-            self.answers[question] = scale_var
-
-        return survey_frame
 
     def submit_survey(self,username):
         # List of survey questions
@@ -2402,15 +2385,12 @@ class CreativeLoginApp:
         survey_window.geometry("800x600")  # Set the window size
         survey_window.title("Survey")
 
-        # Create the survey frame
-        survey_frame = self.create_survey_frame(survey_window)
-
+        #create a scrollable canvas
+        self.survey_canvas = tk.Canvas(survey_window, bg="white", highlightthickness=0)
+        self.survey_canvas.pack(fill=tk.BOTH, expand=True)
+        
         # Load the image
         self.survey_load_image()
-
-        # Create a button to submit the survey
-        submit_button = tk.Button(survey_frame, text="Submit", command=self.submit_feedback)
-        submit_button.pack(pady=10)
 
         # Bind the Escape key to the exit function
         survey_window.bind("<Escape>", lambda event: survey_window.destroy())
@@ -2427,6 +2407,19 @@ class CreativeLoginApp:
         # Run the main loop for the survey_window
         survey_window.mainloop()
         
+    def submit_survey_request(self):
+        # Retrieve the entered values
+        for question in self.questions:
+            self.answers[question] = self.answers[question].get()
+            
+        # Check if all questions have been answered
+        if not all(self.answers.values()):
+            messagebox.showinfo("Employee Window", "Please answer all questions.")
+        else:
+            # # Add the survey to the database
+            # db.reference("/survey").push(self.answers)
+             messagebox.showinfo("Employee Window", "Survey submitted successfully.")
+            # self.survey_window.destroy()
     def submit_feedback(self):
         messagebox.showinfo("Employee Window", "Submit Feedback Button Pressed")
 
