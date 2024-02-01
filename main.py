@@ -1837,16 +1837,6 @@ class CreativeLoginApp:
             relx=0.75, rely=0.6, anchor="center", width=300, height=30
         )
 
-        self.submit_feedback_button = tk.Button(
-            self.employee_logo_canvas, text="View and Submit Feedback", command=lambda:self.submit_feedback(), font=("Helvetica", 14)
-        )
-        self.submit_feedback_button.pack(
-            pady=20
-        )
-        self.submit_feedback_button.place(
-            relx=0.75, rely=0.7, anchor="center", width=300, height=30
-        )
-
         self.submit_complaint_button = tk.Button(
 
             self.employee_logo_canvas, text="Submit Complaint", command=lambda:self.submit_complaint(), font=("Helvetica", 14)
@@ -1855,7 +1845,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.submit_complaint_button.place(
-            relx=0.75, rely=0.8, anchor="center", width=300, height=30
+            relx=0.75, rely=0.7, anchor="center", width=300, height=30
         )
 
         #create an exit button in canvas and place at bottom middle
@@ -2420,8 +2410,6 @@ class CreativeLoginApp:
             # db.reference("/survey").push(self.answers)
              messagebox.showinfo("Employee Window", "Survey submitted successfully.")
             # self.survey_window.destroy()
-    def submit_feedback(self):
-        messagebox.showinfo("Employee Window", "Submit Feedback Button Pressed")
 
     def submit_complaint(self):
        # Create a new window for the submit_complaint top level
