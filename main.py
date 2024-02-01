@@ -1332,10 +1332,7 @@ class CreativeLoginApp:
         self.center_window_all(approve_window)
         # Run the main loop for the create_remove_hr_window
         approve_window.mainloop()
-        
-
-     
-        
+               
     def load_image_approve_leaves(self,username):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -1388,14 +1385,9 @@ class CreativeLoginApp:
             fill="white",
         )
 
-
-
     def on_window_resize_approve_leaves(self, event,username):
         # Handle window resize event
         self.resize_canvas_and_image_approve_leaves(username)
-
-
-
 
     def get_employee_data_with_provisional_vacation_above_zero(self, username):
         emp_ref = db.reference("/employee")
@@ -1406,8 +1398,6 @@ class CreativeLoginApp:
         emp_ref = db.reference("/employee")
         employee_data_2 = [user for user in emp_ref.get() if self.get_employee_data(user, "sick_days") > 0]
         return employee_data_2
-
-
 
     def display_employee_list_on_canvas(self, canvas, employee_data, rely, click_handler=None):
         if len(employee_data) > 0:
@@ -1439,7 +1429,6 @@ class CreativeLoginApp:
         else:
             self.display_no_employee_message(canvas, "No employees to approve")
 
-      
     def display_no_employee_message(self, canvas, message):
         no_employee_label = Label(canvas, text=message, font=("Helvetica", 12, "bold"), bg="white")
         no_employee_label.pack(pady=20)
@@ -1788,11 +1777,6 @@ class CreativeLoginApp:
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been denied
         messagebox.showinfo("Deny Sick Days", "Sick Days Denied")
-
-
-        
-
-
     
     def progress_on_task(self):
         messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
@@ -1814,7 +1798,7 @@ class CreativeLoginApp:
 
         #buttons of Employee window to the right side of the screen
         self.apply_for_vacation_days_button = tk.Button(
-            self.employee_logo_canvas, text="Apply for Vacation Days", command=lambda:self.apply_for_vacation_days(username), font=("Helvetica", 14)
+            self.employee_logo_canvas, text="Apply for Sick/Vacation Days", command=lambda:self.apply_for_vacation_days(username), font=("Helvetica", 14)
         )
         self.apply_for_vacation_days_button.pack(
             pady=20
@@ -2008,7 +1992,7 @@ class CreativeLoginApp:
         # Create a new window for the apply_for_vacation_days top level
         apply_for_vacation_days_window = tk.Toplevel()
         apply_for_vacation_days_window.geometry("800x600")  # Set the window size
-        apply_for_vacation_days_window.title("Apply for Vacation Days")
+        apply_for_vacation_days_window.title("Apply for Sick/Vacation Days")
     
         #create the canvas
         self.apply_for_vacation_days_canvas = tk.Canvas(apply_for_vacation_days_window, bg="white", highlightthickness=0)
@@ -2017,6 +2001,18 @@ class CreativeLoginApp:
         #load the image
         self.apply_for_vacation_days_load_image()
         
+        #create a tickbox for sick days
+        self.sick = tk.IntVar()
+        self.sick.set(0)
+        sick_checkbox = tk.Checkbutton(self.apply_for_vacation_days_canvas, text="Sick Days", variable=self.sick_or_vacation, onvalue=1, offvalue=0)
+        sick_checkbox.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+        
+        #create a tickbox for vacation days
+        self.vacation = tk.IntVar()
+        self.vacation.set(0)
+        vacation_checkbox = tk.Checkbutton(self.apply_for_vacation_days_canvas, text="Vacation Days", variable=self.sick_or_vacation, onvalue=2, offvalue=0)
+        vacation_checkbox.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+               
         # Create entry widgets for number of days and reason
         self.number_of_days_entry = tk.Entry(self.apply_for_vacation_days_canvas)
         self.number_of_days_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
@@ -2049,24 +2045,52 @@ class CreativeLoginApp:
 
     def submit_vacation_request(self,username,apply_for_vacation_days_window):
         # Retrieve the entered values
+        #retrieve the value of the checkbox
+        sick_days = self.sick.get()
+        vacation_days = self.vacation.get()
         number_of_days = self.number_of_days_entry.get()
         reason = self.reason_entry.get()
 
-        # Check if the number of days is valid
-        if not number_of_days.isdigit():
+        # Check if the values are entered and valid
+        if not number_of_days:
+            messagebox.showinfo("Employee Window", "Please enter a number of days.")
+        elif not number_of_days.isdigit():
             messagebox.showinfo("Employee Window", "Please enter a valid number of days.")
-        elif number_of_days == None or reason == None:
-            messagebox.showinfo("Employee Window", "Please enter a number of days and a reason.")
-        elif number_of_days == 0 or reason == "Vacation reason":
-            messagebox.showinfo("Employee Window", "Please enter a number of days and a reason.")
-        elif int(number_of_days)>(db.reference('vacation_uni').get())-(db.reference("/employee").child(username).child("vacation_approved").get()):
+        elif not reason:
+            messagebox.showinfo("Employee Window", "Please enter a reason.")
+        elif number_of_days == 0:
+            messagebox.showinfo("Employee Window", "Please enter a number of days.")
+        elif reason == "Vacation reason":
+            messagebox.showinfo("Employee Window", "Please enter a reason.")
+        elif not sick_days and not vacation_days:
+            messagebox.showinfo("Employee Window", "Please select sick or vacation days.")
+        elif sick_days == 1 and int(number_of_days) > (db.reference("sick_days_uni").get()-(self.get_employee_data(username, "sick_days"))):
+            messagebox.showinfo("Employee Window", "You do not have enough sick days.")
+        elif vacation_days == 1 and int(number_of_days) > (db.reference("vacation_uni").get()-(self.get_employee_data(username, "vacation_days"))):
             messagebox.showinfo("Employee Window", "You do not have enough vacation days.")
         else:
-            # Add the vacation request to the database
-            db.reference("/employee").child(username).child("vacation_days").set((db.reference("/employee").child(username).child("vacation_days").get())+int(number_of_days))
-            db.reference("/employee").child(username).child("vacation_reason").set(reason)
-            messagebox.showinfo("Employee Window", "Vacation request submitted successfully.")
-            
+            # Convert number_of_days string to int
+            number_of_days_int = int(number_of_days)
+
+            # Check if the number of days is at least 1
+            if number_of_days_int < 1:
+                messagebox.showinfo("Employee Window", "Please enter at least 1 day.")
+            else:
+                # Update the database
+                emp_ref = db.reference("/employee")
+                if sick_days == 1:
+                    emp_ref.child(username).update({"sick_days": self.get_employee_data(username, "sick_days") + number_of_days_int})
+                    emp_ref.child(username).update({"reason_for_sick_days": reason})
+                else:
+                    emp_ref.child(username).update({"vacation_days": self.get_employee_data(username, "vacation_days") + number_of_days_int})
+                    emp_ref.child(username).update({"reason_for_vacation_days": reason})
+
+                # Close the apply_for_vacation_days_window
+                apply_for_vacation_days_window.destroy()
+
+                # Show a message that the request has been submitted
+                messagebox.showinfo("Employee Window", "Request submitted.")
+        
         apply_for_vacation_days_window.destroy()        
         
     def apply_for_resignation(self,username):
