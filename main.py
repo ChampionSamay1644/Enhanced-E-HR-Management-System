@@ -2306,83 +2306,27 @@ class CreativeLoginApp:
         
 
     def submit_survey(self, username):
-        #create a new window for the submit_survey top level
-       
-        submit_survey_window = tk.Toplevel()
-        submit_survey_window.geometry("800x600")  # Set the window size
-        submit_survey_window.title("Submit Survey")
+        self.submit_survey_window = tk.Toplevel()
+        self.submit_survey_window.geometry("900x600")
+        self.submit_survey_window.title("Submit Survey")
 
-        #create the canvas
-        self.submit_survey_canvas = tk.Canvas(submit_survey_window, bg="white", highlightthickness=0)
-        self.submit_survey_canvas.pack(fill=tk.BOTH, expand=True)
+        self.canvas = tk.Canvas(self.submit_survey_window, bg="white", highlightthickness=0)
+        self.canvas.pack(side="left", fill="both", expand=True)
 
-        #load the image
-        self.submit_survey_load_image()
+        self.scrollbar = ttk.Scrollbar(self.submit_survey_window, orient="vertical", command=self.canvas.yview)
+        self.scrollbar.pack(side="right", fill="y")
 
-        # bind window resize event to function
-        submit_survey_window.bind("<Configure>", lambda event: self.on_window_resize_submit_survey(event))
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
 
-        # Bind the escape key to the exit function
-        submit_survey_window.bind("<Escape>", lambda event: submit_survey_window.destroy())
+        self.frame = tk.Frame(self.canvas, bg="white")
+        self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
 
-        # Focus on window
-        submit_survey_window.focus_force()
+        self.load_questions()
 
-        # Center the window
-        self.center_window_all(submit_survey_window)
+        self.submit_survey_window.mainloop()
 
-        # Add "Submit Survey" button
-        submit_button = tk.Button(
-            self.submit_survey_canvas,
-            text="Submit Survey",
-            command=lambda: self.submit_survey_request(username),
-            font=("Helvetica", 14)
-        )
-        submit_button.pack(pady=20)
-        submit_button.place(relx=0.5, rely=0.9, anchor="center")
-
-        # Run the main loop for the submit_survey_window
-        submit_survey_window.mainloop()
-
-
-    def submit_survey_load_image(self):
-        # Construct the full path to the image file based on role and username
-        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-
-        # Load image and adjust canvas size
-        self.original_submit_survey_logo_image = Image.open(img_path)
-        self.resize_canvas_and_image_submit_survey()
-
-    def resize_canvas_and_image_submit_survey(self):
-        # Get the submit_survey window size
-        window_width = self.submit_survey_canvas.winfo_width()
-        window_height = self.submit_survey_canvas.winfo_height()
-
-        # Resize the canvas to the current window size
-        self.submit_survey_canvas.config(width=window_width, height=window_height)
-
-        # Resize the image if needed
-        resized_image = self.original_submit_survey_logo_image.resize(
-            (window_width, window_height)
-        )
-        self.submit_survey_logo_image = ImageTk.PhotoImage(resized_image)
-
-        # Update the image on the canvas
-        self.submit_survey_canvas.delete("all")
-        self.submit_survey_canvas.create_image(
-            0, 0, image=self.submit_survey_logo_image, anchor="nw"
-        )
-
-        # make it into a scrollable canvas
-        self.submit_survey_canvas.config(scrollregion=self.submit_survey_canvas.bbox("all"))
-
-        # Move the questions to the left side and align to the top
-        question_start_x = 20  # Adjust this value as needed
-        question_start_y = 20   # Adjust this value as needed
-
-
-          # Define the questions attribute
-        self.questions = [
+    def load_questions(self):
+        questions = [
             "How satisfied are you with your work environment?",
             "Do you feel your skills are utilized effectively in your current role?",
             "How would you rate the communication within the team?",
@@ -2390,7 +2334,6 @@ class CreativeLoginApp:
             "How would you rate the communication with your colleagues?",
             "How would you rate your work-life balance?",
             "How would you rate your overall job satisfaction?",
-
             "How would you rate your stress level at work?",
             "How would you rate your stress level outside of work?",
             "How would you rate your overall health?",
@@ -2400,36 +2343,22 @@ class CreativeLoginApp:
             "How would you rate your overall motivation?"
         ]
 
-        for i, question in enumerate(self.questions):
-            self.submit_survey_canvas.create_text(
-                question_start_x,
-                question_start_y + i * 40,  # Adjust the vertical spacing as needed
-                text=f"{question}",
-                font=("Helvetica", 10, "bold"),
-                fill="white",
-                anchor="w"  # Set anchor to west for left alignment
-            )
+        for i, question in enumerate(questions):
+            tk.Label(self.frame, text=question, font=("Helvetica", 10, "bold"), bg="white", anchor="w").pack(pady=10)
 
-    def on_window_resize_submit_survey(self, event):
-        # Handle window resize event
-        self.resize_canvas_and_image_submit_survey()
+            radio_var = tk.StringVar()
+            for j in range(1, 6):
+                tk.Radiobutton(
+                    self.frame,
+                    text=str(j),
+                    variable=radio_var,
+                    value=j
+                ).pack(pady=5)
 
 
 
-        
-    def submit_survey_request(self):
-        # Retrieve the entered values
-        for question in self.questions:
-            self.answers[question] = self.answers[question].get()
-            
-        # Check if all questions have been answered
-        if not all(self.answers.values()):
-            messagebox.showinfo("Employee Window", "Please answer all questions.")
-        else:
-            # # Add the survey to the database
-            # db.reference("/survey").push(self.answers)
-             messagebox.showinfo("Employee Window", "Survey submitted successfully.")
-            # self.survey_window.destroy()
+
+
 
     def submit_complaint(self):
        # Create a new window for the submit_complaint top level
