@@ -2323,7 +2323,17 @@ class CreativeLoginApp:
 
         self.load_questions()
 
+        self.frame.bind("<Configure>", self.on_frame_configure)
+        self.canvas.bind("<Configure>", self.on_canvas_configure)
+
         self.submit_survey_window.mainloop()
+
+    def on_frame_configure(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def on_canvas_configure(self, event):
+        canvas_width = event.width
+        self.canvas.itemconfig(self.frame_id, width=canvas_width)
 
     def load_questions(self):
         questions = [
@@ -2344,7 +2354,8 @@ class CreativeLoginApp:
         ]
 
         for i, question in enumerate(questions):
-            tk.Label(self.frame, text=question, font=("Helvetica", 10, "bold"), bg="white", anchor="w").pack(pady=10)
+            label = tk.Label(self.frame, text=question, font=("Helvetica", 10, "bold"), bg="white", anchor="w")
+            label.pack(pady=10)
 
             radio_var = tk.StringVar()
             for j in range(1, 6):
@@ -2354,6 +2365,8 @@ class CreativeLoginApp:
                     variable=radio_var,
                     value=j
                 ).pack(pady=5)
+
+        self.frame_id = self.canvas.create_window((0, 0), window=self.frame, anchor="nw", tags="self.frame")
 
 
 
