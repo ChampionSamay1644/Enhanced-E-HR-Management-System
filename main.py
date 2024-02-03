@@ -2497,6 +2497,14 @@ class CreativeLoginApp:
 
         self.frame_id = self.canvas.create_window((0, 0), window=self.frame, anchor="nw", tags="self.frame")
 
+        # Create a button to submit the survey
+        submit_button = tk.Button(self.frame, text="Submit", command=lambda: self.submit_survey_request())
+        submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+
+    def submit_survey_request(self):
+        self.submit_survey_window.destroy()
+        messagebox.showinfo("Employee Window", "Survey submitted successfully.")
+
     def submit_complaint(self):
        # Create a new window for the submit_complaint top level
         submit_complaint_window = tk.Toplevel()
