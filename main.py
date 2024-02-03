@@ -9,6 +9,8 @@ import firebase_admin
 from firebase_admin import db, credentials
 import threading
 from tkinter import Label
+from tkinter import Tk, Canvas, PhotoImage
+
 
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate("credentials.json")  # Path: credentials.json
@@ -28,6 +30,10 @@ class CreativeLoginApp:
         self.boss_original_image = None
         self.boss_img = None
         self.company_name_text = None  # Initialize company_name_text attribute
+        self.current_question_index = 0  # Initialize the current question index
+        self.db_data = {}  # Initialize db_data as an empty dictionary
+
+
 
         # Construct the full path to the image file
         img_path = os.path.join(
@@ -2434,76 +2440,160 @@ class CreativeLoginApp:
         db.reference("/employee").child(username).child("project").child("progress").set(db.reference("/employee").child(username).child("project").child("progress").get()+10)
         messagebox.showinfo("Employee Window", "Task Status set to Completed")
         
+   
     def submit_survey(self, username):
         self.submit_survey_window = tk.Toplevel()
         self.submit_survey_window.geometry("900x600")
         self.submit_survey_window.title("Submit Survey")
 
-        self.canvas = tk.Canvas(self.submit_survey_window, bg="white", highlightthickness=0)
-        self.canvas.pack(side="left", fill="both", expand=True)
+        # Create a canvas that resizes with the window
+        self.submit_survey_canvas = tk.Canvas(self.submit_survey_window, bg="white", highlightthickness=0)
+        self.submit_survey_canvas.pack(fill=tk.BOTH, expand=True)
 
-        self.scrollbar = ttk.Scrollbar(self.submit_survey_window, orient="vertical", command=self.canvas.yview)
-        self.scrollbar.pack(side="right", fill="y")
+        # Load the image
+        self.submit_survey_load_image()
 
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        # Bind the window resize event to the function
+        self.submit_survey_window.bind("<Configure>", lambda event: self.on_window_resize_submit_survey)
 
-        self.frame = tk.Frame(self.canvas, bg="white")
-        self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
+        # Bind the Escape key to the exit function
+        self.submit_survey_window.bind("<Escape>", lambda event: self.submit_survey_window.destroy())
 
-        self.load_questions()
+        # Focus on the window
+        self.submit_survey_window.focus_force()
 
-        self.frame.bind("<Configure>", self.on_frame_configure)
-        self.canvas.bind("<Configure>", self.on_canvas_configure)
+        # Center the window
+        self.center_window_all(self.submit_survey_window)
 
+
+        # Main loop for the submit_survey_window
         self.submit_survey_window.mainloop()
 
-    def on_frame_configure(self, event):
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+    def submit_survey_load_image(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
-    def on_canvas_configure(self, event):
-        canvas_width = event.width
-        self.canvas.itemconfig(self.frame_id, width=canvas_width)
+        # Load image and adjust canvas size
+        self.original_submit_survey_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_submit_survey()
 
-    def load_questions(self):
-        questions = [
-            "How satisfied are you with your work environment?",
-            "Do you feel your skills are utilized effectively in your current role?",
-            "How would you rate the communication within the team?",
-            "How would you rate the communication with your manager?",
-            "How would you rate the communication with your colleagues?",
-            "How would you rate your work-life balance?",
-            "How would you rate your overall job satisfaction?",
-            "How would you rate your stress level at work?",
-            "How would you rate your stress level outside of work?",
-            "How would you rate your overall health?",
-            "How would you rate your overall happiness?",
-            "How would you rate your overall productivity?",
-            "How would you rate your overall performance?",
-            "How would you rate your overall motivation?"
-        ]
 
-        for i, question in enumerate(questions):
-            label = tk.Label(self.frame, text=question, font=("Helvetica", 10, "bold"), bg="white", anchor="w")
-            label.pack(pady=10)
+    def resize_canvas_and_image_submit_survey(self):
+         # Get the submit_survey window size
+        window_width = self.submit_survey_canvas.winfo_width()
+        window_height = self.submit_survey_canvas.winfo_height()
 
-            radio_var = tk.StringVar()
-            for j in range(1, 6):
-                tk.Radiobutton(
-                    self.frame,
-                    text=str(j),
-                    variable=radio_var,
-                    value=j
-                ).pack(pady=5)
+        # Resize the canvas to the current window size
+        self.submit_survey_canvas.config(width=window_width, height=window_height)
 
-        self.frame_id = self.canvas.create_window((0, 0), window=self.frame, anchor="nw", tags="self.frame")
+        # Resize the image if needed
+        resized_image = self.original_submit_survey_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.submit_survey_logo_image = ImageTk.PhotoImage(resized_image)
 
-        # Create a button to submit the survey
-        submit_button = tk.Button(self.frame, text="Submit", command=lambda: self.submit_survey_request())
-        submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        # Update the image on the canvas
+        self.submit_survey_canvas.delete("all")
+        self.submit_survey_canvas.create_image(
+            0, 0, image=self.submit_survey_logo_image, anchor="nw"
+        )
+
+
+        # Pull child classes from Survey_Qs in the db using the .get function
+        survey_questions = db.reference("/Survey_Qs").get()
+
+        # Store the keys of the survey questions in a list
+        survey_questions_keys = list(survey_questions.keys())
+
+        # Display radio buttons for the survey questions
+        self.current_question_index = 0
+        self.display_survey_questions(survey_questions_keys, survey_questions)
+
+        
+        self.create_buttons()
+        
+
+    def create_buttons(self):
+        # Create a frame within the canvas to contain the buttons
+        button_frame = tk.Frame(self.submit_survey_canvas, bg="white")
+        button_frame.pack(pady=20, side=tk.BOTTOM)
+
+        # Create a button to go to the next question
+        next_button = tk.Button(button_frame, text="Next", command=self.next_question)
+        next_button.grid(row=0, column=0)
+
+        # Create a button to go to the previous question
+        previous_button = tk.Button(button_frame, text="Previous", command=self.previous_question)
+        previous_button.grid(row=0, column=1)
+
+    def display_survey_questions(self, survey_questions_keys, survey_questions):
+        #Clear only the text from the canvas
+        self.submit_survey_canvas.delete("all")
+
+        # Redraw the image
+        self.submit_survey_canvas.create_image(
+            0, 0, image=self.submit_survey_logo_image, anchor="nw"
+        )
+
+        # Check if the current question index is out of bounds
+        if self.current_question_index < 0:
+            self.current_question_index = 0
+        elif self.current_question_index >= len(survey_questions_keys):
+            self.current_question_index = len(survey_questions_keys) - 1
+
+        # Get the current question key
+        current_question_key = survey_questions_keys[self.current_question_index]
+
+        # Display the question on the canvas
+        question_text = f"Question {self.current_question_index + 1}: {survey_questions[current_question_key]}"
+        self.submit_survey_canvas.create_text(
+            10,
+            10,
+            text=question_text,
+            font=("Helvetica", 14, "bold"),
+            fill="white",
+            anchor="nw",
+        )
+
+    def next_question(self):
+        # Increment the current question index
+        self.current_question_index += 1
+
+        # Pull child classes from Survey_Qs in the db using the .get function
+        survey_questions = db.reference("/Survey_Qs").get()
+
+        # Store the keys of the survey questions in a list
+        survey_questions_keys = list(survey_questions.keys())
+
+        # Display the next question
+        self.display_survey_questions(survey_questions_keys, survey_questions)
+
+    def previous_question(self):
+        # Decrement the current question index
+        self.current_question_index -= 1
+
+        # Pull child classes from Survey_Qs in the db using the .get function
+        survey_questions = db.reference("/Survey_Qs").get()
+
+        # Store the keys of the survey questions in a list
+        survey_questions_keys = list(survey_questions.keys())
+
+        # Display the previous question
+        self.display_survey_questions(survey_questions_keys, survey_questions)
+
+
+    def on_window_resize_submit_survey(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_submit_survey()
 
     def submit_survey_request(self):
         self.submit_survey_window.destroy()
         messagebox.showinfo("Employee Window", "Survey submitted successfully.")
+
+
+
+
+    
 
     def submit_complaint(self):
        # Create a new window for the submit_complaint top level
@@ -2682,6 +2772,7 @@ class CreativeLoginApp:
                         "vacation_reason": "",
                         "vacation_approved": "",
                         "sick_approved": "",
+                        
                     }
                 )
                 emp_id_ref.child("emp_id").set(emp_uni + 1)
