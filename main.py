@@ -930,7 +930,7 @@ class CreativeLoginApp:
         self.role_entry = ttk.Combobox(
             self.salary_management_canvas, font=("Helvetica", 12, "bold")
         )
-        self.role_entry["values"] = ("HR", "boss", "employee")
+        self.role_entry["values"] = ("None","HR", "boss", "employee")
         self.role_entry.pack(
             pady=20
         )
@@ -952,6 +952,8 @@ class CreativeLoginApp:
             employees = list(( db.reference("/HR").get()).keys())
         elif role == "boss":
             employees = list(( db.reference("/boss").get()).keys())
+        elif role == "None":
+            return
         else:
             employees = list(( db.reference("/employee").get()).keys())
 
