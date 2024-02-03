@@ -702,6 +702,8 @@ class CreativeLoginApp:
         # hr_window.title("HR Window")
         if hasattr(self, "root") and self.root.winfo_exists():
             self.root.destroy()  # Close the main login window
+            
+        self.treeview = None
         
         hr_window,self.hr_logo_canvas=self.create_common_window("HR Window",username,role)
         
@@ -867,7 +869,133 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_hr(username)
 
     def salary_management(self):
-        messagebox.showinfo("HR Window", "Salary Management Button Pressed")
+        #create a frame with clickable text
+        salary_management_frame = tk.Toplevel()
+        salary_management_frame.geometry("800x600")  # Set the window size
+        salary_management_frame.title("Salary Management")
+        
+        #create a canvas that resizes with the window
+        self.salary_management_canvas = tk.Canvas(salary_management_frame, bg="white", highlightthickness=0)
+        self.salary_management_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # bind window resize event to function
+        salary_management_frame.bind("<Configure>", lambda event: self.on_window_resize_salary_management(event))
+        
+        # import the image as the background on the canvas
+        self.load_image_salary_management()
+        
+        #create a scrollable frame
+        self.scrollable_frame = tk.Frame(self.salary_management_canvas, bg="white")
+        self.scrollable_frame.pack(fill=tk.BOTH, expand=True)
+        self.scrollable_frame.place(relx=0.5, rely=0.5, anchor="center")
+        
+        #create a treeview to display the employees
+        if self.treeview is None:
+            self.treeview = ttk.Treeview(
+                self.scrollable_frame, columns=("Employee",), show="headings", selectmode="browse"
+            )
+            self.treeview.heading("Employee", text="Employee")
+            self.treeview.column("Employee", width=200, anchor="center")
+            self.treeview.tag_configure("clickable", foreground="blue", font=("Helvetica", 12, "underline"))
+            self.treeview.bind("<Double-1>", lambda event: self.open_employee_details_window(self.treeview.item(self.treeview.selection())["values"][0]))
+
+            # Add a vertical scrollbar to the Treeview
+            scrollbar = ttk.Scrollbar(self.scrollable_frame, orient="vertical", command=self.treeview.yview)
+            scrollbar.pack(side="right", fill="y")
+            self.treeview.configure(yscrollcommand=scrollbar.set)
+
+            # Pack the Treeview to the scrollable frame
+            self.treeview.pack(fill="both", expand=True)
+
+        # Configure grid row and column weights
+        self.scrollable_frame.grid_rowconfigure(0, weight=1)
+        self.scrollable_frame.grid_columnconfigure(0, weight=1)
+
+
+        # Now you can safely use self.treeview
+        self.treeview.delete(*self.treeview.get_children())
+        
+        #create a tick box for role of the employee
+        role_label = tk.Label(
+            self.salary_management_canvas,
+            text="Role",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        role_label.pack(
+            pady=20
+        )
+        #place it Extreme top middle
+        role_label.place(relx=0.5, rely=0.1, anchor="center")
+        self.role_entry = ttk.Combobox(
+            self.salary_management_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.role_entry["values"] = ("HR", "boss", "employee")
+        self.role_entry.pack(
+            pady=20
+        )
+        self.role_entry.place(relx=0.5, rely=0.2, anchor="center")
+        self.role_entry.current(0)
+        
+        self .role_entry.bind("<<ComboboxSelected>>", self.role_selected)
+        
+    def role_selected(self, event):
+        selected_role = self.role_entry.get()
+        if selected_role:
+            self.populate_employee_list(selected_role)
+    
+    def populate_employee_list(self, role):
+        # Clear the existing items in the Treeview
+        self.treeview.delete(*self.treeview.get_children())
+        
+        if role == "HR":
+            employees = list(( db.reference("/HR").get()).keys())
+        elif role == "boss":
+            employees = list(( db.reference("/boss").get()).keys())
+        else:
+            employees = list(( db.reference("/employee").get()).keys())
+
+        # Populate the Treeview with employee names
+        for employee in employees:
+            self.treeview.insert("", "end", values=(employee,), tags=("clickable",))
+
+    def open_employee_details_window(self, employee_name):
+        # Function to open another window with employee details
+        employee_details_window = tk.Toplevel()
+        employee_details_window.geometry("400x300")
+        employee_details_window.title(f"Details for {employee_name}")
+        
+    def load_image_salary_management(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_salary_management_image = Image.open(img_path)
+        self.resize_canvas_and_image_salary_management()
+    
+    def resize_canvas_and_image_salary_management(self):
+        # Get the salary_management window size
+        window_width = self.salary_management_canvas.winfo_width()
+        window_height = self.salary_management_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.salary_management_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_salary_management_image.resize(
+            (window_width, window_height)
+        )
+        self.salary_management_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.salary_management_canvas.delete("all")
+        self.salary_management_canvas.create_image(
+            0, 0, image=self.salary_management_image, anchor="nw"
+        )
+    
+    def on_window_resize_salary_management(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_salary_management()
 
     def employee_add_remove(self):
         messagebox.showinfo("HR Window", "Employee Add/Remove Button Pressed")
@@ -2304,7 +2432,6 @@ class CreativeLoginApp:
         db.reference("/employee").child(username).child("project").child("progress").set(db.reference("/employee").child(username).child("project").child("progress").get()+10)
         messagebox.showinfo("Employee Window", "Task Status set to Completed")
         
-
     def submit_survey(self, username):
         self.submit_survey_window = tk.Toplevel()
         self.submit_survey_window.geometry("900x600")
@@ -2367,11 +2494,6 @@ class CreativeLoginApp:
                 ).pack(pady=5)
 
         self.frame_id = self.canvas.create_window((0, 0), window=self.frame, anchor="nw", tags="self.frame")
-
-
-
-
-
 
     def submit_complaint(self):
        # Create a new window for the submit_complaint top level
