@@ -2765,7 +2765,7 @@ class CreativeLoginApp:
         survey_questions_keys = list(survey_questions.keys())
 
         # Bind the window resize event to the function
-        submit_survey_window.bind("<Configure>", lambda event: self.display_survey_questions(survey_questions_keys, survey_questions))
+        submit_survey_window.bind("<Configure>", lambda event: self.display_survey_questions(survey_questions_keys, survey_questions,username))
        
         # Bind the Escape key to the exit function
         submit_survey_window.bind("<Escape>", lambda event: submit_survey_window.destroy())
@@ -2801,7 +2801,7 @@ class CreativeLoginApp:
             0, 0, image=self.submit_survey_logo_image, anchor="nw"
         )
        
-    def display_survey_questions(self, survey_questions_keys, survey_questions):
+    def display_survey_questions(self, survey_questions_keys, survey_questions,username):
         # Clear only the text from the canvas
         self.submit_survey_canvas.delete("all")
         
@@ -2850,44 +2850,47 @@ class CreativeLoginApp:
 
 
             # Create a button to go to the next question
-            next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions))
+            next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions,username))
             next_button.grid(row=0, column=1)
 
             # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
-            previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions))
+            previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions,username))
             previous_button.grid(row=0, column=0)
 
             # Create a button to submit the survey at the bottom center of the window
-            submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.submit_survey_request())
+            submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.submit_survey_request(username))
             submit_button.grid(row=0, column=2)
 
             # Set the flag to indicate that buttons have been created
             self.buttons_created = True
                 
-    def next_question(self,survey_questions_keys, survey_questions):
+    def next_question(self,survey_questions_keys, survey_questions,username):
         # Increment the current question index
         self.current_question_index += 1
 
         # Display the next question
-        self.display_survey_questions(survey_questions_keys, survey_questions)
+        self.display_survey_questions(survey_questions_keys, survey_questions,username)
 
-    def previous_question(self,survey_questions_keys, survey_questions):
+    def previous_question(self,survey_questions_keys, survey_questions,username):
         # Decrement the current question index
         self.current_question_index -= 1
 
         # Display the previous question
-        self.display_survey_questions(survey_questions_keys, survey_questions)
+        self.display_survey_questions(survey_questions_keys, survey_questions,username)
         
     def on_window_resize_submit_survey(self, event):
         # Handle window resize event
         self.resize_canvas_and_image_submit_survey()
 
-    def submit_survey_request(self):
+    def submit_survey_request(self,username):
         print(self.selected_values)
         # Show a message that the survey has been submitted
-        messagebox.showinfo("Employee Window", "Survey submitted successfully.(no actual submission yet)")
+        messagebox.showinfo("Employee Window", "Survey submitted successfully.")
         self.buttons_created = False
         self.current_question_index = 0
+
+        #store the selected values in the database
+        db.reference("/employee").child(username).child("survey").set(self.selected_values)
 
     def store_selected_value(self, value):
        #store the selected value in relation to the question index
