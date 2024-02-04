@@ -2753,6 +2753,7 @@ class CreativeLoginApp:
         submit_survey_window = tk.Toplevel()
         submit_survey_window.geometry("800x600")  # Set the window size
         submit_survey_window.title("Submit Survey")
+        self.submit_survey_window = submit_survey_window
 
         # Create the canvas
         self.submit_survey_canvas = tk.Canvas(submit_survey_window, bg="white", highlightthickness=0)
@@ -2849,13 +2850,7 @@ class CreativeLoginApp:
                     command=lambda value=option: self.store_selected_value(value)
                 ).place(x=20, y=50 + i * 30)
 
-                #if a button was previously selected, set it to the selected value
-                # if self.current_question_index in self.selected_values:
-                #     radio_var.set(self.selected_values[self.current_question_index])
-
-
-
-
+               
             # Create a button to go to the next question
             next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions,username))
             next_button.grid(row=0, column=1)
@@ -2891,10 +2886,18 @@ class CreativeLoginApp:
         # Display the previous question
         self.display_survey_questions(survey_questions_keys, survey_questions,username)
 
+        
     def clear_selected_radio_button(self):
-        # Clear the selected radio button by setting the variable to None
-        if hasattr(self, 'radio_var'):
+        # Check if a value is selected for the current question
+        stored_value = self.selected_values.get(self.current_question_index)
+
+        # If a value is present, set the radio variable to that value
+        if stored_value is not None and stored_value in ["Very Poor", "Poor", "Average", "Good", "Very Good"]:
+            self.radio_var.set(stored_value)
+        else:
+            # Otherwise, clear the selected radio button by setting the variable to None
             self.radio_var.set(None)
+
         
     def on_window_resize_submit_survey(self, event):
         # Handle window resize event
@@ -2909,6 +2912,10 @@ class CreativeLoginApp:
 
         #store the selected values in the database
         db.reference("/employee").child(username).child("survey").set(self.selected_values)
+
+        # Destroy the survey window
+        self.submit_survey_window.destroy()
+
 
     def store_selected_value(self, value):
        #store the selected value in relation to the question index
