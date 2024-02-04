@@ -239,11 +239,11 @@ class CreativeLoginApp:
         credits_text = (
             "HR Management System\n\n"
             "Developed by: \n -Samay Pandey, \n-Armaan Nakhuda, \n-Sushant Navle, \n-Peeyush Karnik(assuming he does any work)\n\n"
-            "Stage Completition: Stage 4 completed\n"
+            "Stage Completition: Stage 4 completed\n Stage 5/6 in progress\n"
             "Date: 6th Feb 2024\n"
-            "\nSpecial Thanks to:\n- Firebase\n- OpenAI\n- Yash Patil\n"
+            "\nSpecial Thanks to:\n- Firebase\n- OpenAI\n- Yash Patil\n- Zane Fernandes\n- Ninad Walke\n"
         )
-
+        
         # Create a label for credits information
         credits_label = tk.Label(
             credits_dialog, text=credits_text, font=("Helvetica", 12)
