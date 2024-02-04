@@ -2577,6 +2577,7 @@ class CreativeLoginApp:
     def submit_survey_request(self):
         # Show a message that the survey has been submitted
         messagebox.showinfo("Employee Window", "Survey submitted successfully.(no actual submission yet)")
+        self.buttons_created = False
         
 
 
