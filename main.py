@@ -2246,16 +2246,38 @@ class CreativeLoginApp:
         # import the image as the background on the canvas
         self.load_image_employee(username)
 
-        
-        # if hasattr(self, "root"):
-        #     try:
-        #         if self.root.winfo_exists():
-        #             self.root.destroy()  # Close the main login window
-        #     except:
-        #         pass
+       
+         #add buttons and use a function to place them in the canvas
+        self.add_buttons_to_canvas_employee(username)
 
-        #employee_window,self.employee_logo_canvas=self.create_common_window("Employee Window",username,role)
+        #create an exit button in canvas and place at bottom middle
+        exit_button = tk.Button(
+        self.employee_logo_canvas,
+        text="Exit",
+        command=employee_window.destroy,
+        font=("Helvetica", 14),
+        width=15,
+        height=2,
+        bd=0,
+        fg="white",
+        bg="#FF4500",
+        activebackground="#FF6347",
+    )
+        exit_button.place(relx=0.5, rely=1.0, anchor="s")
 
+        # focus on window
+        employee_window.focus_force()
+
+        # Center the window with function center_window_test
+        self.center_window_all(employee_window)
+
+        # Bind the Escape key to the exit function
+        employee_window.bind("<Escape>", lambda event: employee_window.destroy())
+
+        # Run the main loop for the employee window
+        employee_window.mainloop()
+
+    def add_buttons_to_canvas_employee(self,username):
         #buttons of Employee window to the right side of the screen
         self.apply_for_vacation_days_button = tk.Button(
             self.employee_logo_canvas, text="Apply for Sick/Vacation Days", command=lambda:self.apply_for_vacation_days(username), font=("Helvetica", 14)
@@ -2307,33 +2329,6 @@ class CreativeLoginApp:
         self.submit_complaint_button.place(
             relx=0.75, rely=0.7, anchor="center", width=300, height=30
         )
-
-        #create an exit button in canvas and place at bottom middle
-        exit_button = tk.Button(
-        self.employee_logo_canvas,
-        text="Exit",
-        command=employee_window.destroy,
-        font=("Helvetica", 14),
-        width=15,
-        height=2,
-        bd=0,
-        fg="white",
-        bg="#FF4500",
-        activebackground="#FF6347",
-    )
-        exit_button.place(relx=0.5, rely=1.0, anchor="s")
-
-        # focus on window
-        employee_window.focus_force()
-
-        # Center the window with function center_window_test
-        self.center_window_all(employee_window)
-
-        # Bind the Escape key to the exit function
-        employee_window.bind("<Escape>", lambda event: employee_window.destroy())
-
-        # Run the main loop for the employee window
-        employee_window.mainloop()
        
     def load_image_employee(self,username):
         # Construct the full path to the image file based on role and username
