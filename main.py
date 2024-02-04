@@ -2920,21 +2920,36 @@ class CreativeLoginApp:
         # Handle window resize event
         self.resize_canvas_and_image_submit_survey()
 
-    def submit_survey_request(self,username):
-        print(self.selected_values)
-        # Show a message that the survey has been submitted
-        messagebox.showinfo("Employee Window", "Survey submitted successfully.")
-        self.buttons_created = False
-        self.current_question_index = 0
+       
+    def submit_survey_request(self, username):
 
-        #store the selected values in the database
-        db.reference("/employee").child(username).child("survey").set(self.selected_values)
+        stored_value = self.selected_values.get(self.current_question_index)
+        # Check if there are any unanswered questions
+        if stored_value is None or not stored_value in ["Very Poor", "Poor", "Average", "Good", "Very Good"]:
+
+            self.buttons_created = False
+
+            # If any question is not answered, show a messagebox and return without submitting
+            messagebox.showwarning("Incomplete Survey", "Please answer all survey questions before submitting.")
+            return
+
+        else:# Show a message that the survey has been submitted
+            messagebox.showinfo("Employee Window", "Survey submitted successfully.")
+            
+            # Store the selected values in the database
+            db.reference("/employee").child(username).child("survey").set(self.selected_values)
+
+            # Set the value of the "available" key in the survey to False
+            db.reference("/employee").child(username).child("survey").child("available").set("No")
+
+            # Clear the selected values and reset the current question index
+            self.buttons_created = False
+            self.current_question_index = 0
+
+            # Destroy the survey window
+            self.submit_survey_window.destroy()
 
 
-        #set value of available key in survey to False
-        db.reference("/employee").child(username).child("survey").child("available").set("No")
-        # Destroy the survey window
-        self.submit_survey_window.destroy()
 
 
     def store_selected_value(self, value):
