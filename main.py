@@ -945,6 +945,18 @@ class CreativeLoginApp:
         
         self .role_entry.bind("<<ComboboxSelected>>", self.role_selected)
         
+        #center the window
+        self.center_window_all(salary_management_frame)
+        
+        #focus on window
+        salary_management_frame.focus_force()
+        
+        #bind the escape key to the exit function
+        salary_management_frame.bind("<Escape>", lambda event: salary_management_frame.destroy())
+        
+        # Run the main loop for the salary_management_frame
+        salary_management_frame.mainloop()
+        
     def role_selected(self, event):
         selected_role = self.role_entry.get()
         if selected_role:
@@ -968,10 +980,259 @@ class CreativeLoginApp:
             self.treeview.insert("", "end", values=(employee,), tags=("clickable",))
 
     def open_employee_details_window(self, employee_name):
-        # Function to open another window with employee details
+        #Function to open another window with employee details
         employee_details_window = tk.Toplevel()
         employee_details_window.geometry("400x300")
         employee_details_window.title(f"Details for {employee_name}")
+        employee_details_window.focus_force()
+        
+        #create a canvas that resizes with the window
+        self.employee_details_canvas = tk.Canvas(employee_details_window, bg="white", highlightthickness=0)
+        self.employee_details_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        self.load_image_employee_details_new(employee_name)
+        
+        # bind window resize event to function
+        employee_details_window.bind("<Configure>", lambda event: self.on_window_resize_employee_details_new(employee_name,event))
+        
+        #create a button to edit salary
+        edit_salary_button = tk.Button(
+            self.employee_details_canvas,
+            text="Edit Salary",
+            command=lambda:self.edit_salary(employee_name),
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        edit_salary_button.place(relx=0.2, rely=0.9, anchor="s")
+        
+        #create a button to edit bonus
+        edit_bonus_button = tk.Button(
+            self.employee_details_canvas,
+            text="Edit Bonus",
+            command=lambda:self.edit_bonus(employee_name),
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        edit_bonus_button.place(relx=0.8, rely=0.9, anchor="s")
+        
+        #create an exit button in canvas and place at bottom middle
+        exit_button = tk.Button(
+        self.employee_details_canvas,
+        text="Exit",
+        command=employee_details_window.destroy,
+        font=("Helvetica", 14),
+        width=15,
+        height=2,
+        bd=0,
+        fg="white",
+        bg="#FF4500",
+        activebackground="#FF6347",
+    )
+        exit_button.place(relx=0.5, rely=1.0, anchor="s")
+        
+        # Center the window with function center_window_test
+        self.center_window_all(employee_details_window)
+        
+        # Bind the Escape key to the exit function
+        employee_details_window.bind("<Escape>", lambda event: self.handle_employee_details_window_exit(event, employee_details_window))
+        
+        # Run the main loop for the employee details window
+        employee_details_window.mainloop()
+        
+    def handle_employee_details_window_exit(self, event, employee_details_window):
+        if hasattr(self, "salary_management_canvas") and self.salary_management_canvas.winfo_exists():
+            self.salary_management_canvas.focus_force()
+            
+    def edit_salary(self, employee_name):
+        #Create a window to edit the salary of the employee
+        edit_salary_window = tk.Toplevel()
+        edit_salary_window.geometry("400x300")
+        edit_salary_window.title(f"Edit Salary for {employee_name}")
+        
+        #create an entry for new salary
+        new_salary_label = tk.Label(
+            edit_salary_window,
+            text="New Salary",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        new_salary_label.pack(
+            pady=20
+        )
+        new_salary_label.place(relx=0.5, rely=0.3, anchor="center")
+        
+        #Create an entry for the new salary
+        self.new_salary_entry = tk.Entry(
+            edit_salary_window, font=("Helvetica", 12, "bold")
+        )
+        self.new_salary_entry.pack(
+            pady=20
+        )
+        self.new_salary_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.new_salary_entry.insert(0, "")
+        #create a submit button to change the salary
+        submit_button = tk.Button(
+            edit_salary_window,
+            text="Submit",
+            command=lambda:self.new_submit_salary(employee_name, edit_salary_window),
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        submit_button.place(relx=0.5, rely=0.9, anchor="s")
+        
+        #bind the enter key to the submit button
+        edit_salary_window.bind("<Return>", lambda event: self.new_submit_salary(employee_name, edit_salary_window))
+        
+        #bind the escape key to the exit function
+        edit_salary_window.bind("<Escape>", lambda event: edit_salary_window.destroy())
+        
+        #center the window
+        self.center_window_all(edit_salary_window)
+        
+        #focus on window
+        edit_salary_window.focus_force()
+        
+        # Run the main loop for the edit_salary_window
+        edit_salary_window.mainloop()
+        
+    def new_submit_salary(self, employee_name, edit_salary_window):
+        #Get the new salary from the entry
+        new_salary = self.new_salary_entry.get()
+        #Ask for confirmation 
+        if messagebox.askyesno("Confirm", f"Are you sure you want to change the salary of {employee_name} to {new_salary}?"):
+            #Change the salary in the database
+            db.reference("/employee").child(employee_name).child("salary").set(new_salary)
+        #Close the window
+        edit_salary_window.destroy()
+        #focus on the salary management window
+        self.employee_details_canvas.focus_force()
+                    
+    def edit_bonus(self, employee_name):
+        #Create a window to edit the bonus of the employee
+        edit_bonus_window = tk.Toplevel()
+        edit_bonus_window.geometry("400x300")
+        edit_bonus_window.title(f"Edit Bonus for {employee_name}")
+        
+        #create an entry for new bonus
+        new_bonus_label = tk.Label(
+            edit_bonus_window,
+            text="New Bonus",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        new_bonus_label.pack(
+            pady=20
+        )
+        new_bonus_label.place(relx=0.5, rely=0.3, anchor="center")
+        
+        #Create an entry for the new bonus
+        self.new_bonus_entry = tk.Entry(
+            edit_bonus_window, font=("Helvetica", 12, "bold")
+        )
+        self.new_bonus_entry.pack(
+            pady=20
+        )
+        self.new_bonus_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.new_bonus_entry.insert(0, "")
+        #create a submit button to change the bonus
+        submit_button = tk.Button(
+            edit_bonus_window,
+            text="Submit",
+            command=lambda:self.new_submit_bonus(employee_name, edit_bonus_window),
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        submit_button.place(relx=0.5, rely=0.9, anchor="s")
+        
+        #bind the enter key to the submit button
+        edit_bonus_window.bind("<Return>", lambda event: self.new_submit_bonus(employee_name, edit_bonus_window))
+        
+        #bind the escape key to the exit function
+        edit_bonus_window.bind("<Escape>", lambda event: edit_bonus_window.destroy())
+        
+        #center the window
+        self.center_window_all(edit_bonus_window)
+        
+        #focus on window
+        edit_bonus_window.focus_force()
+        
+        # Run the main loop for the edit_bonus_window
+        edit_bonus_window.mainloop()
+        
+    def new_submit_bonus(self, employee_name, edit_bonus_window):
+        #Get the new bonus from the entry
+        new_bonus = self.new_bonus_entry.get()
+        #Ask for confirmation 
+        if messagebox.askyesno("Confirm", f"Are you sure you want to change the bonus of {employee_name} to {new_bonus}?"):
+            #Change the bonus in the database
+            db.reference("/employee").child(employee_name).child("bonus").set(new_bonus)
+        #Close the window
+        edit_bonus_window.destroy()
+        #focus on the salary management window
+        self.employee_details_canvas.focus_force()
+    
+    def load_image_employee_details_new(self,employee_name):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_employee_details_image = Image.open(img_path)
+        self.resize_canvas_and_image_employee_details_new(employee_name)
+        
+    def resize_canvas_and_image_employee_details_new(self,employee_name):
+        # Get the employee details window size
+        window_width = self.employee_details_canvas.winfo_width()
+        window_height = self.employee_details_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.employee_details_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_employee_details_image.resize(
+            (window_width, window_height)
+        )
+        self.employee_details_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.employee_details_canvas.delete("all")
+        self.employee_details_canvas.create_image(
+            0, 0, image=self.employee_details_image, anchor="nw"
+        )
+        
+        #create text with employee name, role, salary, hours attended, bonus
+        employee_details_text="Employee Name: "+str(employee_name)+"\nRole: "+str(db.reference("/employee").child(employee_name).child("role").get())+"\nSalary: "+str(db.reference("/employee").child(employee_name).child("salary").get())+"\nHours Attended: "+str(db.reference("/employee").child(employee_name).child("hours_attended").get())+"\nBonus: "+str(db.reference("/employee").child(employee_name).child("bonus").get())
+        self.employee_details_canvas.create_text(
+            window_width / 2,
+            window_height / 2,
+            text=employee_details_text,
+            font=("Helvetica", 14, "bold"),
+            fill="white",
+            tag="employee_details_text"
+        )
+    
+    def on_window_resize_employee_details_new(self,employee_name, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_employee_details_new(employee_name)
         
     def load_image_salary_management(self):
         # Construct the full path to the image file based on role and username
