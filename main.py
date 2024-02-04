@@ -2552,8 +2552,7 @@ class CreativeLoginApp:
 
             # Set the flag to indicate that buttons have been created
             self.buttons_created = True
-
-        
+                    
 
     def next_question(self,survey_questions_keys, survey_questions):
         # Increment the current question index
@@ -2578,6 +2577,7 @@ class CreativeLoginApp:
         # Show a message that the survey has been submitted
         messagebox.showinfo("Employee Window", "Survey submitted successfully.(no actual submission yet)")
         self.buttons_created = False
+        self.current_question_index = 0
         
 
 
