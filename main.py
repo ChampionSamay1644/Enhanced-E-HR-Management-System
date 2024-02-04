@@ -2510,20 +2510,20 @@ class CreativeLoginApp:
         self.display_survey_questions(survey_questions_keys, survey_questions)
 
         
-        self.create_buttons()
+        self.create_buttons(survey_questions_keys, survey_questions)
         
 
-    def create_buttons(self):
+    def create_buttons(self, survey_questions_keys, survey_questions):
         # Create a frame within the canvas to contain the buttons
         button_frame = tk.Frame(self.submit_survey_canvas, bg="white")
         button_frame.pack(pady=20, side=tk.BOTTOM)
 
         # Create a button to go to the next question
-        next_button = tk.Button(button_frame, text="Next", command=self.next_question)
+        next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions))
         next_button.grid(row=0, column=0)
 
-        # Create a button to go to the previous question
-        previous_button = tk.Button(button_frame, text="Previous", command=self.previous_question)
+        # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
+        previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions))
         previous_button.grid(row=0, column=1)
 
     def display_survey_questions(self, survey_questions_keys, survey_questions):
@@ -2551,32 +2551,20 @@ class CreativeLoginApp:
             10,
             text=question_text,
             font=("Helvetica", 14, "bold"),
-            fill="white",
+            fill="black",
             anchor="nw",
         )
 
-    def next_question(self):
+    def next_question(self,survey_questions_keys, survey_questions):
         # Increment the current question index
         self.current_question_index += 1
-
-        # Pull child classes from Survey_Qs in the db using the .get function
-        survey_questions = db.reference("/Survey_Qs").get()
-
-        # Store the keys of the survey questions in a list
-        survey_questions_keys = list(survey_questions.keys())
 
         # Display the next question
         self.display_survey_questions(survey_questions_keys, survey_questions)
 
-    def previous_question(self):
+    def previous_question(self,survey_questions_keys, survey_questions):
         # Decrement the current question index
         self.current_question_index -= 1
-
-        # Pull child classes from Survey_Qs in the db using the .get function
-        survey_questions = db.reference("/Survey_Qs").get()
-
-        # Store the keys of the survey questions in a list
-        survey_questions_keys = list(survey_questions.keys())
 
         # Display the previous question
         self.display_survey_questions(survey_questions_keys, survey_questions)
@@ -2592,8 +2580,6 @@ class CreativeLoginApp:
 
 
 
-
-    
 
     def submit_complaint(self):
        # Create a new window for the submit_complaint top level
