@@ -2520,11 +2520,15 @@ class CreativeLoginApp:
 
         # Create a button to go to the next question
         next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions))
-        next_button.grid(row=0, column=0)
+        next_button.grid(row=0, column=1)
 
         # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
         previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions))
-        previous_button.grid(row=0, column=1)
+        previous_button.grid(row=0, column=0)
+
+        # Create a button to submit the survey at the bottom center of the window
+        submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.submit_survey_request())
+        submit_button.grid(row=0, column=2)
 
     def display_survey_questions(self, survey_questions_keys, survey_questions):
         #Clear only the text from the canvas
@@ -2576,7 +2580,7 @@ class CreativeLoginApp:
 
     def submit_survey_request(self):
         self.submit_survey_window.destroy()
-        messagebox.showinfo("Employee Window", "Survey submitted successfully.")
+        messagebox.showinfo("Employee Window", "Survey submitted successfully.(no actual submission yet)")
 
 
 
