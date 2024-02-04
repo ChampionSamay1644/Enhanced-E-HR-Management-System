@@ -2329,7 +2329,8 @@ class CreativeLoginApp:
         self.submit_complaint_button.place(
             relx=0.75, rely=0.7, anchor="center", width=300, height=30
         )
-       
+        
+    
     def load_image_employee(self,username):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -2338,24 +2339,15 @@ class CreativeLoginApp:
         self.original_employee_logo_image = Image.open(img_path)
         self.resize_canvas_and_image_employee(username)
 
-    def resize_canvas_and_image_employee(self,username):
-        username_employee = username
+    
+
+    def resize_canvas_and_image_employee(self, username):
         # Get the employee window size
         window_width = self.employee_logo_canvas.winfo_width()
         window_height = self.employee_logo_canvas.winfo_height()
-        employee_ref = db.reference("/employee")
-        emp_id = employee_ref.child(username).child("emp_id").get()
-        designation = employee_ref.child(username).child("designation").get()
-        salary = employee_ref.child(username).child("salary").get()
-        sick_approved = employee_ref.child(username).child("sick_approved").get()
-        vacation_approved = employee_ref.child(username).child("vacation_approved").get()
-        bonus = employee_ref.child(username).child("bonus").get()
-        hours_attended = employee_ref.child(username).child("hours_attended").get()
-        survey = employee_ref.child(username).child("survey").child("available").get()
 
         # Resize the canvas to the current window size
         self.employee_logo_canvas.config(width=window_width, height=window_height)
-
 
         # Resize the image if needed
         resized_image = self.original_employee_logo_image.resize(
@@ -2369,12 +2361,21 @@ class CreativeLoginApp:
             0, 0, image=self.employee_logo_image, anchor="nw"
         )
 
-        #redraw the employee name text    
-        if hasattr(self, "employee_name_text"):
-            self.employee_logo_canvas.delete(
-                self.employee_name_text
-            )
+        # Redraw the employee name text
+        self.redraw_employee_name(username)
 
+        # Redraw the employee details text
+        self.redraw_employee_details(username)
+
+    def redraw_employee_name(self, username):
+        username_employee = username
+        window_width = self.employee_logo_canvas.winfo_width()
+        
+        # Check if the employee name text already exists and delete it
+        if hasattr(self, "employee_name_text"):
+            self.employee_logo_canvas.delete(self.employee_name_text)
+
+        # Create and place the employee name text
         self.employee_name_text = self.employee_logo_canvas.create_text(
             window_width / 2,
             100,
@@ -2382,21 +2383,34 @@ class CreativeLoginApp:
             font=("Helvetica", 28, "bold"),
             fill="white",
         )
-        #redraw the employee details text
+
+    def redraw_employee_details(self, username):
+        window_height = self.employee_logo_canvas.winfo_height()
+        employee_ref = db.reference("/employee")
+        emp_id = employee_ref.child(username).child("emp_id").get()
+        designation = employee_ref.child(username).child("designation").get()
+        salary = employee_ref.child(username).child("salary").get()
+        sick_approved = employee_ref.child(username).child("sick_approved").get()
+        vacation_approved = employee_ref.child(username).child("vacation_approved").get()
+        bonus = employee_ref.child(username).child("bonus").get()
+        hours_attended = employee_ref.child(username).child("hours_attended").get()
+        survey = employee_ref.child(username).child("survey").child("available").get()
+
+        # Check if the employee details text already exists and delete it
         if hasattr(self, "employee_details_text"):
-            self.employee_logo_canvas.delete(
-                self.employee_details_text
-            )
-        
+            self.employee_logo_canvas.delete(self.employee_details_text)
+
+        # Create and place the employee details text
         self.employee_details_text = self.employee_logo_canvas.create_text(
-            #place it on the leftmost of the window
+            # Place it on the leftmost of the window
             10,
-            window_height-10,
+            window_height - 10,
             text=f"Employee ID: {emp_id}\nDesignation: {designation}\nSalary: {salary}\nSick Days: {sick_approved}\nVacation Days: {vacation_approved}\nBonus: {bonus}\nHours Attended: {hours_attended}\nSurvey Available: {survey}",
             font=("Helvetica", 18, "bold"),
             fill="white",
-            anchor='sw',
+            anchor="sw",
         )
+
         
     def on_window_resize_employee(self, event,username):
         # Handle window resize event
