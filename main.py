@@ -363,7 +363,7 @@ class CreativeLoginApp:
             pady=20
         )
         self.create_all_admin_button.place(
-            relx=0.5, rely=0.5, anchor="center", width=200, height=30
+            relx=0.5, rely=0.4, anchor="center", width=200, height=30
         )
         self.remove_all_admin_button = tk.Button(
             self.admin_logo_canvas, text="Remove HR Login", command=lambda:self.remove_all_admin(), font=("Helvetica", 14)
@@ -372,8 +372,31 @@ class CreativeLoginApp:
             pady=20
         )
         self.remove_all_admin_button.place(
-            relx=0.5, rely=0.6, anchor="center", width=200, height=30
+            relx=0.5, rely=0.5, anchor="center", width=200, height=30
         )
+        
+        #create combo box to select the role
+        self.role_entry = ttk.Combobox(
+            self.admin_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.role_entry["values"] = ("HR", "boss", "employee")
+        self.role_entry.pack(
+            pady=20
+        )
+        self.role_entry.place(relx=0.5, rely=0.6, anchor="center")
+        self.role_entry.current(0)
+        
+        #create a new button to login as the selected role
+        self.login_as_button = tk.Button(
+            self.admin_logo_canvas, text="Login as selected role", command=lambda:self.login_as_selected_role(username,admin_window), font=("Helvetica", 14)
+        )
+        self.login_as_button.pack(
+            pady=20
+        )
+        self.login_as_button.place(
+            relx=0.5, rely=0.7, anchor="center", width=200, height=30
+        )
+        
          # bind window resize event to function
         #admin_window.bind("<Configure>", lambda event: self.on_window_resize_common(event,username))
         
@@ -407,6 +430,16 @@ class CreativeLoginApp:
         # Run the main loop for the admin window
         admin_window.mainloop()
 
+    def login_as_selected_role(self,username,admin_window):
+        role = self.role_entry.get()
+        admin_window.destroy()
+        if role == "HR":
+            self.open_hr_window(role, username)
+        elif role == "boss":
+            self.open_boss_window(role, username)
+        elif role == "employee":
+            self.open_employee_window(role, username)
+            
     def load_image_admin(self,username):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -706,8 +739,12 @@ class CreativeLoginApp:
         # hr_window = tk.Tk()  # Use Tk() to create a new window
         # hr_window.geometry("800x600")  # Set the window size
         # hr_window.title("HR Window")
-        if hasattr(self, "root") and self.root.winfo_exists():
-            self.root.destroy()  # Close the main login window
+        if hasattr(self, "root"):
+            try:
+                if self.root.winfo_exists():
+                    self.root.destroy()  # Close the main login window
+            except:
+                pass
             
         self.treeview = None
         
@@ -1533,7 +1570,13 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_remove_be()
 
     def open_boss_window(self, role, username):
-        self.root.destroy()  # Close the main login window
+        if hasattr(self, "root"):
+            try:
+                if self.root.winfo_exists():
+                    self.root.destroy()  # Close the main login window
+            except:
+                pass
+            
         boss_window = tk.Tk()  # Use Tk() to create a new window
         boss_window.geometry("800x600")  # Set the window size
         boss_window.title("Boss Window")
@@ -2188,8 +2231,12 @@ class CreativeLoginApp:
         messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
 
     def open_employee_window(self, role, username):
-        if hasattr(self, "root") and self.root.winfo_exists():
-           self.root.destroy()  # Close the main login window
+        if hasattr(self, "root"):
+            try:
+                if self.root.winfo_exists():
+                    self.root.destroy()  # Close the main login window
+            except:
+                pass
 
         employee_window,self.employee_logo_canvas=self.create_common_window("Employee Window",username,role)
 
@@ -2701,7 +2748,6 @@ class CreativeLoginApp:
         db.reference("/employee").child(username).child("project").child("progress").set(db.reference("/employee").child(username).child("project").child("progress").get()+10)
         messagebox.showinfo("Employee Window", "Task Status set to Completed")
         
-   
     def submit_survey(self, username):
         # Create a new window for the submit_survey top level
         submit_survey_window = tk.Toplevel()
@@ -2733,7 +2779,6 @@ class CreativeLoginApp:
         # Main loop for the submit_survey_window
         submit_survey_window.mainloop()
 
-   
     def resize_canvas_and_image_submit_survey(self,):
 
         # Construct the full path to the image file based on role and username
@@ -2756,7 +2801,6 @@ class CreativeLoginApp:
             0, 0, image=self.submit_survey_logo_image, anchor="nw"
         )
        
-    
     def display_survey_questions(self, survey_questions_keys, survey_questions):
         # Clear only the text from the canvas
         self.submit_survey_canvas.delete("all")
@@ -2819,8 +2863,7 @@ class CreativeLoginApp:
 
             # Set the flag to indicate that buttons have been created
             self.buttons_created = True
-                    
-
+                
     def next_question(self,survey_questions_keys, survey_questions):
         # Increment the current question index
         self.current_question_index += 1
@@ -2834,8 +2877,7 @@ class CreativeLoginApp:
 
         # Display the previous question
         self.display_survey_questions(survey_questions_keys, survey_questions)
-
-
+        
     def on_window_resize_submit_survey(self, event):
         # Handle window resize event
         self.resize_canvas_and_image_submit_survey()
@@ -2850,14 +2892,6 @@ class CreativeLoginApp:
     def store_selected_value(self, value):
        #store the selected value in relation to the question index
         self.selected_values[self.current_question_index] = value
-
-
-       
-
-               
-
-
-
 
     def submit_complaint(self):
        # Create a new window for the submit_complaint top level
