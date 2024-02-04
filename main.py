@@ -2834,19 +2834,26 @@ class CreativeLoginApp:
             button_frame = tk.Frame(self.submit_survey_canvas, bg="white")
             button_frame.pack(pady=20, side=tk.BOTTOM)
 
-             # Create radio buttons for each question
-            radio_var = tk.StringVar()
-            radio_var.set("Not Answered")  # Set default value
+            # Create radio buttons for each question
+            self.radio_var = tk.StringVar()
+            self.radio_var.set(None)  # Set default value
 
             options = ["Very Poor", "Poor", "Average", "Good", "Very Good"]
             for i, option in enumerate(options):
                 tk.Radiobutton(
                     self.submit_survey_canvas,
                     text=option,
-                    variable=radio_var,
+                    variable=self.radio_var,
+                    radio_var=None,
                     value=option,
                     command=lambda value=option: self.store_selected_value(value)
                 ).place(x=20, y=50 + i * 30)
+
+                #if a button was previously selected, set it to the selected value
+                # if self.current_question_index in self.selected_values:
+                #     radio_var.set(self.selected_values[self.current_question_index])
+
+
 
 
             # Create a button to go to the next question
@@ -2866,7 +2873,10 @@ class CreativeLoginApp:
                 
     def next_question(self,survey_questions_keys, survey_questions,username):
         # Increment the current question index
-        self.current_question_index += 1
+        self.current_question_index += 1     
+
+          # Clear the selected radio button
+        self.clear_selected_radio_button()
 
         # Display the next question
         self.display_survey_questions(survey_questions_keys, survey_questions,username)
@@ -2875,8 +2885,16 @@ class CreativeLoginApp:
         # Decrement the current question index
         self.current_question_index -= 1
 
+          # Clear the selected radio button
+        self.clear_selected_radio_button()
+
         # Display the previous question
         self.display_survey_questions(survey_questions_keys, survey_questions,username)
+
+    def clear_selected_radio_button(self):
+        # Clear the selected radio button by setting the variable to None
+        if hasattr(self, 'radio_var'):
+            self.radio_var.set(None)
         
     def on_window_resize_submit_survey(self, event):
         # Handle window resize event
