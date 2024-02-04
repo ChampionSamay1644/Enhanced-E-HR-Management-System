@@ -2717,26 +2717,17 @@ class CreativeLoginApp:
         # Store the keys of the survey questions in a list
         survey_questions_keys = list(survey_questions.keys())
 
-       
         # Bind the window resize event to the function
         submit_survey_window.bind("<Configure>", lambda event: self.display_survey_questions(survey_questions_keys, survey_questions))
        
-
         # Bind the Escape key to the exit function
         submit_survey_window.bind("<Escape>", lambda event: submit_survey_window.destroy())
      
-
-         # Display radio buttons for the survey questions
-        
-        #self.display_survey_questions(survey_questions_keys, survey_questions)
-
-
         # Focus on the window
         submit_survey_window.focus_force()
 
         # Center the window
         self.center_window_all(submit_survey_window)
-
 
         # Main loop for the submit_survey_window
         submit_survey_window.mainloop()
@@ -2765,7 +2756,6 @@ class CreativeLoginApp:
         )
        
     
-
     def display_survey_questions(self, survey_questions_keys, survey_questions):
         # Clear only the text from the canvas
         self.submit_survey_canvas.delete("all")
@@ -2798,6 +2788,21 @@ class CreativeLoginApp:
             # Create a frame within the canvas to contain the buttons
             button_frame = tk.Frame(self.submit_survey_canvas, bg="white")
             button_frame.pack(pady=20, side=tk.BOTTOM)
+
+             # Create radio buttons for each question
+            radio_var = tk.StringVar()
+            radio_var.set("Not Answered")  # Set default value
+
+            options = ["Very Poor", "Poor", "Average", "Good", "Very Good"]
+            for i, option in enumerate(options):
+                tk.Radiobutton(
+                    self.submit_survey_canvas,
+                    text=option,
+                    variable=radio_var,
+                    value=option,
+                    command=lambda value=option: self.store_selected_value(value)
+                ).place(x=20, y=50 + i * 30)
+
 
             # Create a button to go to the next question
             next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions))
@@ -2839,7 +2844,11 @@ class CreativeLoginApp:
         messagebox.showinfo("Employee Window", "Survey submitted successfully.(no actual submission yet)")
         self.buttons_created = False
         self.current_question_index = 0
-        
+
+    def store_selected_value(self, value):
+        # Store the selected value in the database
+        print(value)
+               
 
 
 
