@@ -32,6 +32,7 @@ class CreativeLoginApp:
         self.company_name_text = None  # Initialize company_name_text attribute
         self.current_question_index = 0  # Initialize the current question index
         self.db_data = {}  # Initialize db_data as an empty dictionary
+        self.selected_values = {}  # Initialize selected_values as an empty dictionary
 
 
         # Construct the full path to the image file
@@ -2840,14 +2841,19 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_submit_survey()
 
     def submit_survey_request(self):
+        print(self.selected_values)
         # Show a message that the survey has been submitted
         messagebox.showinfo("Employee Window", "Survey submitted successfully.(no actual submission yet)")
         self.buttons_created = False
         self.current_question_index = 0
 
     def store_selected_value(self, value):
-        # Store the selected value in the database
-        print(value)
+       #store the selected value in relation to the question index
+        self.selected_values[self.current_question_index] = value
+
+
+       
+
                
 
 
