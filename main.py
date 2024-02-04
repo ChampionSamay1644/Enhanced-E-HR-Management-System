@@ -34,7 +34,6 @@ class CreativeLoginApp:
         self.db_data = {}  # Initialize db_data as an empty dictionary
 
 
-
         # Construct the full path to the image file
         img_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), "HR_background.png" #change jpg to png for main background
@@ -2442,62 +2441,14 @@ class CreativeLoginApp:
         
    
     def submit_survey(self, username):
-        self.submit_survey_window = tk.Toplevel()
-        self.submit_survey_window.geometry("900x600")
-        self.submit_survey_window.title("Submit Survey")
+        # Create a new window for the submit_survey top level
+        submit_survey_window = tk.Toplevel()
+        submit_survey_window.geometry("800x600")  # Set the window size
+        submit_survey_window.title("Submit Survey")
 
-        # Create a canvas that resizes with the window
-        self.submit_survey_canvas = tk.Canvas(self.submit_survey_window, bg="white", highlightthickness=0)
+        # Create the canvas
+        self.submit_survey_canvas = tk.Canvas(submit_survey_window, bg="white", highlightthickness=0)
         self.submit_survey_canvas.pack(fill=tk.BOTH, expand=True)
-
-        # Load the image
-        self.submit_survey_load_image()
-
-        # Bind the window resize event to the function
-        self.submit_survey_window.bind("<Configure>", lambda event: self.on_window_resize_submit_survey)
-
-        # Bind the Escape key to the exit function
-        self.submit_survey_window.bind("<Escape>", lambda event: self.submit_survey_window.destroy())
-
-        # Focus on the window
-        self.submit_survey_window.focus_force()
-
-        # Center the window
-        self.center_window_all(self.submit_survey_window)
-
-
-        # Main loop for the submit_survey_window
-        self.submit_survey_window.mainloop()
-
-    def submit_survey_load_image(self):
-        # Construct the full path to the image file based on role and username
-        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-
-        # Load image and adjust canvas size
-        self.original_submit_survey_logo_image = Image.open(img_path)
-        self.resize_canvas_and_image_submit_survey()
-
-
-    def resize_canvas_and_image_submit_survey(self):
-         # Get the submit_survey window size
-        window_width = self.submit_survey_canvas.winfo_width()
-        window_height = self.submit_survey_canvas.winfo_height()
-
-        # Resize the canvas to the current window size
-        self.submit_survey_canvas.config(width=window_width, height=window_height)
-
-        # Resize the image if needed
-        resized_image = self.original_submit_survey_logo_image.resize(
-            (window_width, window_height)
-        )
-        self.submit_survey_logo_image = ImageTk.PhotoImage(resized_image)
-
-        # Update the image on the canvas
-        self.submit_survey_canvas.delete("all")
-        self.submit_survey_canvas.create_image(
-            0, 0, image=self.submit_survey_logo_image, anchor="nw"
-        )
-
 
         # Pull child classes from Survey_Qs in the db using the .get function
         survey_questions = db.reference("/Survey_Qs").get()
@@ -2505,39 +2456,61 @@ class CreativeLoginApp:
         # Store the keys of the survey questions in a list
         survey_questions_keys = list(survey_questions.keys())
 
-        # Display radio buttons for the survey questions
-        self.current_question_index = 0
-        self.display_survey_questions(survey_questions_keys, survey_questions)
+       
+        # Bind the window resize event to the function
+        submit_survey_window.bind("<Configure>", lambda event: self.display_survey_questions(survey_questions_keys, survey_questions))
+       
 
+        # Bind the Escape key to the exit function
+        submit_survey_window.bind("<Escape>", lambda event: submit_survey_window.destroy())
+     
+
+         # Display radio buttons for the survey questions
         
-        self.create_buttons(survey_questions_keys, survey_questions)
-        
+        #self.display_survey_questions(survey_questions_keys, survey_questions)
 
-    def create_buttons(self, survey_questions_keys, survey_questions):
-        # Create a frame within the canvas to contain the buttons
-        button_frame = tk.Frame(self.submit_survey_canvas, bg="white")
-        button_frame.pack(pady=20, side=tk.BOTTOM)
 
-        # Create a button to go to the next question
-        next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions))
-        next_button.grid(row=0, column=1)
+        # Focus on the window
+        submit_survey_window.focus_force()
 
-        # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
-        previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions))
-        previous_button.grid(row=0, column=0)
+        # Center the window
+        self.center_window_all(submit_survey_window)
 
-        # Create a button to submit the survey at the bottom center of the window
-        submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.submit_survey_request())
-        submit_button.grid(row=0, column=2)
 
-    def display_survey_questions(self, survey_questions_keys, survey_questions):
-        #Clear only the text from the canvas
-        self.submit_survey_canvas.delete("all")
+        # Main loop for the submit_survey_window
+        submit_survey_window.mainloop()
+
+   
+    def resize_canvas_and_image_submit_survey(self,):
+
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_submit_survey_logo_image = Image.open(img_path)
+
+        # Get the submit_survey window size
+        window_width = self.submit_survey_canvas.winfo_width()
+        window_height = self.submit_survey_canvas.winfo_height()
+         # Resize the image if needed
+        resized_image = self.original_submit_survey_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.submit_survey_logo_image = ImageTk.PhotoImage(resized_image)
 
         # Redraw the image
         self.submit_survey_canvas.create_image(
             0, 0, image=self.submit_survey_logo_image, anchor="nw"
         )
+       
+    
+
+    def display_survey_questions(self, survey_questions_keys, survey_questions):
+        # Clear only the text from the canvas
+        self.submit_survey_canvas.delete("all")
+        
+        # Resize canvas and image
+        self.resize_canvas_and_image_submit_survey()
 
         # Check if the current question index is out of bounds
         if self.current_question_index < 0:
@@ -2555,9 +2528,32 @@ class CreativeLoginApp:
             10,
             text=question_text,
             font=("Helvetica", 14, "bold"),
-            fill="black",
+            fill="white",
             anchor="nw",
         )
+
+        # Check if buttons have been created
+        if not hasattr(self, 'buttons_created') or not self.buttons_created:
+            # Create a frame within the canvas to contain the buttons
+            button_frame = tk.Frame(self.submit_survey_canvas, bg="white")
+            button_frame.pack(pady=20, side=tk.BOTTOM)
+
+            # Create a button to go to the next question
+            next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions))
+            next_button.grid(row=0, column=1)
+
+            # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
+            previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions))
+            previous_button.grid(row=0, column=0)
+
+            # Create a button to submit the survey at the bottom center of the window
+            submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.submit_survey_request())
+            submit_button.grid(row=0, column=2)
+
+            # Set the flag to indicate that buttons have been created
+            self.buttons_created = True
+
+        
 
     def next_question(self,survey_questions_keys, survey_questions):
         # Increment the current question index
@@ -2579,8 +2575,9 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_submit_survey()
 
     def submit_survey_request(self):
-        self.submit_survey_window.destroy()
+        # Show a message that the survey has been submitted
         messagebox.showinfo("Employee Window", "Survey submitted successfully.(no actual submission yet)")
+        
 
 
 
