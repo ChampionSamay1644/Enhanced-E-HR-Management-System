@@ -2930,6 +2930,9 @@ class CreativeLoginApp:
         #store the selected values in the database
         db.reference("/employee").child(username).child("survey").set(self.selected_values)
 
+
+        #set value of available key in survey to False
+        db.reference("/employee").child(username).child("survey").child("available").set("No")
         # Destroy the survey window
         self.submit_survey_window.destroy()
 
