@@ -1604,15 +1604,9 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_remove_be()
 
     def open_boss_window(self, role, username):
-        if hasattr(self, "root"):
-            try:
-                if self.root.winfo_exists():
-                    self.root.destroy()  # Close the main login window
-            except:
-                pass
-            
+        self.root.destroy()  # Close the main login window    
         boss_window = tk.Tk()  # Use Tk() to create a new window
-        boss_window.geometry("800x600")  # Set the window size
+        boss_window.geometry("900x600")  # Set the window size
         boss_window.title("Boss Window")
 
         #create a canvas that resizes with the window
@@ -1951,7 +1945,7 @@ class CreativeLoginApp:
         # show the reason of vacation days of the employee using label on the canvas
         provisional_vacation_days_label = tk.Label(
             self.employee_details_logo_canvas,
-            text="Provisional Vacation Days",
+            text="Vacation Days",
             font=("Helvetica", 12, "bold"),
             bg="white",
         )
