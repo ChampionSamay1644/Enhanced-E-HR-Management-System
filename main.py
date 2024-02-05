@@ -2441,6 +2441,8 @@ class CreativeLoginApp:
         bonus = employee_ref.child(username).child("bonus").get()
         hours_attended = employee_ref.child(username).child("hours_attended").get()
         survey = employee_ref.child(username).child("survey").child("available").get()
+        vacation_a_d = employee_ref.child(username).child("vacation_approved_denied").get()
+        sick_a_d = employee_ref.child(username).child("sick_approved_denied").get()
 
         # Check if the employee details text already exists and delete it
         if hasattr(self, "employee_details_text"):
@@ -2451,7 +2453,7 @@ class CreativeLoginApp:
             # Place it on the leftmost of the window
             10,
             window_height - 10,
-            text=f"Employee ID: {emp_id}\nDesignation: {designation}\nSalary: {salary}\nSick Days: {sick_approved}\nVacation Days: {vacation_approved}\nBonus: {bonus}\nHours Attended: {hours_attended}\nSurvey Available: {survey}",
+            text=f"Employee ID: {emp_id}\nDesignation: {designation}\nSalary: {salary}\nSick Days: {sick_approved}\nVacation Days: {vacation_approved}\nBonus: {bonus}\nHours Attended: {hours_attended}\nSurvey Available: {survey}\nVacation Approved/Denied: {vacation_a_d}\nSick Approved/Denied: {sick_a_d}\n\n\n\n\n",
             font=("Helvetica", 18, "bold"),
             fill="white",
             anchor="sw",
