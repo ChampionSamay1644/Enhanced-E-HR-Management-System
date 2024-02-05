@@ -268,6 +268,23 @@ class CreativeLoginApp:
 
         credits_dialog.mainloop()
 
+    def profile(self,username,role):
+        # Create a new Toplevel window for the profile
+        profile_dialog = tk.Toplevel()
+        profile_dialog.title("Profile")
+
+        # You can customize the profile information as per your needs
+        profile_text = (
+            f"Username: {username}\nRole: {role}\n"
+        )
+        
+        # Create a label for profile information
+        profile_label = tk.Label(
+            profile_dialog, text=profile_text, font=("Helvetica", 12)
+        )
+        profile_label.pack(padx=20, pady=20)
+        
+        
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
@@ -850,6 +867,23 @@ class CreativeLoginApp:
         activebackground="#FF6347",
     )
         exit_button.place(relx=0.5, rely=1.0, anchor="s")
+        
+        profile_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "profile.png" #change jpg to png for main background
+        )
+        profile_img = PhotoImage(file=profile_path)
+        
+        resized_profile_img = profile_img.subsample(4, 4)
+        
+        profile_btn = tk.Button(
+            self.hr_logo_canvas, image=resized_profile_img, command=lambda:self.profile(username,role),borderwidth=0, font=("Helvetica", 14)
+        )
+        profile_btn.pack(
+            pady=20
+        )
+        profile_btn.place(
+            relx=0.95, rely=0.05, anchor="center", width=50, height=50
+        )
 
         # focus on window
         hr_window.focus_force()
@@ -862,7 +896,7 @@ class CreativeLoginApp:
 
         #  Run the main loop for the HR window
         hr_window.mainloop()
-
+        
     def load_image_hr(self,username):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
