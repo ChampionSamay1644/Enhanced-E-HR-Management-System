@@ -1923,47 +1923,53 @@ class CreativeLoginApp:
         # import the image as the background on the canvas
         self.load_image_employee_details()
 
-        #show the username of the employee using label on the canvas
+        # show the username of the employee using label on the canvas
         username_label = tk.Label(
             self.employee_details_logo_canvas,
             text="Username",
             font=("Helvetica", 12, "bold"),
             bg="white",
         )
-        username_label.pack(
-            pady=20
-        )
+        username_label.pack(pady=20)
         username_label.place(relx=0.5, rely=0.35, anchor="center")
+
         self.username_entry = tk.Entry(
             self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
         )
-        self.username_entry.pack(
-            pady=20
-        )
+        self.username_entry.pack(pady=20)
         self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
-        self.username_entry.insert(0, employee_data_1)
-        # show the reason of vacation days of the employee using label on the canvas
+
+        # Get the username from the employee data
+        username_data = employee_data_1  # Assuming username data is directly available in employee_data_1
+        self.username_entry.insert(0, username_data)
+
+        # Make the entry widget read-only
+        self.username_entry.configure(state="readonly")
+
+        # show the reason for vacation days of the employee using label on the canvas
         provisional_vacation_days_label = tk.Label(
             self.employee_details_logo_canvas,
             text="Vacation Days",
             font=("Helvetica", 12, "bold"),
             bg="white",
         )
-        provisional_vacation_days_label.pack(
-            pady=20
-        )
+        provisional_vacation_days_label.pack(pady=20)
         provisional_vacation_days_label.place(relx=0.5, rely=0.5, anchor="center")
+
         self.provisional_vacation_days_entry = tk.Entry(
             self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
         )
-        self.provisional_vacation_days_entry.pack(
-            pady=20
-        )
+        self.provisional_vacation_days_entry.pack(pady=20)
         self.provisional_vacation_days_entry.place(relx=0.5, rely=0.55, anchor="center")
 
+        # Get the vacation days from the employee data
         provisional_vacation_days = self.get_employee_data(employee_data_1, "vacation_days")
         self.provisional_vacation_days_entry.insert(0, provisional_vacation_days)
-       # show the reason for vacation days of the employee using label on the canvas
+
+        # Make the entry widget read-only
+        self.provisional_vacation_days_entry.configure(state="readonly")
+
+        # show the reason for vacation days of the employee using label on the canvas
         reason_for_vacation_days_label = tk.Label(
             self.employee_details_logo_canvas,
             text="Reason for Vacation Days",
@@ -1981,7 +1987,12 @@ class CreativeLoginApp:
 
         # Get the reason for vacation days from the employee data
         reason_for_vacation_days = self.get_employee_data(employee_data_1, "vacation_reason")
+
+        # Insert the text into the entry widget
         self.reason_for_vacation_days_entry.insert(0, reason_for_vacation_days)
+
+        # Make the entry widget read-only
+        self.reason_for_vacation_days_entry.configure(state="readonly")
 
         # create a new button for approving the vacation days on canvas
         approve_button = tk.Button(
@@ -2042,47 +2053,53 @@ class CreativeLoginApp:
         # import the image as the background on the canvas
         self.load_image_employee_details()
 
-        #show the username of the employee using label on the canvas
+        # show the username of the employee using label on the canvas
         username_label = tk.Label(
             self.employee_details_logo_canvas,
             text=f"Username",
             font=("Helvetica", 12, "bold"),
             bg="white",
         )
-        username_label.pack(
-            pady=20
-        )
+        username_label.pack(pady=20)
         username_label.place(relx=0.5, rely=0.35, anchor="center")
+
         self.username_entry = tk.Entry(
             self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
         )
-        self.username_entry.pack(
-            pady=20
-        )
+        self.username_entry.pack(pady=20)
         self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
-        self.username_entry.insert(0, employee_data_2)
-        # show the reason of vacation days of the employee using label on the canvas
+
+        # Get the username from the employee data
+        username_data = employee_data_2  # Assuming username data is directly available in employee_data_2
+        self.username_entry.insert(0, username_data)
+
+        # Make the entry widget read-only
+        self.username_entry.configure(state="readonly")
+
+        # show the reason for sick days of the employee using label on the canvas
         provisional_vacation_days_label = tk.Label(
             self.employee_details_logo_canvas,
             text="Sick Days",
             font=("Helvetica", 12, "bold"),
             bg="white",
         )
-        provisional_vacation_days_label.pack(
-            pady=20
-        )
+        provisional_vacation_days_label.pack(pady=20)
         provisional_vacation_days_label.place(relx=0.5, rely=0.5, anchor="center")
+
         self.provisional_vacation_days_entry = tk.Entry(
             self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
         )
-        self.provisional_vacation_days_entry.pack(
-            pady=20
-        )
+        self.provisional_vacation_days_entry.pack(pady=20)
         self.provisional_vacation_days_entry.place(relx=0.5, rely=0.55, anchor="center")
 
+        # Get the sick days from the employee data
         provisional_vacation_days = self.get_employee_data(employee_data_2, "sick_days")
         self.provisional_vacation_days_entry.insert(0, provisional_vacation_days)
-       # show the reason for sick days of the employee using label on the canvas
+
+        # Make the entry widget read-only
+        self.provisional_vacation_days_entry.configure(state="readonly")
+
+        # show the reason for sick days of the employee using label on the canvas
         reason_for_sick_days_label = tk.Label(
             self.employee_details_logo_canvas,
             text="Reason for Sick Days",
@@ -2100,7 +2117,12 @@ class CreativeLoginApp:
 
         # Get the reason for sick days from the employee data
         reason_for_sick_days = self.get_employee_data(employee_data_2, "sick_reason")
+
+        # Insert the text into the entry widget
         self.reason_for_sick_days_entry.insert(0, reason_for_sick_days)
+
+        # Make the entry widget read-only
+        self.reason_for_sick_days_entry.configure(state="readonly")
 
         # create a new button for approving the vacation days on canvas
         approve_button = tk.Button(
