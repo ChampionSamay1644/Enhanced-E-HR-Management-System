@@ -2304,6 +2304,7 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
         # update the vacation days in the database for the employee
         emp_ref.child(employee_data).update({"vacation_approved": provisional_vacation_days})
+        emp_ref.child(employee_data).update({"vacation_approved_denied": "Approved"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been approved
@@ -2319,6 +2320,7 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"vacation_days": 0})
         # update the reason for vacation days in the database for the employee
         emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
+        emp_ref.child(employee_data).update({"vacation_approved_denied": "Denied"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been denied
@@ -2336,6 +2338,7 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"reason_for_sick_days": reason_for_vacation_days})
         # update the vacation days in the database for the employee
         emp_ref.child(employee_data).update({"sick_approved": provisional_vacation_days})
+        emp_ref.child(employee_data).update({"sick_approved_denied": "Approved"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been approved
@@ -2351,6 +2354,7 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"sick_days": 0})
         # update the reason for vacation days in the database for the employee
         emp_ref.child(employee_data).update({"reason_for_sick_days": reason_for_vacation_days})
+        emp_ref.child(employee_data).update({"sick_approved_denied": "Denied"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been denied
