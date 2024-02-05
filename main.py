@@ -2480,68 +2480,61 @@ class CreativeLoginApp:
     
     def on_window_resize_apply_for_vacation_days(self, event):
         # Handle window resize event
-        self.resize_canvas_and_image_apply_for_vacation_days()
+        self.resize_canvas_and_image_apply_for_vacation_days()  
 
     def apply_for_vacation_days(self, username):
         # Create a new window for the apply_for_vacation_days top level
         apply_for_vacation_days_window = tk.Toplevel()
         apply_for_vacation_days_window.geometry("800x600")  # Set the window size
         apply_for_vacation_days_window.title("Apply for Sick/Vacation Days")
-    
-        #create the canvas
+
+        # create the canvas
         self.apply_for_vacation_days_canvas = tk.Canvas(apply_for_vacation_days_window, bg="white", highlightthickness=0)
         self.apply_for_vacation_days_canvas.pack(fill=tk.BOTH, expand=True)
-        
-        #load the image
+
+        # load the image
         self.apply_for_vacation_days_load_image()
-        
-        #create a tickbox for sick days
-        self.sick = tk.IntVar()
-        self.sick.set(0)
-        sick_checkbox = tk.Checkbutton(self.apply_for_vacation_days_canvas, text="Sick Days", variable=self.sick, onvalue=1, offvalue=0)
-        sick_checkbox.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
-        
-        #create a tickbox for vacation days
-        self.vacation = tk.IntVar()
-        self.vacation.set(0)
-        vacation_checkbox = tk.Checkbutton(self.apply_for_vacation_days_canvas, text="Vacation Days", variable=self.vacation, onvalue=2, offvalue=0)
-        vacation_checkbox.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
-               
+
+        # Create a dropdown menu for sick/vacation days
+        options = ["Select Type", "Sick Days", "Vacation Days"]
+        selected_option = tk.StringVar()
+        selected_option.set(options[0])  # Set the default option
+
+        dropdown_menu = tk.OptionMenu(self.apply_for_vacation_days_canvas, selected_option, *options)
+        dropdown_menu.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+
         # Create entry widgets for number of days and reason
         self.number_of_days_entry = tk.Entry(self.apply_for_vacation_days_canvas)
         self.number_of_days_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
         self.number_of_days_entry.insert(0, "0")  # Default value
-        self.number_of_days_entry.bind("<FocusIn>", lambda event:self.days_entry_del())  # Delete the default value when the user clicks on the entry widget
+        self.number_of_days_entry.bind("<FocusIn>", lambda event: self.days_entry_del())  # Delete the default value when the user clicks on the entry widget
 
         self.reason_entry = tk.Entry(self.apply_for_vacation_days_canvas)
         self.reason_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
         self.reason_entry.insert(0, "Vacation reason")  # Default value
-        self.reason_entry.bind("<FocusIn>", lambda event:self.reason_entry_del())  # Delete the default value when the user clicks on the entry widget
+        self.reason_entry.bind("<FocusIn>", lambda event: self.reason_entry_del())  # Delete the default value when the user clicks on the entry widget
 
         # Create a button to submit the vacation request
-        submit_button = tk.Button(self.apply_for_vacation_days_canvas, text="Submit", command=lambda: self.submit_vacation_request(username,apply_for_vacation_days_window))
+        submit_button = tk.Button(self.apply_for_vacation_days_canvas, text="Submit", command=lambda: self.submit_vacation_request(username, selected_option.get(), apply_for_vacation_days_window))
         submit_button.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
-        
+
         # Bind the Escape key to the exit function
         apply_for_vacation_days_window.bind("<Escape>", lambda event: apply_for_vacation_days_window.destroy())
-        
+
         # bind window resize event to function
         apply_for_vacation_days_window.bind("<Configure>", lambda event: self.on_window_resize_apply_for_vacation_days(event))
-        
+
         # focus on window
         apply_for_vacation_days_window.focus_force()
-        
+
         # Center the window with function center_window_test
         self.center_window_all(apply_for_vacation_days_window)
-        
+
         # Run the main loop for the apply_for_vacation_days_window
         apply_for_vacation_days_window.mainloop()
 
-    def submit_vacation_request(self,username,apply_for_vacation_days_window):
+    def submit_vacation_request(self, username, selected_option, apply_for_vacation_days_window):
         # Retrieve the entered values
-        #retrieve the value of the checkbox
-        sick_days = self.sick.get()
-        vacation_days = self.vacation.get()
         number_of_days = self.number_of_days_entry.get()
         reason = self.reason_entry.get()
 
@@ -2552,15 +2545,15 @@ class CreativeLoginApp:
             messagebox.showinfo("Employee Window", "Please enter a valid number of days.")
         elif not reason:
             messagebox.showinfo("Employee Window", "Please enter a reason.")
-        elif number_of_days == 0:
+        elif number_of_days == "0":
             messagebox.showinfo("Employee Window", "Please enter a number of days.")
         elif reason == "Vacation reason":
             messagebox.showinfo("Employee Window", "Please enter a reason.")
-        elif not sick_days and not vacation_days:
+        elif selected_option == "Select Type":
             messagebox.showinfo("Employee Window", "Please select sick or vacation days.")
-        elif sick_days == 1 and int(number_of_days) > (db.reference("sick_days_uni").get()-(self.get_employee_data(username, "sick_days"))):
+        elif selected_option == "Sick Days" and int(number_of_days) > (db.reference("sick_days_uni").get() - (self.get_employee_data(username, "sick_days"))):
             messagebox.showinfo("Employee Window", "You do not have enough sick days.")
-        elif vacation_days == 1 and int(number_of_days) > (db.reference("vacation_uni").get()-(self.get_employee_data(username, "vacation_days"))):
+        elif selected_option == "Vacation Days" and int(number_of_days) > (db.reference("vacation_uni").get() - (self.get_employee_data(username, "vacation_days"))):
             messagebox.showinfo("Employee Window", "You do not have enough vacation days.")
         else:
             # Convert number_of_days string to int
@@ -2572,20 +2565,19 @@ class CreativeLoginApp:
             else:
                 # Update the database
                 emp_ref = db.reference("/employee")
-                if sick_days == 1:
+                if selected_option == "Sick Days":
                     emp_ref.child(username).update({"sick_days": self.get_employee_data(username, "sick_days") + number_of_days_int})
-                    emp_ref.child(username).update({"reason_for_sick_days": reason})
+                    emp_ref.child(username).update({"sick_reason": reason})
                 else:
                     emp_ref.child(username).update({"vacation_days": self.get_employee_data(username, "vacation_days") + number_of_days_int})
-                    emp_ref.child(username).update({"reason_for_vacation_days": reason})
-
-                # Close the apply_for_vacation_days_window
-                apply_for_vacation_days_window.destroy()
+                    emp_ref.child(username).update({"vacation_reason": reason})
 
                 # Show a message that the request has been submitted
                 messagebox.showinfo("Employee Window", "Request submitted.")
-        
-        apply_for_vacation_days_window.destroy()        
+
+                # Close the apply_for_vacation_days_window
+                apply_for_vacation_days_window.destroy()
+    
         
     def apply_for_resignation(self,username):
         # Create a new window for the apply_for_resignation top level
@@ -3176,6 +3168,7 @@ class CreativeLoginApp:
                         "vacation_reason": "",
                         "vacation_approved": "",
                         "sick_approved": "",
+                        "sick_reason": "",
                         
                     }
                 )
