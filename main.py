@@ -2403,7 +2403,13 @@ class CreativeLoginApp:
         if vacation_approved != None and vacation_approved == "Approved":
             messagebox.showinfo("Vacation Days Approved", "Your Vacation Days have been approved")
             emp_ref.child(username).update({"vacation_approved_denied": "None"})
-            
+        if sick_approved != None and sick_approved == "Denied":
+            messagebox.showinfo("Sick Days Denied", "Your Sick Days have been denied")
+            emp_ref.child(username).update({"sick_approved_denied": "None"})
+        if vacation_approved != None and vacation_approved == "Denied":
+            messagebox.showinfo("Vacation Days Denied", "Your Vacation Days have been denied")
+            emp_ref.child(username).update({"vacation_approved_denied": "None"})
+        
         #add buttons and use a function to place them in the canvas
         self.add_buttons_to_canvas_employee(username)
 
