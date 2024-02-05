@@ -2303,6 +2303,7 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
         # update the vacation days in the database for the employee
         emp_ref.child(employee_data).update({"vacation_approved": provisional_vacation_days})
+        emp_ref.child(employee_data).update({"vacation_approved_denied": "Approved"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been approved
@@ -2318,6 +2319,7 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"vacation_days": 0})
         # update the reason for vacation days in the database for the employee
         emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
+        emp_ref.child(employee_data).update({"vacation_approved_denied": "Denied"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been denied
@@ -2327,7 +2329,7 @@ class CreativeLoginApp:
         # get the username, provisional vacation days and reason for vacation days from the employee details window
         username = self.username_entry.get()
         provisional_vacation_days = self.provisional_vacation_days_entry.get()
-        reason_for_vacation_days = self.reason_for_vacation_days_entry.get()
+        reason_for_vacation_days = self.reason_for_sick_days_entry.get()
         # update the provisional vacation days in the database for the employee
         emp_ref = db.reference("/employee")
         emp_ref.child(employee_data).update({"sick_days": 0})
@@ -2335,6 +2337,7 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"reason_for_sick_days": reason_for_vacation_days})
         # update the vacation days in the database for the employee
         emp_ref.child(employee_data).update({"sick_approved": provisional_vacation_days})
+        emp_ref.child(employee_data).update({"sick_approved_denied": "Approved"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been approved
@@ -2350,6 +2353,7 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"sick_days": 0})
         # update the reason for vacation days in the database for the employee
         emp_ref.child(employee_data).update({"reason_for_sick_days": reason_for_vacation_days})
+        emp_ref.child(employee_data).update({"sick_approved_denied": "Denied"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been denied
@@ -2391,12 +2395,14 @@ class CreativeLoginApp:
         
         #Check if Sick/Vacation Days are approved
         emp_ref = db.reference("/employee")
-        vacation_approved = emp_ref.child(username).child("vacation_approved").get()
-        sick_approved = emp_ref.child(username).child("sick_approved").get()
-        if vacation_approved:
-            messagebox.showinfo("Vacation Days Approved", f"Vacation Days Approved: {vacation_approved}")
-        if sick_approved:
-            messagebox.showinfo("Sick Days Approved", f"Sick Days Approved: {sick_approved}")
+        vacation_approved = emp_ref.child(username).child("vacation_approved_denied").get()
+        sick_approved = emp_ref.child(username).child("sick_approved_denied").get()
+        if sick_approved != None and sick_approved == "Approved":
+            messagebox.showinfo("Sick Days Approved", "Your Sick Days have been approved")
+            emp_ref.child(username).update({"sick_approved_denied": "None"})
+        if vacation_approved != None and vacation_approved == "Approved":
+            messagebox.showinfo("Vacation Days Approved", "Your Vacation Days have been approved")
+            emp_ref.child(username).update({"vacation_approved_denied": "None"})
             
         #add buttons and use a function to place them in the canvas
         self.add_buttons_to_canvas_employee(username)
@@ -3347,6 +3353,7 @@ class CreativeLoginApp:
             self.date_entry.delete(0, tk.END)
         
 def main():
+    
     root = tk.Tk()
     root.geometry("900x600")  # Set the window size
     app = CreativeLoginApp(root)
