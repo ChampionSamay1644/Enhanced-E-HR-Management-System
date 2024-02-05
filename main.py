@@ -164,7 +164,7 @@ class CreativeLoginApp:
             list.append(emp_ref.child(username).child("bonus").get())
             list.append(emp_ref.child(username).child("sick_days").get())
             list.append(emp_ref.child(username).child("vacation_days").get())
-            list.append(emp_ref.child(username).child("survey").get())
+            list.append(emp_ref.child(username).child("survey").child("available").get())
             
             return list
         elif role=="boss":
@@ -177,7 +177,6 @@ class CreativeLoginApp:
             list.append(boss_ref.child(username).child("bonus").get())
             list.append(boss_ref.child(username).child("sick_days").get())
             list.append(boss_ref.child(username).child("vacation_days").get())
-            list.append(boss_ref.child(username).child("survey").get())
             
             return list
         elif role=="HR":
@@ -190,7 +189,6 @@ class CreativeLoginApp:
             list.append(hr_ref.child(username).child("bonus").get())
             list.append(hr_ref.child(username).child("sick_days").get())
             list.append(hr_ref.child(username).child("vacation_days").get())
-            list.append(hr_ref.child(username).child("survey").get())
             
             return list
     
@@ -363,7 +361,9 @@ class CreativeLoginApp:
         self.profile_canvas.create_image(0, 0, image=self.profile_image, anchor="nw")
 
         list=self.getdata(username,role)
-        text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}\nSurvey: {list[7]}"
+        text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
+        if role=="employee":
+            text1+=f"\nSurvey: {list[7]}"
         self.profile_canvas.create_text(
             10,  # X-coordinate (left)
             self.profile_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
@@ -372,7 +372,6 @@ class CreativeLoginApp:
             fill="white",
             anchor="sw"  # Anchor to bottom left
         )
-        
         
     def on_window_resize_profile(self,username,role, event=None):
         self.resize_canvas_and_image_profile(username,role)
@@ -2304,7 +2303,6 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
         # update the vacation days in the database for the employee
         emp_ref.child(employee_data).update({"vacation_approved": provisional_vacation_days})
-        emp_ref.child(employee_data).update({"vacation_approved_denied": "Approved"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been approved
@@ -2320,7 +2318,6 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"vacation_days": 0})
         # update the reason for vacation days in the database for the employee
         emp_ref.child(employee_data).update({"reason_for_vacation_days": reason_for_vacation_days})
-        emp_ref.child(employee_data).update({"vacation_approved_denied": "Denied"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been denied
@@ -2338,7 +2335,6 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"reason_for_sick_days": reason_for_vacation_days})
         # update the vacation days in the database for the employee
         emp_ref.child(employee_data).update({"sick_approved": provisional_vacation_days})
-        emp_ref.child(employee_data).update({"sick_approved_denied": "Approved"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been approved
@@ -2354,7 +2350,6 @@ class CreativeLoginApp:
         emp_ref.child(employee_data).update({"sick_days": 0})
         # update the reason for vacation days in the database for the employee
         emp_ref.child(employee_data).update({"reason_for_sick_days": reason_for_vacation_days})
-        emp_ref.child(employee_data).update({"sick_approved_denied": "Denied"})
         # close the employee details window
         self.employee_details_logo_canvas.destroy()
         # show a message that the vacation days have been denied
@@ -2387,9 +2382,23 @@ class CreativeLoginApp:
 
         # import the image as the background on the canvas
         self.load_image_employee(username)
+        
+                # focus on window
+        employee_window.focus_force()
 
-       
-         #add buttons and use a function to place them in the canvas
+        # Center the window with function center_window_test
+        self.center_window_all(employee_window)
+        
+        #Check if Sick/Vacation Days are approved
+        emp_ref = db.reference("/employee")
+        vacation_approved = emp_ref.child(username).child("vacation_approved").get()
+        sick_approved = emp_ref.child(username).child("sick_approved").get()
+        if vacation_approved:
+            messagebox.showinfo("Vacation Days Approved", f"Vacation Days Approved: {vacation_approved}")
+        if sick_approved:
+            messagebox.showinfo("Sick Days Approved", f"Sick Days Approved: {sick_approved}")
+            
+        #add buttons and use a function to place them in the canvas
         self.add_buttons_to_canvas_employee(username)
 
         #create an exit button in canvas and place at bottom middle
@@ -2424,12 +2433,6 @@ class CreativeLoginApp:
             relx=0.95, rely=0.05, anchor="center", width=50, height=50
         )
         
-        # focus on window
-        employee_window.focus_force()
-
-        # Center the window with function center_window_test
-        self.center_window_all(employee_window)
-
         # Bind the Escape key to the exit function
         employee_window.bind("<Escape>", lambda event: employee_window.destroy())
 
