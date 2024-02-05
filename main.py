@@ -2347,7 +2347,7 @@ class CreativeLoginApp:
        # get the username, provisional vacation days and reason for vacation days from the employee details window
         username = self.username_entry.get()
         provisional_vacation_days = self.provisional_vacation_days_entry.get()
-        reason_for_vacation_days = self.reason_for_vacation_days_entry.get()
+        reason_for_vacation_days = self.reason_for_sick_days_entry.get()
         # update the provisional vacation days in the database for the employee
         emp_ref = db.reference("/employee")
         emp_ref.child(employee_data).update({"sick_days": 0})
