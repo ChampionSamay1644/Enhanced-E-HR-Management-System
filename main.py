@@ -141,31 +141,58 @@ class CreativeLoginApp:
         self.common_canvas.create_text(text_position, text=text_content, anchor="center")
         self.common_canvas.itemconfig(self.common_canvas.find_all()[-1], fill="white")
         
-        if role=="employee":
-            list=self.getdata(username)
-            text1=f"EID: {list[0]}\nName: {username}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}\nSurvey: {list[7]}"
-            self.common_canvas.create_text(
-                10,  # X-coordinate (left)
-                self.common_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
-                font=("Helvetica", 15, "bold"),
-                text=text1,
-                fill="white",
-                anchor="sw"  # Anchor to bottom left
-            )
+        # if role=="employee":
+        #     list=self.getdata(username)
+        #     text1=f"EID: {list[0]}\nName: {username}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}\nSurvey: {list[7]}"
+        #     self.common_canvas.create_text(
+        #         10,  # X-coordinate (left)
+        #         self.common_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
+        #         font=("Helvetica", 15, "bold"),
+        #         text=text1,
+        #         fill="white",
+        #         anchor="sw"  # Anchor to bottom left
+        #     )
     
-    def getdata(self,username):
-        emp_ref = db.reference("/employee")
-        list=[]
-        list.append(emp_ref.child(username).child("emp_id").get())
-        list.append(emp_ref.child(username).child("designation").get())
-        list.append(emp_ref.child(username).child("salary").get())
-        list.append(emp_ref.child(username).child("hours_attended").get())
-        list.append(emp_ref.child(username).child("bonus").get())
-        list.append(emp_ref.child(username).child("sick_days").get())
-        list.append(emp_ref.child(username).child("vacation_days").get())
-        list.append(emp_ref.child(username).child("survey").get())
-        
-        return list
+    def getdata(self,username,role):
+        if role=="employee":
+            emp_ref = db.reference("/employee")
+            list=[]
+            list.append(emp_ref.child(username).child("emp_id").get())
+            list.append(emp_ref.child(username).child("designation").get())
+            list.append(emp_ref.child(username).child("salary").get())
+            list.append(emp_ref.child(username).child("hours_attended").get())
+            list.append(emp_ref.child(username).child("bonus").get())
+            list.append(emp_ref.child(username).child("sick_days").get())
+            list.append(emp_ref.child(username).child("vacation_days").get())
+            list.append(emp_ref.child(username).child("survey").get())
+            
+            return list
+        elif role=="boss":
+            boss_ref = db.reference("/boss")
+            list=[]
+            list.append(boss_ref.child(username).child("boss_id").get())
+            list.append(boss_ref.child(username).child("designation").get())
+            list.append(boss_ref.child(username).child("salary").get())
+            list.append(boss_ref.child(username).child("hours_attended").get())
+            list.append(boss_ref.child(username).child("bonus").get())
+            list.append(boss_ref.child(username).child("sick_days").get())
+            list.append(boss_ref.child(username).child("vacation_days").get())
+            list.append(boss_ref.child(username).child("survey").get())
+            
+            return list
+        elif role=="HR":
+            hr_ref = db.reference("/HR")
+            list=[]
+            list.append(hr_ref.child(username).child("hr_id").get())
+            list.append(hr_ref.child(username).child("designation").get())
+            list.append(hr_ref.child(username).child("salary").get())
+            list.append(hr_ref.child(username).child("hours_attended").get())
+            list.append(hr_ref.child(username).child("bonus").get())
+            list.append(hr_ref.child(username).child("sick_days").get())
+            list.append(hr_ref.child(username).child("vacation_days").get())
+            list.append(hr_ref.child(username).child("survey").get())
+            
+            return list
     
     def on_window_resize_common(self,username,role, event=None):
         self.resize_canvas_and_image_common(username,role)
@@ -272,18 +299,83 @@ class CreativeLoginApp:
         # Create a new Toplevel window for the profile
         profile_dialog = tk.Toplevel()
         profile_dialog.title("Profile")
+        profile_dialog.geometry("800x600")
+        
+        # Create a canvas that resizes with the window
+        self.profile_canvas = tk.Canvas(profile_dialog, bg="white", highlightthickness=0)
+        self.profile_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Import the image as the background on the canvas
+        self.load_image_profile(username,role)
+        
+        # Bind window resize event to function
+        profile_dialog.bind("<Configure>", lambda event: self.on_window_resize_profile(username,role, event))
+        
+        # Create an exit button in canvas and place at middle of screen
+        exit_button = tk.Button(
+            self.profile_canvas,
+            text="Exit",
+            command=profile_dialog.destroy,
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="#FF4500",
+            activebackground="#FF6347",
+        )
+        exit_button.place(relx=0.5, rely=1.0, anchor="s")
+        
+        # Focus on window
+        profile_dialog.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(profile_dialog)
+        
+        # Bind the Escape key to the exit function
+        profile_dialog.bind("<Escape>", lambda event: profile_dialog.destroy())
+        
+        # Run the main loop for the profile window
+        profile_dialog.mainloop()
+        
+    def load_image_profile(self,username,role):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
-        # You can customize the profile information as per your needs
-        profile_text = (
-            f"Username: {username}\nRole: {role}\n"
+        # Load image and adjust canvas size
+        self.original_profile_image = Image.open(img_path)
+        self.resize_canvas_and_image_profile(username,role)
+        
+    def resize_canvas_and_image_profile(self,username,role, event=None):
+        # Get the profile window size
+        window_width = self.profile_canvas.winfo_width()
+        window_height = self.profile_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.profile_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_profile_image.resize((window_width, window_height))
+        self.profile_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.profile_canvas.delete("all")
+        self.profile_canvas.create_image(0, 0, image=self.profile_image, anchor="nw")
+
+        list=self.getdata(username,role)
+        text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}\nSurvey: {list[7]}"
+        self.profile_canvas.create_text(
+            10,  # X-coordinate (left)
+            self.profile_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
+            font=("Helvetica", 15, "bold"),
+            text=text1,
+            fill="white",
+            anchor="sw"  # Anchor to bottom left
         )
         
-        # Create a label for profile information
-        profile_label = tk.Label(
-            profile_dialog, text=profile_text, font=("Helvetica", 12)
-        )
-        profile_label.pack(padx=20, pady=20)
         
+    def on_window_resize_profile(self,username,role, event=None):
+        self.resize_canvas_and_image_profile(username,role)
         
     def login(self):
         username = self.username_entry.get()
@@ -2311,6 +2403,23 @@ class CreativeLoginApp:
     )
         exit_button.place(relx=0.5, rely=1.0, anchor="s")
 
+        profile_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "profile.png" #change jpg to png for main background
+        )
+        profile_img = PhotoImage(file=profile_path)
+        
+        resized_profile_img = profile_img.subsample(4, 4)
+        
+        profile_btn = tk.Button(
+            self.employee_logo_canvas, image=resized_profile_img, command=lambda:self.profile(username,role),borderwidth=0, font=("Helvetica", 14)
+        )
+        profile_btn.pack(
+            pady=20
+        )
+        profile_btn.place(
+            relx=0.95, rely=0.05, anchor="center", width=50, height=50
+        )
+        
         # focus on window
         employee_window.focus_force()
 
@@ -2375,7 +2484,6 @@ class CreativeLoginApp:
         self.submit_complaint_button.place(
             relx=0.75, rely=0.7, anchor="center", width=300, height=30
         )
-        
     
     def load_image_employee(self,username):
         # Construct the full path to the image file based on role and username
@@ -2384,8 +2492,6 @@ class CreativeLoginApp:
         # Load image and adjust canvas size
         self.original_employee_logo_image = Image.open(img_path)
         self.resize_canvas_and_image_employee(username)
-
-    
 
     def resize_canvas_and_image_employee(self, username):
         # Get the employee window size
@@ -2411,7 +2517,7 @@ class CreativeLoginApp:
         self.redraw_employee_name(username)
 
         # Redraw the employee details text
-        self.redraw_employee_details(username)
+        # self.redraw_employee_details(username)
 
     def redraw_employee_name(self, username):
         username_employee = username
@@ -2430,36 +2536,35 @@ class CreativeLoginApp:
             fill="white",
         )
 
-    def redraw_employee_details(self, username):
-        window_height = self.employee_logo_canvas.winfo_height()
-        employee_ref = db.reference("/employee")
-        emp_id = employee_ref.child(username).child("emp_id").get()
-        designation = employee_ref.child(username).child("designation").get()
-        salary = employee_ref.child(username).child("salary").get()
-        sick_approved = employee_ref.child(username).child("sick_approved").get()
-        vacation_approved = employee_ref.child(username).child("vacation_approved").get()
-        bonus = employee_ref.child(username).child("bonus").get()
-        hours_attended = employee_ref.child(username).child("hours_attended").get()
-        survey = employee_ref.child(username).child("survey").child("available").get()
-        vacation_a_d = employee_ref.child(username).child("vacation_approved_denied").get()
-        sick_a_d = employee_ref.child(username).child("sick_approved_denied").get()
+    # def redraw_employee_details(self, username):
+    #     window_height = self.employee_logo_canvas.winfo_height()
+    #     employee_ref = db.reference("/employee")
+    #     emp_id = employee_ref.child(username).child("emp_id").get()
+    #     designation = employee_ref.child(username).child("designation").get()
+    #     salary = employee_ref.child(username).child("salary").get()
+    #     sick_approved = employee_ref.child(username).child("sick_approved").get()
+    #     vacation_approved = employee_ref.child(username).child("vacation_approved").get()
+    #     bonus = employee_ref.child(username).child("bonus").get()
+    #     hours_attended = employee_ref.child(username).child("hours_attended").get()
+    #     survey = employee_ref.child(username).child("survey").child("available").get()
+    #     vacation_a_d = employee_ref.child(username).child("vacation_approved_denied").get()
+    #     sick_a_d = employee_ref.child(username).child("sick_approved_denied").get()
 
-        # Check if the employee details text already exists and delete it
-        if hasattr(self, "employee_details_text"):
-            self.employee_logo_canvas.delete(self.employee_details_text)
+    #     # Check if the employee details text already exists and delete it
+    #     if hasattr(self, "employee_details_text"):
+    #         self.employee_logo_canvas.delete(self.employee_details_text)
 
-        # Create and place the employee details text
-        self.employee_details_text = self.employee_logo_canvas.create_text(
-            # Place it on the leftmost of the window
-            10,
-            window_height - 10,
-            text=f"Employee ID: {emp_id}\nDesignation: {designation}\nSalary: {salary}\nSick Days: {sick_approved}\nVacation Days: {vacation_approved}\nBonus: {bonus}\nHours Attended: {hours_attended}\nSurvey Available: {survey}\nVacation Approved/Denied: {vacation_a_d}\nSick Approved/Denied: {sick_a_d}\n\n\n\n\n",
-            font=("Helvetica", 18, "bold"),
-            fill="white",
-            anchor="sw",
-        )
+    #     # Create and place the employee details text
+    #     self.employee_details_text = self.employee_logo_canvas.create_text(
+    #         # Place it on the leftmost of the window
+    #         10,
+    #         window_height - 10,
+    #         text=f"Employee ID: {emp_id}\nDesignation: {designation}\nSalary: {salary}\nSick Days: {sick_approved}\nVacation Days: {vacation_approved}\nBonus: {bonus}\nHours Attended: {hours_attended}\nSurvey Available: {survey}\nVacation Approved/Denied: {vacation_a_d}\nSick Approved/Denied: {sick_a_d}\n\n\n\n\n",
+    #         font=("Helvetica", 18, "bold"),
+    #         fill="white",
+    #         anchor="sw",
+    #     )
 
-        
     def on_window_resize_employee(self, event,username):
         # Handle window resize event
         self.resize_canvas_and_image_employee(username)
@@ -2595,7 +2700,6 @@ class CreativeLoginApp:
                 # Close the apply_for_vacation_days_window
                 apply_for_vacation_days_window.destroy()
     
-        
     def apply_for_resignation(self,username):
         # Create a new window for the apply_for_resignation top level
         apply_for_resignation_window = tk.Toplevel()
@@ -2955,7 +3059,6 @@ class CreativeLoginApp:
         # Display the previous question
         self.display_survey_questions(survey_questions_keys, survey_questions,username)
 
-        
     def clear_selected_radio_button(self):
         # Check if a value is selected for the current question
         stored_value = self.selected_values.get(self.current_question_index)
@@ -2967,12 +3070,10 @@ class CreativeLoginApp:
             # Otherwise, clear the selected radio button by setting the variable to None
             self.radio_var.set(None)
 
-        
     def on_window_resize_submit_survey(self, event):
         # Handle window resize event
         self.resize_canvas_and_image_submit_survey()
 
-       
     def submit_survey_request(self, username):
 
         stored_value = self.selected_values.get(self.current_question_index)
@@ -3000,10 +3101,7 @@ class CreativeLoginApp:
 
             # Destroy the survey window
             self.submit_survey_window.destroy()
-
-
-
-
+            
     def store_selected_value(self, value):
        #store the selected value in relation to the question index
         self.selected_values[self.current_question_index] = value
