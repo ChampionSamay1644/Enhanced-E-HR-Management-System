@@ -3181,6 +3181,8 @@ class CreativeLoginApp:
                         "vacation_approved": "",
                         "sick_approved": "",
                         "sick_reason": "",
+                        "vacation approved/denied": "",
+                        "sick approved/denied": "",
                         
                     }
                 )
