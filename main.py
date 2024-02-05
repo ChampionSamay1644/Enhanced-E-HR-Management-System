@@ -2580,9 +2580,12 @@ class CreativeLoginApp:
                 if selected_option == "Sick Days":
                     emp_ref.child(username).update({"sick_days": self.get_employee_data(username, "sick_days") + number_of_days_int})
                     emp_ref.child(username).update({"sick_reason": reason})
+                    #add pending approval for sick days in the database in approved/denied sick days
+                    emp_ref.child(username).update({"sick_approved_denied": "pending"})
                 else:
                     emp_ref.child(username).update({"vacation_days": self.get_employee_data(username, "vacation_days") + number_of_days_int})
                     emp_ref.child(username).update({"vacation_reason": reason})
+                    emp_ref.child(username).update({"vacation_approved_denied": "pending"})
 
                 # Show a message that the request has been submitted
                 messagebox.showinfo("Employee Window", "Request submitted.")
@@ -3181,8 +3184,8 @@ class CreativeLoginApp:
                         "vacation_approved": "",
                         "sick_approved": "",
                         "sick_reason": "",
-                        "vacation approved/denied": "",
-                        "sick approved/denied": "",
+                        "vacation_approved_denied": "",
+                        "sick_approved_denied": "",
                         
                     }
                 )
