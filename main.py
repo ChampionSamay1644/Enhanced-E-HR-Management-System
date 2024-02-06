@@ -1088,17 +1088,17 @@ class CreativeLoginApp:
         )
         # place it Extreme top middle
         role_label.place(relx=0.5, rely=0.1, anchor="center")
-        self.role_entry = ttk.Combobox(
+        self.role_entry_emp_mng = ttk.Combobox(
             self.salary_management_canvas, font=("Helvetica", 12, "bold")
         )
-        self.role_entry["values"] = ("None","HR", "boss", "employee")
-        self.role_entry.pack(
+        self.role_entry_emp_mng["values"] = ("None","HR", "boss", "employee")
+        self.role_entry_emp_mng.pack(
             pady=20
         )
-        self.role_entry.place(relx=0.5, rely=0.2, anchor="center")
-        self.role_entry.current(0)
+        self.role_entry_emp_mng.place(relx=0.5, rely=0.2, anchor="center")
+        self.role_entry_emp_mng.current(0)
         
-        self.role_entry.bind("<<ComboboxSelected>>", self.role_selected)
+        self.role_entry_emp_mng.bind("<<ComboboxSelected>>", self.role_selected)
         
         #Create a add login button to add the login of the employee
         add_login_button = tk.Button(
@@ -1127,8 +1127,8 @@ class CreativeLoginApp:
         salary_management_frame.mainloop()
     
     def role_selected(self, event):
-        if self.role_entry is not None:
-            selected_role = self.role_entry.get()
+        if self.role_entry_emp_mng is not None:
+            selected_role = self.role_entry_emp_mng.get()
             if selected_role:
                 self.populate_employee_list(selected_role)
         else:
@@ -1319,7 +1319,7 @@ class CreativeLoginApp:
         self.role_entry = ttk.Combobox(
             self.add_login_from_hr_canvas, font=("Helvetica", 12), state="readonly"
         )
-        self.role_entry["values"] = ("HR", "boss", "employee")
+        self.role_entry["values"] = ("boss", "employee")
         self.role_entry.current(0)
         self.role_entry.pack(pady=10)
         self.role_entry.place(relx=0.7, rely=0.4, anchor="center")
