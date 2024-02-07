@@ -1773,7 +1773,7 @@ class CreativeLoginApp:
         # Populate the Treeview with employee names
         for employee in employees:
             #Add the employee name,bonus amount,reason,hours attended with tag selectable
-            self.treeview_bonus.insert("", "end", values=(employee, db.reference("/employee").child(employee).child("bonus").get(), db.reference("/employee").child(employee).child("reason").get(), db.reference("/employee").child(employee).child("hours_attended").get()), tags=("clickable",))
+            self.treeview_bonus.insert("", "end", values=(employee, db.reference("/employee").child(employee).child("bonus_req").get(), db.reference("/employee").child(employee).child("bonus_reason").get(), db.reference("/employee").child(employee).child("hours_attended").get()), tags=("clickable",))
             
     def approve_bonus_btn(self):
         messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
