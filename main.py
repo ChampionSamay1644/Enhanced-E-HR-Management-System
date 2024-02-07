@@ -3089,14 +3089,35 @@ class CreativeLoginApp:
         employee_details_window2.mainloop()
 
     def submit_bonus_request(self, employee_name):
-        # Add your logic to handle the bonus request submission
-        # You can access the entered values using self.bonus_amount_entry.get() and self.reason_entry.get()
-        bonus_amount = self.bonus_amount_entry.get()
-        reason = self.reason_entry.get()
+        # Get the entered values from the Entry widgets
+        amount_bonus = self.bonus_amount_entry.get()
+        reason_bonus = self.reason_entry.get()
+        
 
-        # Perform further actions based on the entered values
-        print(f"Employee: {employee_name}, Bonus Amount: {bonus_amount}, Reason: {reason}")
-    
+       #put if conditions to handle non integer values, non input in the amount_bonus
+        if amount_bonus == "":
+            messagebox.showerror("Error", "Please enter a valid amount for the bonus")
+        else:
+            try:
+                amount_bonus = int(amount_bonus)
+                if amount_bonus < 0:
+                    messagebox.showerror("Error", "Please enter a valid amount for the bonus")
+            except ValueError:
+                messagebox.showerror("Error", "Please enter a valid amount for the bonus")
+
+        #put if conditions to handle non input in the reason_bonus
+        if reason_bonus == "":
+            messagebox.showerror("Error", "Please enter a reason for the bonus")
+        else:
+            # Update the database with the bonus request
+            emp_ref = db.reference("/employee")
+            emp_ref.child(employee_name).update({"bonus_req": amount_bonus})
+            emp_ref.child(employee_name).update({"bonus_reason": reason_bonus})
+            # Close the employee details window
+            self.employee_details_canvas.destroy()
+            # Show a message that the bonus request has been submitted
+            messagebox.showinfo("Bonus Request", "Bonus Request Submitted")
+          
 
     def load_image_employee_details_new2(self,employee_name):
         # Construct the full path to the image file based on role and username
