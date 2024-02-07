@@ -2863,7 +2863,7 @@ class CreativeLoginApp:
         employee_details_window2.geometry("400x300")
         employee_details_window2.title(f"Details for {employee_name}")
         employee_details_window2.focus_force()
-        
+                
         #create a canvas that resizes with the window
         self.employee_details_canvas = tk.Canvas(employee_details_window2, bg="white", highlightthickness=0)
         self.employee_details_canvas.pack(fill=tk.BOTH, expand=True)
@@ -2872,6 +2872,19 @@ class CreativeLoginApp:
         
         # bind window resize event to function
         employee_details_window2.bind("<Configure>", lambda event: self.on_window_resize_employee_details_new2(employee_name,event))
+       
+         # Create Entry widgets for text input
+        self.bonus_amount_entry = tk.Entry(
+            self.employee_details_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.bonus_amount_entry.place(relx=0.5, rely=0.4, anchor="center")
+
+        self.reason_entry = tk.Entry(
+            self.employee_details_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.reason_entry.place(relx=0.5, rely=0.6, anchor="center")
+
+
         
         
         #create an exit button in canvas and place at bottom middle
@@ -2925,12 +2938,38 @@ class CreativeLoginApp:
         self.employee_details_canvas.create_image(
             0, 0, image=self.employee_details_logo_image, anchor="nw"
         )
+        
+          #show the employee name on the canvas
+        self.employee_details_canvas.create_text(
+            window_width / 2,
+            100,
+            text=f"Employee Name: {employee_name}",
+            font=("Helvetica", 18, "bold"),
+            fill="white",
+        )
+
+        self.employee_details_canvas.create_text(
+            window_width / 2,
+            200,
+            text="Amount of Bonus to be Requested:",
+            font=("Helvetica", 18, "bold"),
+            fill="white",
+        )
+
+        self.employee_details_canvas.create_text(
+            window_width / 2,
+            320,
+            text="Reason for Bonus:",
+            font=("Helvetica", 18, "bold"),
+            fill="white",
+        )
+        
 
     def on_window_resize_employee_details_new2(self,employee_name, event):
         # Handle window resize event
         self.resize_canvas_and_image_employee_details_new2(employee_name)
 
-        
+
 
     def open_employee_window(self, role, username):
         if hasattr(self, "root"):
