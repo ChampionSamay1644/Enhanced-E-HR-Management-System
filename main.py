@@ -3047,8 +3047,22 @@ class CreativeLoginApp:
         )
         self.reason_entry.place(relx=0.5, rely=0.6, anchor="center")
 
+          # Create a Submit Request button
+        submit_button = tk.Button(
+            self.employee_details_canvas,
+            text="Submit Request",
+            command=lambda: self.submit_bonus_request(employee_name),
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="green",  # You can change the color as needed
+            activebackground="dark green",  # You can change the color as needed
+        )
+        submit_button.place(relx=0.5, rely=0.8, anchor="center")
 
-        
+            
         
         #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
@@ -3073,6 +3087,16 @@ class CreativeLoginApp:
         
         # Run the main loop for the employee details window
         employee_details_window2.mainloop()
+
+    def submit_bonus_request(self, employee_name):
+        # Add your logic to handle the bonus request submission
+        # You can access the entered values using self.bonus_amount_entry.get() and self.reason_entry.get()
+        bonus_amount = self.bonus_amount_entry.get()
+        reason = self.reason_entry.get()
+
+        # Perform further actions based on the entered values
+        print(f"Employee: {employee_name}, Bonus Amount: {bonus_amount}, Reason: {reason}")
+    
 
     def load_image_employee_details_new2(self,employee_name):
         # Construct the full path to the image file based on role and username
