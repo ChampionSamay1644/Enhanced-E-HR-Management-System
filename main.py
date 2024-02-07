@@ -1424,7 +1424,7 @@ class CreativeLoginApp:
                         "vacation_days": 0,
                         "bonus": 0,
                         "hours_attended": 0,
-                        "apply_for_resignation": 0,
+                        "apply_for_resignation": "",
                         "apply_for_vacation": 0,
                         "progress_on_task": 0,
                         "survey": db.reference("survey_uni").child("available").get(),
@@ -1814,7 +1814,170 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_approve_bonus()
 
     def approve_resignation(self):
+        #Create a window to approve the resignation of the employee
+        approve_resignation_window = tk.Toplevel()
+        approve_resignation_window.geometry("400x300")
+        approve_resignation_window.title("Approve Resignation")
+        
+        #Create a canvas that resizes with the window
+        self.approve_resignation_canvas = tk.Canvas(approve_resignation_window, bg="white", highlightthickness=0)
+        self.approve_resignation_canvas.pack(fill=tk.BOTH, expand=True)
+
+        #Load the image as the background on the canvas
+        self.load_image_approve_resignation()
+        
+        #Bind window resize event to function
+        approve_resignation_window.bind("<Configure>", lambda event: self.on_window_resize_approve_resignation(event))
+        
+        #Center the window with function center_window_test
+        self.center_window_all(approve_resignation_window)
+        
+        #focus on window
+        approve_resignation_window.focus_force()
+        
+        self.treeview_resignation = None
+        
+        # create a scrollable frame
+        self.scrollable_frame_resignation = tk.Frame(self.approve_resignation_canvas, bg="white")
+        self.scrollable_frame_resignation.pack(fill=tk.BOTH, expand=True)
+        self.scrollable_frame_resignation.place(relx=0.5, rely=0.5, anchor="center")
+        
+        # create a treeview to display the employees
+        if self.treeview_resignation is None:
+            self.treeview_resignation = ttk.Treeview(
+                self.scrollable_frame_resignation, columns=("Employee",), show="headings", selectmode="browse"
+            )
+            self.treeview_resignation.heading("Employee", text="Employee")
+            #Create columns for name,reason,if role is employee then add a column for hours attended and a button for approve
+            self.treeview_resignation["columns"] = ("Employee", "Reason")
+            self.treeview_resignation.column("Employee", width=100, anchor="center")
+            self.treeview_resignation.column("Reason", width=100, anchor="center")
+            self.treeview_resignation.heading("Employee", text="Employee")
+            self.treeview_resignation.heading("Reason", text="Reason")
+            self.treeview_resignation.tag_configure("selectable", foreground="blue", font=("Helvetica", 12, "underline"))
+            # self.treeview_resignation.bind("<Double-1>", lambda event: self.open_employee_details_window(self.treeview_resignation.item(self.treeview_resignation.selection())["values"][0]))
+            
+            # Add a vertical scrollbar to the Treeview
+            scrollbar_resignation_y = ttk.Scrollbar(self.scrollable_frame_resignation, orient="vertical", command=self.treeview_resignation.yview)
+            scrollbar_resignation_y.pack(side="right", fill="y")
+            self.treeview_resignation.configure(yscrollcommand=scrollbar_resignation_y.set)
+            
+            # Add a horizontal scrollbar to the Treeview
+            scrollbar_resignation_x = ttk.Scrollbar(self.scrollable_frame_resignation, orient="horizontal", command=self.treeview_resignation.xview)
+            scrollbar_resignation_x.pack(side="bottom", fill="x")
+            self.treeview_resignation.configure(xscrollcommand=scrollbar_resignation_x.set)
+
+            # Pack the Treeview to the scrollable frame
+            self.treeview_resignation.pack(fill="both", expand=True)
+            
+        # bind the treeview select event to function
+        self.treeview_resignation.bind("<<TreeviewSelect>>", self.on_treeview_select_resignation)
+        
+        #Populate the list with who applied for resignation, execute only once
+        self.populate_employee_list_resignation()
+    
+        #Create 2 buttons for approve and deny that are disabled by default and enabled when a row is selected
+        self.approve_resignation_button = tk.Button(
+            self.approve_resignation_canvas,
+            text="Approve Resignation",
+            command=lambda:self.approve_resignation_btn(),
+            font=("Helvetica", 14),
+            width=20,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        self.approve_resignation_button.place(relx=0.5, rely=0.9, anchor="s")
+        self.approve_resignation_button["state"] = "disabled"
+        
+        # Configure grid row and column weights
+        self.scrollable_frame_resignation.grid_rowconfigure(0, weight=1)
+        self.scrollable_frame_resignation.grid_columnconfigure(0, weight=1)
+                
+        #Bind the escape key to the exit function
+        approve_resignation_window.bind("<Escape>", lambda event: approve_resignation_window.destroy())
+        
+        #Run the main loop for the approve_resignation_window
+        approve_resignation_window.mainloop()
+        
+    def on_treeview_select_resignation(self, event):
+        selected_items = self.treeview_resignation.selection()
+        if selected_items:
+            # Enable buttons if a row is selected
+            self.approve_resignation_button["state"] = "normal"
+        else:
+            # Disable buttons if no row is selected
+            self.approve_resignation_button["state"] = "disabled"
+        
+    def populate_employee_list_resignation(self):
+        # Clear the existing items in the Treeview
+        if self.treeview_resignation is not None:
+            self.treeview_resignation.delete(*self.treeview_resignation.get_children())
+        
+        #Get only the keys of the employees,managers that have applied for resignation
+        employees = list(( db.reference("/employee").get()).keys())
+        managers = list(( db.reference("/manager").get()).keys())
+        employees_with_resignation = []
+        managers_with_resignation = []
+        for employee in employees:
+            #check if apply_fpr_resignation value exists and is not empty
+            if db.reference("/employee").child(employee).child("apply_for_resignation").get() != "":
+                employees_with_resignation.append(employee)
+        for manager in managers:
+            if db.reference("/manager").child(manager).child("apply_for_resignation").get() != "":
+                managers_with_resignation.append(manager)
+        #add the employees and managers to the list
+        employees = employees_with_resignation + managers_with_resignation
+
+        # Populate the Treeview with employee names
+        for person in employees:
+            # Determine if the person is an employee or a manager
+            if person in employees_with_resignation:
+                reason = db.reference("/employee").child(person).child("reason").get()
+            else:
+                reason = db.reference("/manager").child(person).child("reason").get()
+            #Add the employee name,reason with tag selectable
+            self.treeview_resignation.insert("", "end", values=(person, reason), tags=("clickable",))
+            
+    def approve_resignation_btn(self):
         messagebox.showinfo("HR Window", "Approve Resignation Button Pressed")
+        
+    def deny_resignation_btn(self):
+        messagebox.showinfo("HR Window", "Deny Resignation Button Pressed")
+    
+    def load_image_approve_resignation(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_approve_resignation_image = Image.open(img_path)
+        self.resize_canvas_and_image_approve_resignation()
+        
+    def resize_canvas_and_image_approve_resignation(self):
+        # Get the approve_resignation window size
+        window_width = self.approve_resignation_canvas.winfo_width()
+        window_height = self.approve_resignation_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.approve_resignation_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_approve_resignation_image.resize(
+            (window_width, window_height)
+        )
+        self.approve_resignation_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.approve_resignation_canvas.delete("all")
+        self.approve_resignation_canvas.create_image(
+            0, 0, image=self.approve_resignation_image, anchor="nw"
+        )
+        
+    def on_window_resize_approve_resignation(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_approve_resignation()
 
     def check_hours_attended(self):
         messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
@@ -3419,7 +3582,7 @@ class CreativeLoginApp:
             messagebox.showinfo("Employee Window", "Please enter a reason.")
         elif date == "Date of resignation":
             messagebox.showinfo("Employee Window", "Please enter a date.")
-        elif db.reference("/employee").child(username).child("apply_for_resignation").get() != None:
+        elif db.reference("/employee").child(username).child("apply_for_resignation").get() != 0:
             messagebox.showinfo("Employee Window", "You have already applied for resignation.")
         else:
             # Convert date string to datetime object
@@ -3438,7 +3601,7 @@ class CreativeLoginApp:
                 db.reference("/employee").child(username).child("resignation_reason").set(reason)
                 messagebox.showinfo("Employee Window", "Resignation request submitted successfully.")
 
-                apply_for_resignation_window.destroy()
+        apply_for_resignation_window.destroy()
 
     def check_progress_on_tasks(self, username):
         # Create a new window for the check_progress_on_tasks top level
