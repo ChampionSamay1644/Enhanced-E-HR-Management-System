@@ -2916,22 +2916,58 @@ class CreativeLoginApp:
         messagebox.showinfo("manager Window", "Approve Resignation Button Pressed")
 
     def request_bonus(self):
-        #create a new window to show the bonus request
+        # create a new window to show the bonus request
         bonus_request_window = tk.Toplevel()
         bonus_request_window.geometry("800x600")  # Set the window size
         bonus_request_window.title("Request for Bonus")
 
-        #create a canvas that resizes with the window
+        # create a canvas that resizes with the window
         self.bonus_request_logo_canvas = tk.Canvas(bonus_request_window, bg="white", highlightthickness=0)
         self.bonus_request_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
         # bind window resize event to function
         bonus_request_window.bind("<Configure>", lambda event: self.on_window_resize_bonus_request(event))
 
+        self.treeview2 = None
+ 
         # import the image as the background on the canvas
         self.load_image_bonus_request()
 
-        #bind the escape key to the exit function
+        #create a scrollable frame to hold the employee list
+        self.scrollable_frame2 = tk.Frame(bonus_request_window, bg="white")
+        self.scrollable_frame2.pack(fill="both", expand=True)
+        self.scrollable_frame2.place(relx=0.5, rely=0.5, anchor="center", width=600, height=400)
+
+        
+        # create a treeview to display the employees
+        if self.treeview2 is None:
+            self.treeview2 = ttk.Treeview(
+                self.scrollable_frame2, columns=("Employee",), show="headings", selectmode="browse"
+            )
+            self.treeview2.heading("Employee", text="Employee")
+            self.treeview2.column("Employee", width=200, anchor="center")
+            self.treeview2.tag_configure("clickable", foreground="blue", font=("Helvetica", 12, "underline"))
+            self.treeview2.bind("<Double-1>", lambda event: self.open_employee_details_window2(self.treeview2.item(self.treeview2.selection())["values"][0]))
+
+            # Add a vertical scrollbar to the Treeview
+            scrollbar = ttk.Scrollbar(self.scrollable_frame2, orient="vertical", command=self.treeview2.yview)
+            scrollbar.pack(side="right", fill="y")
+            self.treeview2.configure(yscrollcommand=scrollbar.set)
+
+            # Pack the Treeview to the scrollable frame
+            self.treeview2.pack(fill="both", expand=True)
+
+        # Configure grid row and column weights
+        self.scrollable_frame2.grid_rowconfigure(0, weight=1)
+        self.scrollable_frame2.grid_columnconfigure(0, weight=1)
+
+        # Now you can safely use self.treeview
+        self.treeview2.delete(*self.treeview2.get_children())
+
+        # Populate the treeview with employee data
+        self.populate_employee_list_2("employee")
+        
+         # bind the escape key to the exit function
         bonus_request_window.bind("<Escape>", lambda event: bonus_request_window.destroy())
 
         # focus on window
@@ -2978,6 +3014,86 @@ class CreativeLoginApp:
         # Handle window resize event
         self.resize_canvas_and_image_bonus_request()
 
+    def populate_employee_list_2(self, role):
+        employees = list((db.reference("/employee").get()).keys())
+        for employee in employees:
+            self.treeview2.insert("", "end", values=(employee,), tags=("clickable",))
+
+
+    def open_employee_details_window2(self, employee_name):
+        #Function to open another window with employee details
+        employee_details_window2 = tk.Toplevel()
+        employee_details_window2.geometry("400x300")
+        employee_details_window2.title(f"Details for {employee_name}")
+        employee_details_window2.focus_force()
+        
+        #create a canvas that resizes with the window
+        self.employee_details_canvas = tk.Canvas(employee_details_window2, bg="white", highlightthickness=0)
+        self.employee_details_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        self.load_image_employee_details_new2(employee_name)
+        
+        # bind window resize event to function
+        employee_details_window2.bind("<Configure>", lambda event: self.on_window_resize_employee_details_new2(employee_name,event))
+        
+        
+        #create an exit button in canvas and place at bottom middle
+        exit_button = tk.Button(
+        self.employee_details_canvas,
+        text="Exit",
+        command=employee_details_window2.destroy,
+        font=("Helvetica", 14),
+        width=15,
+        height=2,
+        bd=0,
+        fg="white",
+        bg="#FF4500",
+        activebackground="#FF6347",
+    )
+        exit_button.place(relx=0.5, rely=1.0, anchor="s")
+        
+        # Center the window with function center_window_test
+        self.center_window_all(employee_details_window2)
+        
+        # Bind the Escape key to the exit function
+        employee_details_window2.bind("<Escape>", lambda event: self.handle_employee_details_window_exit(event, employee_details_window2))
+        
+        # Run the main loop for the employee details window
+        employee_details_window2.mainloop()
+
+    def load_image_employee_details_new2(self,employee_name):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_employee_details_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_employee_details_new2(employee_name)
+
+    def resize_canvas_and_image_employee_details_new2(self,employee_name):
+        # Get the employee_details window size
+        window_width = self.employee_details_canvas.winfo_width()
+        window_height = self.employee_details_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.employee_details_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_employee_details_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.employee_details_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.employee_details_canvas.delete("all")
+        self.employee_details_canvas.create_image(
+            0, 0, image=self.employee_details_logo_image, anchor="nw"
+        )
+
+    def on_window_resize_employee_details_new2(self,employee_name, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_employee_details_new2(employee_name)
+
+        
 
     def open_employee_window(self, role, username):
         if hasattr(self, "root"):
