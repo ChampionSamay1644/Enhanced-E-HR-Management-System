@@ -20,7 +20,7 @@ firebase_admin.initialize_app(
     },
 )
 
-class CreativeLoginApp:
+class CreativeLoginApp:  
     def __init__(self, root):
         self.root = root
         self.root.title("HR Management System")
@@ -2543,7 +2543,68 @@ class CreativeLoginApp:
         messagebox.showinfo("manager Window", "Approve Resignation Button Pressed")
 
     def request_bonus(self):
-        messagebox.showinfo("manager Window", "Request for Bonus Button Pressed")
+        #create a new window to show the bonus request
+        bonus_request_window = tk.Toplevel()
+        bonus_request_window.geometry("800x600")  # Set the window size
+        bonus_request_window.title("Request for Bonus")
+
+        #create a canvas that resizes with the window
+        self.bonus_request_logo_canvas = tk.Canvas(bonus_request_window, bg="white", highlightthickness=0)
+        self.bonus_request_logo_canvas.pack(fill=tk.BOTH, expand=True)
+
+        # bind window resize event to function
+        bonus_request_window.bind("<Configure>", lambda event: self.on_window_resize_bonus_request(event))
+
+        # import the image as the background on the canvas
+        self.load_image_bonus_request()
+
+        #bind the escape key to the exit function
+        bonus_request_window.bind("<Escape>", lambda event: bonus_request_window.destroy())
+
+        # focus on window
+        bonus_request_window.focus_force()
+
+        # Center the window with function center_window_test
+        self.center_window_all(bonus_request_window)
+
+        # Run the main loop for the bonus_request_window
+        bonus_request_window.mainloop()
+
+
+       
+    def load_image_bonus_request(self):
+            
+            # Construct the full path to the image file based on role and username
+            img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+    
+            # Load image and adjust canvas size
+            self.original_bonus_request_logo_image = Image.open(img_path)
+            self.resize_canvas_and_image_bonus_request()
+
+    def resize_canvas_and_image_bonus_request(self):
+        # Get the bonus_request window size
+        window_width = self.bonus_request_logo_canvas.winfo_width()
+        window_height = self.bonus_request_logo_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.bonus_request_logo_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_bonus_request_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.bonus_request_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.bonus_request_logo_canvas.delete("all")
+        self.bonus_request_logo_canvas.create_image(
+            0, 0, image=self.bonus_request_logo_image, anchor="nw"
+        )
+
+    def on_window_resize_bonus_request(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_bonus_request()
+
 
     def open_employee_window(self, role, username):
         if hasattr(self, "root"):
