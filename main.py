@@ -1762,19 +1762,37 @@ class CreativeLoginApp:
         elif role == "None":
             return
         else:
-            #Get only the keys of the employees that have a non zero bonus
-            employees = list(( db.reference("/employee").get()).keys())
-            employees_with_bonus = []
-            for employee in employees:
-                if db.reference("/employee").child(employee).child("bonus").get() != 0 and db.reference("/employee").child(employee).child("bonus").get() != "":
-                    employees_with_bonus.append(employee)
-            employees = employees_with_bonus
+            employees= self.get_employee_data_with_non_zero_bonus()
+        #   #Get only the keys of the employees that have a non zero bonus
+        #     employees = list(( db.reference("/employee").get()).keys())
+        #     employees_with_bonus = []
+        #     for employee in employees:
+        #         if db.reference("/employee").child(employee).child("bonus").get() != 0 and db.reference("/employee").child(employee).child("bonus").get() != "":
+        #             employees_with_bonus.append(employee)
+        #     employees = employees_with_bonus
 
+
+        #employees = employees_with_bonus
+        #print(employees)
         # Populate the Treeview with employee names
         for employee in employees:
-            #Add the employee name,bonus amount,reason,hours attended with tag selectable
-            self.treeview_bonus.insert("", "end", values=(employee, db.reference("/employee").child(employee).child("bonus_req").get(), db.reference("/employee").child(employee).child("bonus_reason").get(), db.reference("/employee").child(employee).child("hours_attended").get()), tags=("clickable",))
+            # Add the employee name, bonus amount, reason, hours attended with tag selectable
+
+            # self.treeview_bonus.insert("", "end", values=(employee, db.reference("/employee").child(employee).child("bonus_req").get(), db.reference("/employee").child(employee).child("bonus_reason").get(), db.reference("/employee").child(employee).child("hours_attended").get()), tags=("clickable",))
             
+            self.treeview_bonus.insert("", "end", values=(
+                employee,
+                db.reference("/employee").child(employee).child("bonus_req").get(),
+                db.reference("/employee").child(employee).child("bonus_reason").get(),
+                db.reference("/employee").child(employee).child("hours_attended").get()
+            ), tags=("selectable",))
+
+    def get_employee_data_with_non_zero_bonus(self):
+        emp_ref = db.reference("/employee")
+        employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "bonus_req") > 0]
+        return employee_data
+
+
     def approve_bonus_btn(self):
         messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
         
