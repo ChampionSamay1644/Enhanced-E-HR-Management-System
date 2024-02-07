@@ -26,8 +26,8 @@ class CreativeLoginApp:
         self.root.title("HR Management System")
         self.employee_original_image = None
         self.employee_img = None
-        self.boss_original_image = None
-        self.boss_img = None
+        self.manager_original_image = None
+        self.manager_img = None
         self.company_name_text = None  # Initialize company_name_text attribute
         self.current_question_index = 0  # Initialize the current question index
         self.db_data = {}  # Initialize db_data as an empty dictionary
@@ -168,16 +168,16 @@ class CreativeLoginApp:
             list.append(emp_ref.child(username).child("survey").child("available").get())
             
             return list
-        elif role=="boss":
-            boss_ref = db.reference("/boss")
+        elif role=="manager":
+            manager_ref = db.reference("/manager")
             list=[]
-            list.append(boss_ref.child(username).child("boss_id").get())
-            list.append(boss_ref.child(username).child("designation").get())
-            list.append(boss_ref.child(username).child("salary").get())
-            list.append(boss_ref.child(username).child("hours_attended").get())
-            list.append(boss_ref.child(username).child("bonus").get())
-            list.append(boss_ref.child(username).child("sick_days").get())
-            list.append(boss_ref.child(username).child("vacation_days").get())
+            list.append(manager_ref.child(username).child("manager_id").get())
+            list.append(manager_ref.child(username).child("designation").get())
+            list.append(manager_ref.child(username).child("salary").get())
+            list.append(manager_ref.child(username).child("hours_attended").get())
+            list.append(manager_ref.child(username).child("bonus").get())
+            list.append(manager_ref.child(username).child("sick_days").get())
+            list.append(manager_ref.child(username).child("vacation_days").get())
             
             return list
         elif role=="HR":
@@ -390,7 +390,7 @@ class CreativeLoginApp:
 
         admins_ref = db.reference("/admins")
         hr_ref = db.reference("/HR")
-        boss_ref = db.reference("/boss")
+        manager_ref = db.reference("/manager")
         employee_ref = db.reference("/employee")
 
         if admins_ref.child(username).child("password").get() == password:
@@ -411,13 +411,13 @@ class CreativeLoginApp:
             self.open_hr_window(role, username)
             return
 
-        if boss_ref.child(username).child("password").get() == password:
-            role = boss_ref.child(username).child("role").get()
+        if manager_ref.child(username).child("password").get() == password:
+            role = manager_ref.child(username).child("role").get()
             messagebox.showinfo(
                 "Login Successful",
                 f"Welcome, {username}!\nYou are logged in as a {role}.",
             )
-            self.open_boss_window(role, username)
+            self.open_manager_window(role, username)
             return
 
         if employee_ref.child(username).child("password").get() == password:
@@ -488,7 +488,7 @@ class CreativeLoginApp:
         self.role_entry = ttk.Combobox(
             self.admin_logo_canvas, font=("Helvetica", 12, "bold")
         )
-        self.role_entry["values"] = ("HR", "boss", "employee")
+        self.role_entry["values"] = ("HR", "manager", "employee")
         self.role_entry.pack(
             pady=20
         )
@@ -544,8 +544,8 @@ class CreativeLoginApp:
         admin_window.destroy()
         if role == "HR":
             self.open_hr_window(role, username)
-        elif role == "boss":
-            self.open_boss_window(role, username)
+        elif role == "manager":
+            self.open_manager_window(role, username)
         elif role == "employee":
             self.open_employee_window(role, username)
             
@@ -651,7 +651,7 @@ class CreativeLoginApp:
         )
         self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
         self.password_entry.insert(0, "")
-        # create a new checkbox for role with options- HR, boss, employee on canvas
+        # create a new checkbox for role with options- HR, manager, employee on canvas
         role_label = tk.Label(
             self.create_hr_logo_canvas,
             text="Role",
@@ -665,7 +665,7 @@ class CreativeLoginApp:
         self.role_entry = ttk.Combobox(
             self.create_hr_logo_canvas, font=("Helvetica", 12, "bold")
         )
-        self.role_entry["values"] = ("HR", "boss", "employee")
+        self.role_entry["values"] = ("HR", "manager", "employee")
         self.role_entry.pack(
             pady=20
         )
@@ -765,7 +765,7 @@ class CreativeLoginApp:
         )
         self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
         self.username_entry.insert(0, "")
-        # create a checkbox for role with options- HR, boss, employee on canvas
+        # create a checkbox for role with options- HR, manager, employee on canvas
         role_label = tk.Label(
             self.remove_hr_logo_canvas,
             text="Role",
@@ -779,7 +779,7 @@ class CreativeLoginApp:
         self.role_entry = ttk.Combobox(
             self.remove_hr_logo_canvas, font=("Helvetica", 12, "bold")
         )
-        self.role_entry["values"] = ("HR", "boss", "employee")
+        self.role_entry["values"] = ("HR", "manager", "employee")
         self.role_entry.pack(
             pady=20
         )
@@ -918,7 +918,7 @@ class CreativeLoginApp:
             relx=0.75, rely=0.6, anchor="center", width=200, height=30
         )
         # self.addbe_button = tk.Button(
-        #     self.hr_logo_canvas, text="Add Boss/Employee", command=lambda:self.create_all_hr(), font=("Helvetica", 14)
+        #     self.hr_logo_canvas, text="Add manager/Employee", command=lambda:self.create_all_hr(), font=("Helvetica", 14)
         # )
         # self.addbe_button.pack(
         #     pady=20
@@ -927,7 +927,7 @@ class CreativeLoginApp:
         #     relx=0.75, rely=0.675, anchor="center", width=300, height=30
         # )
         # self.removebe_button = tk.Button(
-        #     self.hr_logo_canvas, text="Remove Boss/Employee", command=lambda:self.remove_all_hr(), font=("Helvetica", 14)
+        #     self.hr_logo_canvas, text="Remove manager/Employee", command=lambda:self.remove_all_hr(), font=("Helvetica", 14)
         # )
         # self.removebe_button.pack(
         #     pady=20
@@ -1091,7 +1091,7 @@ class CreativeLoginApp:
         self.role_entry_emp_mng = ttk.Combobox(
             self.salary_management_canvas, font=("Helvetica", 12, "bold")
         )
-        self.role_entry_emp_mng["values"] = ("None","HR", "boss", "employee")
+        self.role_entry_emp_mng["values"] = ("None","HR", "manager", "employee")
         self.role_entry_emp_mng.pack(
             pady=20
         )
@@ -1141,8 +1141,8 @@ class CreativeLoginApp:
         
         if role == "HR":
             employees = list(( db.reference("/HR").get()).keys())
-        elif role == "boss":
-            employees = list(( db.reference("/boss").get()).keys())
+        elif role == "manager":
+            employees = list(( db.reference("/manager").get()).keys())
         elif role == "None":
             return
         else:
@@ -1307,7 +1307,7 @@ class CreativeLoginApp:
         self.password_entry.place(relx=0.7, rely=0.3, anchor="center")
         self.password_entry.insert(0, "")
 
-        # Create a new checkbox for role with options- boss, employee on canvas
+        # Create a new checkbox for role with options- manager, employee on canvas
         role_label = tk.Label(
             self.add_login_from_hr_canvas,
             text="Role",
@@ -1319,7 +1319,7 @@ class CreativeLoginApp:
         self.role_entry = ttk.Combobox(
             self.add_login_from_hr_canvas, font=("Helvetica", 12), state="readonly"
         )
-        self.role_entry["values"] = ("boss", "employee")
+        self.role_entry["values"] = ("manager", "employee")
         self.role_entry.current(0)
         self.role_entry.pack(pady=10)
         self.role_entry.place(relx=0.7, rely=0.4, anchor="center")
@@ -1386,12 +1386,12 @@ class CreativeLoginApp:
 
         admins_ref = db.reference("/admins")
         hr_ref = db.reference("/HR")
-        boss_ref = db.reference("/boss")
+        manager_ref = db.reference("/manager")
         employee_ref = db.reference("/employee")
         emp_id_ref = db.reference("/")
         emp_uni = emp_id_ref.child("emp_id").get()
 
-        if username in list(admins_ref.get().keys()) or username in list(hr_ref.get().keys()) or username in list(boss_ref.get().keys()) or username in list(employee_ref.get().keys()):
+        if username in list(admins_ref.get().keys()) or username in list(hr_ref.get().keys()) or username in list(manager_ref.get().keys()) or username in list(employee_ref.get().keys()):
             messagebox.showinfo(
                 "Add HR Login", "Username already exists. Choose a different username."
             )
@@ -1401,8 +1401,8 @@ class CreativeLoginApp:
             messagebox.showinfo("Add HR Login", "Salary should be a number.")
         else:
             # Add the new login to the database
-            if role == "boss":
-                boss_ref.child(username).set(
+            if role == "manager":
+                manager_ref.child(username).set(
                     {
                         "password": password,
                         "role": role,
@@ -1616,7 +1616,7 @@ class CreativeLoginApp:
     #     # create a new window
     #     create_remove_hr_window = tk.Toplevel()
     #     create_remove_hr_window.geometry("800x600")  # Set the window size
-    #     create_remove_hr_window.title("Create Boss/Employee Login")
+    #     create_remove_hr_window.title("Create manager/Employee Login")
 
     #     #create a canvas that resizes with the window
     #     self.create_be_logo_canvas = tk.Canvas(create_remove_hr_window, bg="white", highlightthickness=0)
@@ -1667,7 +1667,7 @@ class CreativeLoginApp:
     #     )
     #     self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
     #     self.password_entry.insert(0, "")
-    #     # create a checkbox for role with options- HR, boss, employee on canvas
+    #     # create a checkbox for role with options- HR, manager, employee on canvas
     #     role_label = tk.Label(
     #         self.create_be_logo_canvas,
     #         text="Role",
@@ -1681,7 +1681,7 @@ class CreativeLoginApp:
     #     self.role_entry = ttk.Combobox(
     #         self.create_be_logo_canvas, font=("Helvetica", 12, "bold")
     #     )
-    #     self.role_entry["values"] = ("boss", "employee")
+    #     self.role_entry["values"] = ("manager", "employee")
     #     self.role_entry.pack(
     #         pady=20
     #     )
@@ -1750,7 +1750,7 @@ class CreativeLoginApp:
     #     # create a new window
     #     create_remove_hr_window = tk.Toplevel()
     #     create_remove_hr_window.geometry("800x600")  # Set the window size
-    #     create_remove_hr_window.title("Remove Boss/Employee Login")
+    #     create_remove_hr_window.title("Remove manager/Employee Login")
       
     #     #create a canvas that resizes with the window
     #     self.remove_be_logo_canvas = tk.Canvas(create_remove_hr_window, bg="white", highlightthickness=0)
@@ -1783,7 +1783,7 @@ class CreativeLoginApp:
     #     )
     #     self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
     #     self.username_entry.insert(0, "")
-    #     # create a checkbox for role with options- HR, boss, employee on canvas
+    #     # create a checkbox for role with options- HR, manager, employee on canvas
     #     role_label = tk.Label(
     #         self.remove_be_logo_canvas,
     #         text="Role",
@@ -1797,7 +1797,7 @@ class CreativeLoginApp:
     #     self.role_entry = ttk.Combobox(
     #         self.remove_be_logo_canvas, font=("Helvetica", 12, "bold")
     #     )
-    #     self.role_entry["values"] = ("boss", "employee")
+    #     self.role_entry["values"] = ("manager", "employee")
     #     self.role_entry.pack(
     #         pady=20
     #     )
@@ -1863,30 +1863,30 @@ class CreativeLoginApp:
     #     # Handle window resize event
     #     self.resize_canvas_and_image_remove_be()
 
-    def open_boss_window(self, role, username):
+    def open_manager_window(self, role, username):
         if hasattr(self, "root"):
             try:
                 if self.root.winfo_exists():
                     self.root.destroy()  # Close the main login window
             except:
                 pass    
-        boss_window = tk.Tk()  # Use Tk() to create a new window
-        boss_window.geometry("900x600")  # Set the window size
-        boss_window.title("Boss Window")
+        manager_window = tk.Tk()  # Use Tk() to create a new window
+        manager_window.geometry("900x600")  # Set the window size
+        manager_window.title("Manager Window")
 
         #create a canvas that resizes with the window
-        self.boss_logo_canvas = tk.Canvas(boss_window, bg="white", highlightthickness=0)
-        self.boss_logo_canvas.pack(fill=tk.BOTH, expand=True)
+        self.manager_logo_canvas = tk.Canvas(manager_window, bg="white", highlightthickness=0)
+        self.manager_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
        # bind window resize event to function
-        boss_window.bind("<Configure>", lambda event: self.on_window_resize_boss(event,username))
+        manager_window.bind("<Configure>", lambda event: self.on_window_resize_manager(event,username))
 
        # import the image as the background on the canvas
-        self.load_image_boss(username)
+        self.load_image_manager(username)
 
-        #buttons of Boss window
+        #buttons of manager window
         self.perform_review_approval_button = tk.Button(
-            self.boss_logo_canvas, text="Performance Review Approval", command=lambda:self.perform_review_approval(), font=("Helvetica", 14)
+            self.manager_logo_canvas, text="Performance Review Approval", command=lambda:self.perform_review_approval(), font=("Helvetica", 14)
         )
         self.perform_review_approval_button.pack(
             pady=20
@@ -1895,7 +1895,7 @@ class CreativeLoginApp:
             relx=0.5, rely=0.3, anchor="center", width=300, height=30
         )
         self.approve_vacations_sick_leaves_button = tk.Button(
-            self.boss_logo_canvas, text="Approve Vacations and Sick Leaves", command=lambda:self.approve_vacations_sick_leaves(username,role), font=("Helvetica", 14)
+            self.manager_logo_canvas, text="Approve Vacations and Sick Leaves", command=lambda:self.approve_vacations_sick_leaves(username,role), font=("Helvetica", 14)
         )
         self.approve_vacations_sick_leaves_button.pack(
             pady=20
@@ -1904,7 +1904,7 @@ class CreativeLoginApp:
             relx=0.5, rely=0.4, anchor="center", width=320, height=30
         )
         self.progress_on_task_button = tk.Button(
-            self.boss_logo_canvas, text="Progress on Task", command=lambda:self.progress_on_task(), font=("Helvetica", 14)
+            self.manager_logo_canvas, text="Progress on Task", command=lambda:self.progress_on_task(), font=("Helvetica", 14)
         )
         self.progress_on_task_button.pack(
             pady=20
@@ -1913,7 +1913,7 @@ class CreativeLoginApp:
           relx=0.5, rely=0.5, anchor="center", width=200, height=30
         )
         self.approve_promotion_button = tk.Button(
-            self.boss_logo_canvas, text="Approve Promotion", command=lambda:self.approve_promotion(), font=("Helvetica", 14)
+            self.manager_logo_canvas, text="Approve Promotion", command=lambda:self.approve_promotion(), font=("Helvetica", 14)
         )
         self.approve_promotion_button.pack(
             pady=20
@@ -1922,7 +1922,7 @@ class CreativeLoginApp:
             relx=0.5, rely=0.6, anchor="center", width=200, height=30
         )
         self.approve_resignation_button = tk.Button(
-            self.boss_logo_canvas, text="Approve Resignation", command=lambda:self.approve_resignation(), font=("Helvetica", 14)
+            self.manager_logo_canvas, text="Approve Resignation", command=lambda:self.approve_resignation(), font=("Helvetica", 14)
         )
         self.approve_resignation_button.pack(
             pady=20
@@ -1931,7 +1931,7 @@ class CreativeLoginApp:
             relx=0.5, rely=0.7, anchor="center", width=200, height=30
         )
         self.request_bonus_button = tk.Button(
-            self.boss_logo_canvas, text="Request for Bonus", command=lambda:self.request_bonus(), font=("Helvetica", 14)
+            self.manager_logo_canvas, text="Request for Bonus", command=lambda:self.request_bonus(), font=("Helvetica", 14)
         )
         self.request_bonus_button.pack(
             pady=20
@@ -1942,9 +1942,9 @@ class CreativeLoginApp:
 
         #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
-        self.boss_logo_canvas,
+        self.manager_logo_canvas,
         text="Exit",
-        command=boss_window.destroy,
+        command=manager_window.destroy,
         font=("Helvetica", 14),
         width=15,
         height=2,
@@ -1956,66 +1956,66 @@ class CreativeLoginApp:
         exit_button.place(relx=0.5, rely=1.0, anchor="s")
 
         # focus on window
-        boss_window.focus_force()
+        manager_window.focus_force()
 
         # Center the window with function center_window_test
-        self.center_window_all(boss_window)
+        self.center_window_all(manager_window)
 
         # Bind the Escape key to the exit function
-        boss_window.bind("<Escape>", lambda event: boss_window.destroy())
+        manager_window.bind("<Escape>", lambda event: manager_window.destroy())
 
-        # Run the main loop for the boss window
-        boss_window.mainloop()
+        # Run the main loop for the manager window
+        manager_window.mainloop()
 
-    def load_image_boss(self,username):
+    def load_image_manager(self,username):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
         # Load image and adjust canvas size
-        self.original_boss_logo_image = Image.open(img_path)
-        self.resize_canvas_and_image_boss(username)
+        self.original_manager_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_manager(username)
 
-    def resize_canvas_and_image_boss(self,username):
-        username_boss = username
-        # Get the boss window size
-        window_width = self.boss_logo_canvas.winfo_width()
-        window_height = self.boss_logo_canvas.winfo_height()
+    def resize_canvas_and_image_manager(self,username):
+        username_manager = username
+        # Get the manager window size
+        window_width = self.manager_logo_canvas.winfo_width()
+        window_height = self.manager_logo_canvas.winfo_height()
        
         # Resize the canvas to the current window size
-        self.boss_logo_canvas.config(width=window_width, height=window_height)
+        self.manager_logo_canvas.config(width=window_width, height=window_height)
 
         # Resize the image if needed
-        resized_image = self.original_boss_logo_image.resize(
+        resized_image = self.original_manager_logo_image.resize(
             (window_width, window_height)
         )
-        self.boss_logo_image = ImageTk.PhotoImage(resized_image)
+        self.manager_logo_image = ImageTk.PhotoImage(resized_image)
 
         # Update the image on the canvas
-        self.boss_logo_canvas.delete("all")
-        self.boss_logo_canvas.create_image(
-            0, 0, image=self.boss_logo_image, anchor="nw"
+        self.manager_logo_canvas.delete("all")
+        self.manager_logo_canvas.create_image(
+            0, 0, image=self.manager_logo_image, anchor="nw"
         )
 
-         #redraw the boss name text    
-        if hasattr(self, "boss_name_text"):
-            self.boss_logo_canvas.delete(
-                self.boss_name_text
+         #redraw the manager name text    
+        if hasattr(self, "manager_name_text"):
+            self.manager_logo_canvas.delete(
+                self.manager_name_text
             )  # Remove the old text
 
-        self.boss_name_text = self.boss_logo_canvas.create_text(
+        self.manager_name_text = self.manager_logo_canvas.create_text(
             window_width / 2,
             100,
-            text=f"Welcome {username_boss}!",
+            text=f"Welcome {username_manager}!",
             font=("Helvetica", 28, "bold"),
             fill="white",
         )
 
-    def on_window_resize_boss(self, event,username):
+    def on_window_resize_manager(self, event,username):
         # Handle window resize event
-        self.resize_canvas_and_image_boss(username)
+        self.resize_canvas_and_image_manager(username)
 
     def perform_review_approval(self):
-        messagebox.showinfo("Boss Window", "Performance Review Approval Button Pressed")
+        messagebox.showinfo("manager Window", "Performance Review Approval Button Pressed")
 
     def approve_vacations_sick_leaves(self, role, username):
         approve_window = tk.Toplevel()  # Use Tk() to create a new window
@@ -2075,7 +2075,7 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_approve_leaves(username)
 
     def resize_canvas_and_image_approve_leaves(self,username):
-        # Get the boss window size
+        # Get the manager window size
         window_width = self.approve_leaves_logo_canvas.winfo_width()
         window_height = self.approve_leaves_logo_canvas.winfo_height()
        
@@ -2534,16 +2534,16 @@ class CreativeLoginApp:
         messagebox.showinfo("Deny Sick Days", "Sick Days Denied")
     
     def progress_on_task(self):
-        messagebox.showinfo("Boss Window", "Progress on Task Button Pressed")
+        messagebox.showinfo("manager Window", "Progress on Task Button Pressed")
 
     def approve_promotion(self):
-        messagebox.showinfo("Boss Window", "Approve Promotion Button Pressed")
+        messagebox.showinfo("manager Window", "Approve Promotion Button Pressed")
 
     def approve_resignatin(self):
-        messagebox.showinfo("Boss Window", "Approve Resignation Button Pressed")
+        messagebox.showinfo("manager Window", "Approve Resignation Button Pressed")
 
     def request_bonus(self):
-        messagebox.showinfo("Boss Window", "Request for Bonus Button Pressed")
+        messagebox.showinfo("manager Window", "Request for Bonus Button Pressed")
 
     def open_employee_window(self, role, username):
         if hasattr(self, "root"):
@@ -3424,7 +3424,7 @@ class CreativeLoginApp:
 
         admins_ref = db.reference("/admins")
         hr_ref = db.reference("/HR")
-        boss_ref = db.reference("/boss")
+        manager_ref = db.reference("/manager")
         employee_ref = db.reference("/employee")
         emp_id_ref = db.reference("/")
         emp_uni = emp_id_ref.child("emp_id").get()
@@ -3432,7 +3432,7 @@ class CreativeLoginApp:
         if (
             admins_ref.child(username).get()
             or hr_ref.child(username).get()
-            or boss_ref.child(username).get()
+            or manager_ref.child(username).get()
             or employee_ref.child(username).get()
         ):
             messagebox.showinfo(
@@ -3451,8 +3451,8 @@ class CreativeLoginApp:
                     }
                 )
                 emp_id_ref.child("emp_id").set(emp_uni + 1)
-            elif role == "boss":
-                boss_ref.child(username).set(
+            elif role == "manager":
+                manager_ref.child(username).set(
                     {
                         "password": password,
                         "role": role,
@@ -3498,7 +3498,7 @@ class CreativeLoginApp:
         role = self.role_entry.get()
         admins_ref = db.reference("/admins")
         hr_ref = db.reference("/HR")
-        boss_ref = db.reference("/boss")
+        manager_ref = db.reference("/manager")
         employee_ref = db.reference("/employee")
         if role == "HR":
             if hr_ref.child(username).get():
@@ -3507,10 +3507,10 @@ class CreativeLoginApp:
                 messagebox.showinfo("Remove HR Login", "Login removed successfully.")
             else:
                 messagebox.showinfo("Remove HR Login", "Username does not exist.")
-        elif role == "boss":
-            if boss_ref.child(username).get():
+        elif role == "manager":
+            if manager_ref.child(username).get():
                 # Remove the login from the database
-                boss_ref.child(username).delete()
+                manager_ref.child(username).delete()
                 messagebox.showinfo("Remove HR Login", "Login removed successfully.")
             else:
                 messagebox.showinfo("Remove HR Login", "Username does not exist.")
