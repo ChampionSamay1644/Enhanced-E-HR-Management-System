@@ -1395,8 +1395,10 @@ class CreativeLoginApp:
             messagebox.showinfo(
                 "Add HR Login", "Username already exists. Choose a different username."
             )
-        elif username == "" or password == "":
+        elif username == "" or password == "" or role == "" or designation == "" or salary == "":
             messagebox.showinfo("Add HR Login", "Please fill in all the fields.")
+        elif not salary.isdigit():
+            messagebox.showinfo("Add HR Login", "Salary should be a number.")
         else:
             # Add the new login to the database
             if role == "boss":
@@ -1418,18 +1420,18 @@ class CreativeLoginApp:
                         "designation": designation,
                         "emp_id": emp_uni + 1,
                         "salary": salary,
-                        "sick_days": "",
-                        "vacation_days": "",
-                        "bonus": "",
-                        "hours_attended": "",
-                        "apply_for_resignation": "",
-                        "apply_for_vacation": "",
-                        "progress_on_task": "",
-                        "survey": "",
+                        "sick_days": 0,
+                        "vacation_days": 0,
+                        "bonus": 0,
+                        "hours_attended": 0,
+                        "apply_for_resignation": 0,
+                        "apply_for_vacation": 0,
+                        "progress_on_task": 0,
+                        "survey": db.reference("survey_uni").child("available").get(),
                         "feedback": "",
                         "vacation_reason": "",
-                        "vacation_approved": "",
-                        "sick_approved": "",
+                        "vacation_approved": 0,
+                        "sick_approved": 0,
                         "sick_reason": "",
                         "vacation_approved_denied": "",
                         "sick_approved_denied": "",
