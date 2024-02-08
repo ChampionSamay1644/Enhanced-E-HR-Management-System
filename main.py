@@ -4089,17 +4089,26 @@ class CreativeLoginApp:
         dropdown_menu.pack(pady=50, side=tk.TOP, anchor=tk.CENTER)
 
         # Create entry widgets for the performance review, constructed feedback, and goals
-        entry_labels = ["Performance Review", "Constructed Feedback", "Goals for the Future"]
+        entry_labels = ["Self Review", "Other Feedback", "Goals for the Future"]
         entry_variables = [tk.StringVar() for _ in range(3)]
         entry_widgets = []
+
+        # for i in range(3):
+        #     entry_widget = tk.Entry(self.submit_performance_review_canvas, width=50, font=("Helvetica", 14), textvariable=entry_variables[i])
+        #     entry_widget.pack(pady=40, side=tk.TOP, anchor=tk.CENTER)
+        #     entry_widget.insert(0, entry_labels[i])
+        #     entry_widget.bind("<FocusIn>", lambda event, i=i: self.entry_del(entry_widget, entry_labels[i]))
+
+        #     entry_widgets.append(entry_widget)
 
         for i in range(3):
             entry_widget = tk.Entry(self.submit_performance_review_canvas, width=50, font=("Helvetica", 14), textvariable=entry_variables[i])
             entry_widget.pack(pady=40, side=tk.TOP, anchor=tk.CENTER)
             entry_widget.insert(0, entry_labels[i])
-            entry_widget.bind("<FocusIn>", lambda event, i=i: self.entry_del(entry_widget, entry_labels[i]))
+            entry_widget.bind("<FocusIn>", lambda event, entry_widget=entry_widget, default_text=entry_labels[i]: self.entry_del(entry_widget, default_text))
 
             entry_widgets.append(entry_widget)
+
 
         # Create a button to submit the performance review
         submit_button = tk.Button(self.submit_performance_review_canvas, text="Submit", command=lambda: self.submit_performance_review_request(username, selected_option.get(), entry_variables, submit_performance_review_window))
@@ -4186,8 +4195,10 @@ class CreativeLoginApp:
         self.resize_canvas_and_image_submit_performance_review()
 
     def entry_del(self, entry_widget, default_text):
-        if entry_widget.get() == default_text:
+        current_content = entry_widget.get()
+        if current_content == default_text:
             entry_widget.delete(0, tk.END)
+
 
     def submit_performance_review_request(self, username, selected_option, entry_variables, submit_performance_review_window):
         # Retrieve the entered values
