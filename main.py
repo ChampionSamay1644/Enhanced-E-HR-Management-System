@@ -4201,6 +4201,7 @@ class CreativeLoginApp:
         if self.date_entry.get() == "mm/dd/yyyy":
             self.date_entry.delete(0, tk.END)
     
+            
     def submit_performance_review(self, username):
         # Create a new window for the submit_performance_review top level
         submit_performance_review_window = tk.Toplevel()
@@ -4222,14 +4223,21 @@ class CreativeLoginApp:
         dropdown_menu = tk.OptionMenu(self.submit_performance_review_canvas, selected_option, *options)
         dropdown_menu.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
 
-        # Create entry widgets for the performance review
-        self.performance_review_entry = tk.Entry(self.submit_performance_review_canvas, width=50, font=("Helvetica", 14))
-        self.performance_review_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
-        self.performance_review_entry.insert(0, "Performance Review")
-        self.performance_review_entry.bind("<FocusIn>", lambda event: self.performance_review_entry_del())
+        # Create entry widgets for the performance review, constructed feedback, and goals
+        entry_labels = ["Performance Review", "Constructed Feedback", "Goals for the Future"]
+        entry_variables = [tk.StringVar() for _ in range(3)]
+        entry_widgets = []
+
+        for i in range(3):
+            entry_widget = tk.Entry(self.submit_performance_review_canvas, width=50, font=("Helvetica", 14), textvariable=entry_variables[i])
+            entry_widget.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+            entry_widget.insert(0, entry_labels[i])
+            entry_widget.bind("<FocusIn>", lambda event, i=i: self.entry_del(entry_widget, entry_labels[i]))
+
+            entry_widgets.append(entry_widget)
 
         # Create a button to submit the performance review
-        submit_button = tk.Button(self.submit_performance_review_canvas, text="Submit", command=lambda: self.submit_performance_review_request(username, selected_option.get(), submit_performance_review_window))
+        submit_button = tk.Button(self.submit_performance_review_canvas, text="Submit", command=lambda: self.submit_performance_review_request(username, selected_option.get(), entry_variables, submit_performance_review_window))
         submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
 
         # Bind the Escape key to the exit function
@@ -4279,31 +4287,39 @@ class CreativeLoginApp:
         # Handle window resize event
         self.resize_canvas_and_image_submit_performance_review()
 
-    def performance_review_entry_del(self):
-        if self.performance_review_entry.get() == "Performance Review":
-            self.performance_review_entry.delete(0, tk.END)
+    def entry_del(self, entry_widget, default_text):
+        if entry_widget.get() == default_text:
+            entry_widget.delete(0, tk.END)
 
-    def submit_performance_review_request(self, username, selected_option, submit_performance_review_window):
+    def submit_performance_review_request(self, username, selected_option, entry_variables, submit_performance_review_window):
         # Retrieve the entered values
-        performance_review = self.performance_review_entry.get()
+        performance_review = entry_variables[0].get()
+        constructed_feedback = entry_variables[1].get()
+        goals_for_future = entry_variables[2].get()
 
         # Check if the values are entered and valid
-        if not performance_review:
+        if not performance_review or performance_review == "Performance Review":
             messagebox.showinfo("Employee Window", "Please enter a performance review.")
-        elif performance_review == "Performance Review":
-            messagebox.showinfo("Employee Window", "Please enter a performance review.")
+        elif not constructed_feedback or constructed_feedback == "Constructed Feedback":
+            messagebox.showinfo("Employee Window", "Please enter constructed feedback.")
+        elif not goals_for_future or goals_for_future == "Goals for the Future":
+            messagebox.showinfo("Employee Window", "Please enter goals for the future.")
         elif selected_option == "Select Type":
             messagebox.showinfo("Employee Window", "Please select a type.")
         else:
-            # Add the performance review to the database
-            db.reference("/employee").child(username).child("performance_review").child(selected_option).set(performance_review)
+            # Add the performance review details to the database
+            db.reference("/employee").child(username).child("performance_review").child(selected_option).set({
+                "performance_review": performance_review,
+                "constructed_feedback": constructed_feedback,
+                "goals_for_future": goals_for_future
+            })
             messagebox.showinfo("Employee Window", "Performance review submitted successfully.")
 
             # Close the submit_performance_review_window
             submit_performance_review_window.destroy()
 
-        
-        
+
+
 def main():
     
     root = tk.Tk()
