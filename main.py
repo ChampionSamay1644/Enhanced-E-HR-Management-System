@@ -2303,13 +2303,13 @@ class CreativeLoginApp:
         self.progress_on_task_button.place(
           relx=0.5, rely=0.5, anchor="center", width=200, height=30
         )
-        self.approve_promotion_button = tk.Button(
-            self.manager_logo_canvas, text="Approve Promotion", command=lambda:self.approve_promotion(), font=("Helvetica", 14)
+        self.assign_promotion_button = tk.Button(
+            self.manager_logo_canvas, text="Assign Promotion", command=lambda:self.assign_promotion(), font=("Helvetica", 14)
         )
-        self.approve_promotion_button.pack(
+        self.assign_promotion_button.pack(
             pady=20
         )
-        self.approve_promotion_button.place(
+        self.assign_promotion_button.place(
             relx=0.5, rely=0.6, anchor="center", width=200, height=30
         )
         self.approve_resignation_button = tk.Button(
@@ -2927,7 +2927,7 @@ class CreativeLoginApp:
     def progress_on_task(self):
         messagebox.showinfo("manager Window", "Progress on Task Button Pressed")
 
-    def approve_promotion(self):
+    def assign_promotion(self):
         messagebox.showinfo("manager Window", "Approve Promotion Button Pressed")
 
     def approve_resignatin(self):
