@@ -4081,7 +4081,7 @@ class CreativeLoginApp:
         self.submit_performance_review_load_image()
 
         # Create a dropdown menu for the performance review
-        options = ["Select Type", "Annual Review", "Quarterly Review"]
+        options = ["Select Type", "Quarterly Review", "Annual Review"]
         selected_option = tk.StringVar()
         selected_option.set(options[0])
 
