@@ -3335,6 +3335,16 @@ class CreativeLoginApp:
         self.submit_complaint_button.place(
             relx=0.75, rely=0.7, anchor="center", width=300, height=30
         )
+
+        self.submit_performance_review_button = tk.Button(
+            self.employee_logo_canvas, text="Submit Performance Review", command=lambda:self.submit_performance_review(username), font=("Helvetica", 14)
+        )
+        self.submit_performance_review_button.pack(
+            pady=20
+        )
+        self.submit_performance_review_button.place(
+            relx=0.75, rely=0.8, anchor="center", width=300, height=30
+        )
     
     def load_image_employee(self,username):
         # Construct the full path to the image file based on role and username
@@ -4189,6 +4199,109 @@ class CreativeLoginApp:
     def date_entry_del(self):
         if self.date_entry.get() == "mm/dd/yyyy":
             self.date_entry.delete(0, tk.END)
+    
+    def submit_performance_review(self, username):
+        # Create a new window for the submit_performance_review top level
+        submit_performance_review_window = tk.Toplevel()
+        submit_performance_review_window.geometry("900x600")
+        submit_performance_review_window.title("Submit Performance Review")
+
+        # Create the canvas
+        self.submit_performance_review_canvas = tk.Canvas(submit_performance_review_window, bg="white", highlightthickness=0)
+        self.submit_performance_review_canvas.pack(fill=tk.BOTH, expand=True)
+
+        # Load the image
+        self.submit_performance_review_load_image()
+
+        # Create a dropdown menu for the performance review
+        options = ["Select Type", "Annual Review", "Quarterly Review"]
+        selected_option = tk.StringVar()
+        selected_option.set(options[0])
+
+        dropdown_menu = tk.OptionMenu(self.submit_performance_review_canvas, selected_option, *options)
+        dropdown_menu.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+
+        # Create entry widgets for the performance review
+        self.performance_review_entry = tk.Entry(self.submit_performance_review_canvas, width=50, font=("Helvetica", 14))
+        self.performance_review_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        self.performance_review_entry.insert(0, "Performance Review")
+        self.performance_review_entry.bind("<FocusIn>", lambda event: self.performance_review_entry_del())
+
+        # Create a button to submit the performance review
+        submit_button = tk.Button(self.submit_performance_review_canvas, text="Submit", command=lambda: self.submit_performance_review_request(username, selected_option.get(), submit_performance_review_window))
+        submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+
+        # Bind the Escape key to the exit function
+        submit_performance_review_window.bind("<Escape>", lambda event: submit_performance_review_window.destroy())
+
+        # bind window resize event to function
+        submit_performance_review_window.bind("<Configure>", lambda event: self.on_window_resize_submit_performance_review(event))
+
+        # focus on window
+        submit_performance_review_window.focus_force()
+
+        # Center the window with function center_window_test
+        self.center_window_all(submit_performance_review_window)
+
+        # Run the main loop for the submit_performance_review_window
+        submit_performance_review_window.mainloop()
+
+    def submit_performance_review_load_image(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_submit_performance_review_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_submit_performance_review()
+
+    def resize_canvas_and_image_submit_performance_review(self):
+        # Get the submit_performance_review window size
+        window_width = self.submit_performance_review_canvas.winfo_width()
+        window_height = self.submit_performance_review_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.submit_performance_review_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_submit_performance_review_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.submit_performance_review_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.submit_performance_review_canvas.delete("all")
+        self.submit_performance_review_canvas.create_image(
+            0, 0, image=self.submit_performance_review_logo_image, anchor="nw"
+        )
+
+    def on_window_resize_submit_performance_review(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_submit_performance_review()
+
+    def performance_review_entry_del(self):
+        if self.performance_review_entry.get() == "Performance Review":
+            self.performance_review_entry.delete(0, tk.END)
+
+    def submit_performance_review_request(self, username, selected_option, submit_performance_review_window):
+        # Retrieve the entered values
+        performance_review = self.performance_review_entry.get()
+
+        # Check if the values are entered and valid
+        if not performance_review:
+            messagebox.showinfo("Employee Window", "Please enter a performance review.")
+        elif performance_review == "Performance Review":
+            messagebox.showinfo("Employee Window", "Please enter a performance review.")
+        elif selected_option == "Select Type":
+            messagebox.showinfo("Employee Window", "Please select a type.")
+        else:
+            # Add the performance review to the database
+            db.reference("/employee").child(username).child("performance_review").child(selected_option).set(performance_review)
+            messagebox.showinfo("Employee Window", "Performance review submitted successfully.")
+
+            # Close the submit_performance_review_window
+            submit_performance_review_window.destroy()
+
+        
         
 def main():
     
