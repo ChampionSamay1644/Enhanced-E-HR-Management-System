@@ -4221,7 +4221,7 @@ class CreativeLoginApp:
         selected_option.set(options[0])
 
         dropdown_menu = tk.OptionMenu(self.submit_performance_review_canvas, selected_option, *options)
-        dropdown_menu.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+        dropdown_menu.pack(pady=50, side=tk.TOP, anchor=tk.CENTER)
 
         # Create entry widgets for the performance review, constructed feedback, and goals
         entry_labels = ["Performance Review", "Constructed Feedback", "Goals for the Future"]
@@ -4230,7 +4230,7 @@ class CreativeLoginApp:
 
         for i in range(3):
             entry_widget = tk.Entry(self.submit_performance_review_canvas, width=50, font=("Helvetica", 14), textvariable=entry_variables[i])
-            entry_widget.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+            entry_widget.pack(pady=40, side=tk.TOP, anchor=tk.CENTER)
             entry_widget.insert(0, entry_labels[i])
             entry_widget.bind("<FocusIn>", lambda event, i=i: self.entry_del(entry_widget, entry_labels[i]))
 
@@ -4281,6 +4281,39 @@ class CreativeLoginApp:
         self.submit_performance_review_canvas.delete("all")
         self.submit_performance_review_canvas.create_image(
             0, 0, image=self.submit_performance_review_logo_image, anchor="nw"
+        )
+
+        # Information labels
+        self.submit_performance_review_canvas.create_text(
+            window_width / 2,
+            20,
+            text="Submit Performance Review",
+            font=("Helvetica", 20, "bold"),
+            fill="white",
+        )
+
+        self.submit_performance_review_canvas.create_text(
+            window_width / 2,
+            140,
+            text="Self Review:",
+            font=("Helvetica", 14, "bold"),
+            fill="white",
+        )
+
+        self.submit_performance_review_canvas.create_text(
+            window_width / 2,
+            245,
+            text="Feedback:",
+            font=("Helvetica", 14, "bold"),
+            fill="white",
+        )
+
+        self.submit_performance_review_canvas.create_text(
+            window_width / 2,
+            350,
+            text="Goals:",
+            font=("Helvetica", 14, "bold"),
+            fill="white",
         )
 
     def on_window_resize_submit_performance_review(self, event):
