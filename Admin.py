@@ -86,6 +86,8 @@ class Admin_class():
         #     )
 
     def open_admin_window(self, role, username):
+        if hasattr(self, "root") and self.root.winfo_exists():
+            self.root.destroy()  # Close the main login window
         admin_window = tk.Tk()  # Use Tk() to create a new window
         admin_window.geometry("900x600")  # Set the window size
         admin_window.title("Admin Window")
