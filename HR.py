@@ -13,6 +13,7 @@ from tkinter import Tk, Canvas, PhotoImage
 
 class HR_class:
     def __init__(this):
+        
         this.root = tk.Tk()
         this.root.geometry("800x600")
         this.root.title("HR Window")
@@ -1494,7 +1495,7 @@ class HR_class:
     #     # Handle window resize event
     #     this.resize_canvas_and_image_remove_be()
 
-def main(role,username,self_main):
+def main(role,username):
     # Create a new window
     hr=HR_class()
-    hr.open_hr_window(self_main,role,username)
+    hr.open_hr_window(role,username)

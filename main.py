@@ -405,6 +405,7 @@ class CreativeLoginApp:
                 f"Welcome, {username}!\nYou are logged in as a {role}.",
             )
             #Run the admin py file
+            self.root.destroy()
             Admin.main(role, username)
             return
 
@@ -414,7 +415,8 @@ class CreativeLoginApp:
                 "Login Successful",
                 f"Welcome, {username}!\nYou are logged in as a {role}.",
             )
-            HR.main(role, username,self)
+            self.root.destroy()
+            HR.main(role, username)
             return
 
         if manager_ref.child(username).child("password").get() == password:
@@ -423,6 +425,7 @@ class CreativeLoginApp:
                 "Login Successful",
                 f"Welcome, {username}!\nYou are logged in as a {role}.",
             )
+            self.root.destroy()
             Manager.open_manager_window(self,role, username)
             return
 
@@ -432,6 +435,7 @@ class CreativeLoginApp:
                 "Login Successful",
                 f"Welcome, {username}!\nYou are logged in as a {role}.",
             )
+            self.root.destroy()
             Employee.open_employee_window(self,role, username)
             return
 

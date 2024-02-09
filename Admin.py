@@ -10,8 +10,12 @@ from firebase_admin import db, credentials
 import threading
 from tkinter import Label
 from tkinter import Tk, Canvas, PhotoImage
+
 class Admin_class():
     def __init__(self):
+        #destroy the root window of the main file if it exists
+        if hasattr(self, "root") and self.root.winfo_exists():
+            self.root.destroy
         self.root = tk.Tk()
         self.root.geometry("800x600")
         self.root.title("Admin Window")
@@ -82,8 +86,6 @@ class Admin_class():
         #     )
 
     def open_admin_window(self, role, username):
-        if hasattr(self, "root") and self.root.winfo_exists():
-            self.root.destroy()  # Close the main login window
         admin_window = tk.Tk()  # Use Tk() to create a new window
         admin_window.geometry("900x600")  # Set the window size
         admin_window.title("Admin Window")
@@ -116,16 +118,16 @@ class Admin_class():
         # admin_window.bind("<Configure>", lambda event: self.on_window_resize_common(event))
 
         #create a button on the canvas
-        create_all_admin_button = tk.Button(
+        self.create_all_admin_button = tk.Button(
             self.admin_logo_canvas, text="Create HR Login", command=lambda:self.create_all_admin(), font=("Helvetica", 14)
         )
-        create_all_admin_button.pack(
+        self.create_all_admin_button.pack(
             pady=20
         )
-        create_all_admin_button.place(
+        self.create_all_admin_button.place(
             relx=0.5, rely=0.4, anchor="center", width=200, height=30
         )
-        remove_all_admin_button = tk.Button(
+        self.remove_all_admin_button = tk.Button(
             self.admin_logo_canvas, text="Remove HR Login", command=lambda:self.remove_all_admin(), font=("Helvetica", 14)
         )
         self.remove_all_admin_button.pack(
@@ -200,24 +202,24 @@ class Admin_class():
         elif role == "employee":
             self.open_employee_window(role, username)
             
-    def load_image_admin(self,username):
-        # Construct the full path to the image file based on role and username
-        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+    def load_image_admin(self, username):
+        try:
+            # Construct the full path to the image file based on role and username
+            img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
-        # Load image and adjust canvas size
-        self.original_admin_logo_image = Image.open(img_path)
-        self.resize_canvas_and_image_admin(username)
-
+            # Load image and adjust canvas size
+            self.original_admin_logo_image = Image.open(img_path)
+            self.resize_canvas_and_image_admin(username)
+        except Exception as e:
+            print(f"Error loading admin image: {e}")
+        
     def resize_canvas_and_image_admin(self,username):
-        username_admin = username
         # Get the admin window size
         window_width = self.admin_logo_canvas.winfo_width()
         window_height = self.admin_logo_canvas.winfo_height()
-        
 
         # Resize the canvas to the current window size
         self.admin_logo_canvas.config(width=window_width, height=window_height)
-
 
         # Resize the image if needed
         resized_image = self.original_admin_logo_image.resize(
@@ -231,20 +233,13 @@ class Admin_class():
             0, 0, image=self.admin_logo_image, anchor="nw"
         )
 
-            #redraw the admin name text    
-        if hasattr(self, "admin_name_text"):
-            self.admin_logo_canvas.delete(
-                self.admin_name_text
-            )  # Remove the old text
-        self.admin_name_text = self.admin_logo_canvas.create_text(
-            window_width / 2,
-            100,
-            text=f"Welcome {username_admin}!",
-            font=("Helvetica", 28, "bold"),
-            fill="white",
-        )
+        # Add text to the top center of the canvas
+        text_content = f"Hello, {username}"
+        text_position = (window_width // 2, 20)  # Top center of the canvas
+        self.admin_logo_canvas.create_text(text_position, text=text_content, anchor="center")
+        self.admin_logo_canvas.itemconfig(self.admin_logo_canvas.find_all()[-1], fill="white")
 
-    def on_window_resize_admin(self, event,username):
+    def on_window_resize_admin(self,username,role, event=None):
         # Handle window resize event
         self.resize_canvas_and_image_admin(username)
 
@@ -493,6 +488,126 @@ class Admin_class():
     def on_window_resize_remove_hr(self, event):
         # Handle window resize event
         self.resize_canvas_and_image_remove_hr()
+
+    def add_login_to_database(self, create_remove_hr_window):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        role = self.role_entry.get()
+
+        admins_ref = db.reference("/admins")
+        hr_ref = db.reference("/HR")
+        manager_ref = db.reference("/manager")
+        employee_ref = db.reference("/employee")
+        emp_id_ref = db.reference("/")
+        emp_uni = emp_id_ref.child("emp_id").get()
+
+        if (
+            admins_ref.child(username).get()
+            or hr_ref.child(username).get()
+            or manager_ref.child(username).get()
+            or employee_ref.child(username).get()
+        ):
+            messagebox.showinfo(
+                "Add HR Login", "Username already exists. Choose a different username."
+            )
+        else:
+            # Add the new login to the database
+            if role == "HR":
+                hr_ref.child(username).set(
+                    {
+                        "password": password,
+                        "role": role,
+                        "post:": "",
+                        "salary": "",
+                        "emp_id": emp_uni + 1,
+                    }
+                )
+                emp_id_ref.child("emp_id").set(emp_uni + 1)
+            elif role == "manager":
+                manager_ref.child(username).set(
+                    {
+                        "password": password,
+                        "role": role,
+                        "designnation: ": "",
+                        "salary": "",
+                        "emp_ids": emp_uni + 1,
+                    }
+                )
+                emp_id_ref.child("emp_id").set(emp_uni + 1)
+            elif role == "employee":
+                employee_ref.child(username).set(
+                    {
+                        "password": password,
+                        "role": role,
+                        "designation": "",
+                        "emp_id": emp_uni + 1,
+                        "salary": "",
+                        "sick_days": "",
+                        "vacation_days": "",
+                        "bonus": "",
+                        "hours_attended": "",
+                        "apply_for_resignation": "",
+                        "apply_for_vacation": "",
+                        "progress_on_task": "",
+                        "survey": "",
+                        "feedback": "",
+                        "vacation_reason": "",
+                        "vacation_approved": "",
+                        "sick_approved": "",
+                        "sick_reason": "",
+                        "vacation_approved_denied": "",
+                        "sick_approved_denied": "",
+                        "performance_review": "",
+                        
+                    }
+                )
+                emp_id_ref.child("emp_id").set(emp_uni + 1)
+            messagebox.showinfo("Add HR Login", "Login added successfully.")
+        # close the window
+        create_remove_hr_window.destroy()
+
+    def remove_login_from_database(self, create_remove_hr_window):
+        username = self.username_entry.get()
+        role = self.role_entry.get()
+        admins_ref = db.reference("/admins")
+        hr_ref = db.reference("/HR")
+        manager_ref = db.reference("/manager")
+        employee_ref = db.reference("/employee")
+        if role == "HR":
+            if hr_ref.child(username).get():
+                # Remove the login from the database
+                hr_ref.child(username).delete()
+                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+            else:
+                messagebox.showinfo("Remove HR Login", "Username does not exist.")
+        elif role == "manager":
+            if manager_ref.child(username).get():
+                # Remove the login from the database
+                manager_ref.child(username).delete()
+                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+            else:
+                messagebox.showinfo("Remove HR Login", "Username does not exist.")
+        elif role == "employee":
+            if employee_ref.child(username).get():
+                # Remove the login from the database
+                employee_ref.child(username).delete()
+                messagebox.showinfo("Remove HR Login", "Login removed successfully.")
+            else:
+                messagebox.showinfo("Remove HR Login", "Username does not exist.")
+        # close the window
+        create_remove_hr_window.destroy()
+ 
+    def center_window_all(self, window):
+        # Get the width and height of the screen
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+
+        # Calculate the x and y coordinates to center the main window
+        x = (screen_width / 2) - (900 / 2)
+        y = (screen_height / 2) - (600 / 2)
+
+        # Set the dimensions of the screen and where it is placed
+        window.geometry("%dx%d+%d+%d" % (900, 600, x, y))
 
 def main(role, username):
     admin = Admin_class()

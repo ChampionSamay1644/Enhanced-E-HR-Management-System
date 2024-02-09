@@ -1014,7 +1014,6 @@ def entry_del(self, entry_widget, default_text):
     if current_content == default_text:
         entry_widget.delete(0, tk.END)
 
-
 def submit_performance_review_request(self, username, selected_option, entry_variables, submit_performance_review_window):
     # Retrieve the entered values
     performance_review = entry_variables[0].get()
@@ -1053,114 +1052,6 @@ def center_window_all(self, window):
 
     # Set the dimensions of the screen and where it is placed
     window.geometry("%dx%d+%d+%d" % (900, 600, x, y))
-
-def add_login_to_database(self, create_remove_hr_window):
-    username = self.username_entry.get()
-    password = self.password_entry.get()
-    role = self.role_entry.get()
-
-    admins_ref = db.reference("/admins")
-    hr_ref = db.reference("/HR")
-    manager_ref = db.reference("/manager")
-    employee_ref = db.reference("/employee")
-    emp_id_ref = db.reference("/")
-    emp_uni = emp_id_ref.child("emp_id").get()
-
-    if (
-        admins_ref.child(username).get()
-        or hr_ref.child(username).get()
-        or manager_ref.child(username).get()
-        or employee_ref.child(username).get()
-    ):
-        messagebox.showinfo(
-            "Add HR Login", "Username already exists. Choose a different username."
-        )
-    else:
-        # Add the new login to the database
-        if role == "HR":
-            hr_ref.child(username).set(
-                {
-                    "password": password,
-                    "role": role,
-                    "post:": "",
-                    "salary": "",
-                    "emp_id": emp_uni + 1,
-                }
-            )
-            emp_id_ref.child("emp_id").set(emp_uni + 1)
-        elif role == "manager":
-            manager_ref.child(username).set(
-                {
-                    "password": password,
-                    "role": role,
-                    "designnation: ": "",
-                    "salary": "",
-                    "emp_ids": emp_uni + 1,
-                }
-            )
-            emp_id_ref.child("emp_id").set(emp_uni + 1)
-        elif role == "employee":
-            employee_ref.child(username).set(
-                {
-                    "password": password,
-                    "role": role,
-                    "designation": "",
-                    "emp_id": emp_uni + 1,
-                    "salary": "",
-                    "sick_days": "",
-                    "vacation_days": "",
-                    "bonus": "",
-                    "hours_attended": "",
-                    "apply_for_resignation": "",
-                    "apply_for_vacation": "",
-                    "progress_on_task": "",
-                    "survey": "",
-                    "feedback": "",
-                    "vacation_reason": "",
-                    "vacation_approved": "",
-                    "sick_approved": "",
-                    "sick_reason": "",
-                    "vacation_approved_denied": "",
-                    "sick_approved_denied": "",
-                    "performance_review": "",
-                    
-                }
-            )
-            emp_id_ref.child("emp_id").set(emp_uni + 1)
-        messagebox.showinfo("Add HR Login", "Login added successfully.")
-    # close the window
-    create_remove_hr_window.destroy()
-
-def remove_login_from_database(self, create_remove_hr_window):
-    username = self.username_entry.get()
-    role = self.role_entry.get()
-    admins_ref = db.reference("/admins")
-    hr_ref = db.reference("/HR")
-    manager_ref = db.reference("/manager")
-    employee_ref = db.reference("/employee")
-    if role == "HR":
-        if hr_ref.child(username).get():
-            # Remove the login from the database
-            hr_ref.child(username).delete()
-            messagebox.showinfo("Remove HR Login", "Login removed successfully.")
-        else:
-            messagebox.showinfo("Remove HR Login", "Username does not exist.")
-    elif role == "manager":
-        if manager_ref.child(username).get():
-            # Remove the login from the database
-            manager_ref.child(username).delete()
-            messagebox.showinfo("Remove HR Login", "Login removed successfully.")
-        else:
-            messagebox.showinfo("Remove HR Login", "Username does not exist.")
-    elif role == "employee":
-        if employee_ref.child(username).get():
-            # Remove the login from the database
-            employee_ref.child(username).delete()
-            messagebox.showinfo("Remove HR Login", "Login removed successfully.")
-        else:
-            messagebox.showinfo("Remove HR Login", "Username does not exist.")
-    # close the window
-    create_remove_hr_window.destroy()
 
 def days_entry_del(self):
     if self.number_of_days_entry.get() == "0":
