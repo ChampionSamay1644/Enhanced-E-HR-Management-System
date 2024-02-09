@@ -13,9 +13,6 @@ from tkinter import Tk, Canvas, PhotoImage
 
 class Admin_class():
     def __init__(self):
-        #destroy the root window of the main file if it exists
-        if hasattr(self, "root") and self.root.winfo_exists():
-            self.root.destroy
         self.root = tk.Tk()
         self.root.geometry("800x600")
         self.root.title("Admin Window")

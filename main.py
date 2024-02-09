@@ -426,7 +426,7 @@ class CreativeLoginApp:
                 f"Welcome, {username}!\nYou are logged in as a {role}.",
             )
             self.root.destroy()
-            Manager.open_manager_window(self,role, username)
+            Manager.main(role, username)
             return
 
         if employee_ref.child(username).child("password").get() == password:
@@ -436,7 +436,7 @@ class CreativeLoginApp:
                 f"Welcome, {username}!\nYou are logged in as a {role}.",
             )
             self.root.destroy()
-            Employee.open_employee_window(self,role, username)
+            Employee.main(role, username)
             return
 
         messagebox.showerror(
