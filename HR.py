@@ -687,9 +687,15 @@ class HR_class:
         this.salary_management_canvas.focus_force()
             
     def remove_login(this, employee_name, employee_details_window):
-        #Function to remove the login of the employee
-        if messagebox.askyesno("Confirm", f"Are you sure you want to remove the login of {employee_name}?"):
-            db.reference("/employee").child(employee_name).delete()
+        #Function to remove the login of the employee or manager
+        if messagebox.askyesno("Remove Login", f"Are you sure you want to remove the login of {employee_name}?"):
+            #Remove the login from the database
+            if db.reference("/employee").child(employee_name).get() is not None:
+                db.reference("/employee").child(employee_name).delete()
+            elif db.reference("/manager").child(employee_name).get() is not None:
+                db.reference("/manager").child(employee_name).delete()
+            messagebox.showinfo("Remove Login", "Login removed successfully.")
+        #Close the window
         employee_details_window.destroy()
         this.salary_management_canvas.focus_force()
         
