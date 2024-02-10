@@ -32,11 +32,11 @@ class Manager_class:
         self.manager_logo_canvas = tk.Canvas(manager_window, bg="white", highlightthickness=0)
         self.manager_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
-        # bind window resize event to function
-        manager_window.bind("<Configure>", lambda event: self.on_window_resize_manager(event,username))
-
         # import the image as the background on the canvas
         self.load_image_manager(username)
+
+        # bind window resize event to function
+        manager_window.bind("<Configure>", lambda event: self.on_window_resize_manager(event,username))
 
         #buttons of manager window
         self.perform_review_approval_button = tk.Button(

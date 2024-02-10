@@ -28,18 +28,22 @@ class Employee_class:
         employee_window = tk.Tk()  # Use Tk() to create a new window
         employee_window.geometry("900x600")  # Set the window size
         employee_window.title("Employee Window")
-
+        
+        self.current_question_index = 0  # Initialize the current question index
+        self.selected_values = {}  # Initialize selected_values as an empty dictionary
+        self.buttons_created = False  # Initialize the buttons_created flag as False
+        
         #create a canvas that resizes with the window
         self.employee_logo_canvas = tk.Canvas(employee_window, bg="white", highlightthickness=0)
         self.employee_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
-            # bind window resize event to function
-        employee_window.bind("<Configure>", lambda event: self.on_window_resize_employee(event,username))
-
         # import the image as the background on the canvas
         self.load_image_employee(username)
         
-                # focus on window
+        # bind window resize event to function
+        employee_window.bind("<Configure>", lambda event: self.on_window_resize_employee(event,username))
+
+        # focus on window
         employee_window.focus_force()
 
         # Center the window with function center_window_test
@@ -656,7 +660,7 @@ class Employee_class:
             0, 0, image=self.submit_survey_logo_image, anchor="nw"
         )
         
-    def display_survey_questions(self, survey_questions_keys, survey_questions,username):
+    def display_survey_questions(self, survey_questions_keys, survey_questions, username):
         # Clear only the text from the canvas
         self.submit_survey_canvas.delete("all")
         
@@ -683,7 +687,7 @@ class Employee_class:
             anchor="nw",
         )
 
-        # Check if buttons have been created
+        # Check if buttons have already been created
         if not hasattr(self, 'buttons_created') or not self.buttons_created:
             # Create a frame within the canvas to contain the buttons
             button_frame = tk.Frame(self.submit_survey_canvas, bg="white")
@@ -704,21 +708,22 @@ class Employee_class:
                     command=lambda value=option: self.store_selected_value(value)
                 ).place(x=20, y=50 + i * 30)
 
-                
+            
             # Create a button to go to the next question
-            next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions,username))
+            next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions, username))
             next_button.grid(row=0, column=1)
 
             # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
-            previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions,username))
+            previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions, username))
             previous_button.grid(row=0, column=0)
 
             # Create a button to submit the survey at the bottom center of the window
             submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.submit_survey_request(username))
             submit_button.grid(row=0, column=2)
 
-            # Set the flag to indicate that buttons have been created
-            self.buttons_created = True
+        # Set the flag to indicate that buttons have been created
+        self.buttons_created = True
+
                 
     def next_question(self,survey_questions_keys, survey_questions,username):
         # Increment the current question index
@@ -765,6 +770,7 @@ class Employee_class:
 
             # If any question is not answered, show a messagebox and return without submitting
             messagebox.showwarning("Incomplete Survey", "Please answer all survey questions before submitting.")
+            self.submit_survey_window.focus_force()
             return
 
         else:# Show a message that the survey has been submitted
@@ -1072,6 +1078,128 @@ class Employee_class:
         if self.date_entry.get() == "mm/dd/yyyy":
             self.date_entry.delete(0, tk.END)
 
+    def getdata(self,username,role):
+        if role=="employee":
+            emp_ref = db.reference("/employee")
+            list=[]
+            list.append(emp_ref.child(username).child("emp_id").get())
+            list.append(emp_ref.child(username).child("designation").get())
+            list.append(emp_ref.child(username).child("salary").get())
+            list.append(emp_ref.child(username).child("hours_attended").get())
+            list.append(emp_ref.child(username).child("bonus").get())
+            list.append(emp_ref.child(username).child("sick_days").get())
+            list.append(emp_ref.child(username).child("vacation_days").get())
+            list.append(emp_ref.child(username).child("survey").child("available").get())
+            
+            return list
+        elif role=="manager":
+            manager_ref = db.reference("/manager")
+            list=[]
+            list.append(manager_ref.child(username).child("manager_id").get())
+            list.append(manager_ref.child(username).child("designation").get())
+            list.append(manager_ref.child(username).child("salary").get())
+            list.append(manager_ref.child(username).child("hours_attended").get())
+            list.append(manager_ref.child(username).child("bonus").get())
+            list.append(manager_ref.child(username).child("sick_days").get())
+            list.append(manager_ref.child(username).child("vacation_days").get())
+            
+            return list
+        elif role=="HR":
+            hr_ref = db.reference("/HR")
+            list=[]
+            list.append(hr_ref.child(username).child("hr_id").get())
+            list.append(hr_ref.child(username).child("designation").get())
+            list.append(hr_ref.child(username).child("salary").get())
+            list.append(hr_ref.child(username).child("hours_attended").get())
+            list.append(hr_ref.child(username).child("bonus").get())
+            list.append(hr_ref.child(username).child("sick_days").get())
+            list.append(hr_ref.child(username).child("vacation_days").get())
+            
+            return list
+    
+    def profile(self,username,role):
+        # Create a new Toplevel window for the profile
+        profile_dialog = tk.Toplevel()
+        profile_dialog.title("Profile")
+        profile_dialog.geometry("800x600")
+        
+        # Create a canvas that resizes with the window
+        self.profile_canvas = tk.Canvas(profile_dialog, bg="white", highlightthickness=0)
+        self.profile_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Import the image as the background on the canvas
+        self.load_image_profile(username,role)
+        
+        # Bind window resize event to function
+        profile_dialog.bind("<Configure>", lambda event: self.on_window_resize_profile(username,role, event))
+        
+        # Create an exit button in canvas and place at middle of screen
+        exit_button = tk.Button(
+            self.profile_canvas,
+            text="Exit",
+            command=profile_dialog.destroy,
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="#FF4500",
+            activebackground="#FF6347",
+        )
+        exit_button.place(relx=0.5, rely=1.0, anchor="s")
+        
+        # Focus on window
+        profile_dialog.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(profile_dialog)
+        
+        # Bind the Escape key to the exit function
+        profile_dialog.bind("<Escape>", lambda event: profile_dialog.destroy())
+        
+        # Run the main loop for the profile window
+        profile_dialog.mainloop()
+        
+    def load_image_profile(self,username,role):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_profile_image = Image.open(img_path)
+        self.resize_canvas_and_image_profile(username,role)
+        
+    def resize_canvas_and_image_profile(self,username,role, event=None):
+        # Get the profile window size
+        window_width = self.profile_canvas.winfo_width()
+        window_height = self.profile_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.profile_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_profile_image.resize((window_width, window_height))
+        self.profile_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.profile_canvas.delete("all")
+        self.profile_canvas.create_image(0, 0, image=self.profile_image, anchor="nw")
+
+        list=self.getdata(username,role)
+        text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
+        if role=="employee":
+            text1+=f"\nSurvey: {list[7]}"
+        self.profile_canvas.create_text(
+            10,  # X-coordinate (left)
+            self.profile_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
+            font=("Helvetica", 15, "bold"),
+            text=text1,
+            fill="white",
+            anchor="sw"  # Anchor to bottom left
+        )
+        
+    def on_window_resize_profile(self,username,role, event=None):
+        self.resize_canvas_and_image_profile(username,role)
+        
 def main(role,username):
     employee=Employee_class()
     employee.open_employee_window(role,username)

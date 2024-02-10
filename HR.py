@@ -17,99 +17,37 @@ class HR_class:
         this.root = tk.Tk()
         this.root.geometry("800x600")
         this.root.title("HR Window")
-        
-    def load_image_common(this):
-        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-
-        try:
-            this.original_common_image = Image.open(img_path)
-        except Exception as e:
-            print(f"Error loading image: {e}")
-        
-        
-    def on_window_resize_common(this,username,role, event=None):
-        this.resize_canvas_and_image_common(username,role)
-
-    def create_common_window(this, title,username,role):
-
-        common_window = tk.Tk()
-        common_window.geometry("800x600")
-        common_window.title(title)
-
-        this.common_canvas = tk.Canvas(common_window, bg="white", highlightthickness=0)
-        this.common_canvas.pack(fill=tk.BOTH, expand=True)
-
-        common_window.bind("<Configure>",lambda event,username=username,role=role:this.on_window_resize_common(username,role))
-
-        this.load_image_common()
-        this.resize_canvas_and_image_common(username,role)
-        
-        return common_window, this.common_canvas
-        
+    
     def center_window_all(this, window):
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
         x = (screen_width / 2) - (900 / 2)
         y = (screen_height / 2) - (600 / 2)
         window.geometry("%dx%d+%d+%d" % (900, 600, x, y))
-        
-    def resize_canvas_and_image_common(this,username,role):
-        window_width = this.common_canvas.winfo_width()
-        window_height = this.common_canvas.winfo_height()
-        this.common_canvas.config(width=window_width, height=window_height)
-
-        resized_image = this.original_common_image.resize((window_width, window_height))
-        this.common_image = ImageTk.PhotoImage(resized_image)
-
-        this.common_canvas.delete("all")
-        this.common_canvas.create_image(0, 0, image=this.common_image, anchor="nw")
-        
-        if username=="Default" or role=="Default":
-            return
-        # Add text to the top center of the canvas
-        text_content = f"Hello, {username}"
-        text_position = (window_width // 2, 20)  # Top center of the canvas
-        this.common_canvas.create_text(text_position, text=text_content, anchor="center")
-        this.common_canvas.itemconfig(this.common_canvas.find_all()[-1], fill="white")
-        
-        # if role=="employee":
-        #     list=this.getdata(username)
-        #     text1=f"EID: {list[0]}\nName: {username}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}\nSurvey: {list[7]}"
-        #     this.common_canvas.create_text(
-        #         10,  # X-coordinate (left)
-        #         this.common_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
-        #         font=("Helvetica", 15, "bold"),
-        #         text=text1,
-        #         fill="white",
-        #         anchor="sw"  # Anchor to bottom left
-        #     )
-
+       
     def open_hr_window(this,role, username):
         # this.root.destroy()  # Close the main login window
-        # hr_window = tk.Tk()  # Use Tk() to create a new window
-        # hr_window.geometry("800x600")  # Set the window size
-        # hr_window.title("HR Window")
         if hasattr(this, "root"):
             try:
                 if this.root.winfo_exists():
                     this.root.destroy()  # Close the main login window
             except:
                 pass
-            
+        # Create a new window
+        hr_window = tk.Tk()  # Use Tk() to create a new window
+        hr_window.geometry("800x600")  # Set the window size
+        hr_window.title("HR Window")
         this.treeview = None
         
-        hr_window,this.hr_logo_canvas=this.create_common_window("HR Window",username,role)
+        #create a canvas that resizes with the window
+        this.hr_logo_canvas = tk.Canvas(hr_window, bg="white", highlightthickness=0)
+        this.hr_logo_canvas.pack(fill=tk.BOTH, expand=True)
+
+        #import the image as the background on the canvas
+        this.load_image_hr(username)
         
-        # create a canvas that resizes with the window
-        # this.hr_logo_canvas = tk.Canvas(hr_window, bg="white", highlightthickness=0)
-        # this.hr_logo_canvas.pack(fill=tk.BOTH, expand=True)
-
-        # bind window resize event to function
-        # hr_window.bind("<Configure>", lambda event: this.on_window_resize_hr(event,username))
-
-        # import the image as the background on the canvas
-        # this.load_image_hr(username)
-
+        #bind window resize event to function
+        hr_window.bind("<Configure>", lambda event: this.on_window_resize_hr(event,username))
 
         #buttons of HR window
         this.salary_management_button = tk.Button(

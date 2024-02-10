@@ -34,10 +34,7 @@ class CreativeLoginApp:
         self.manager_original_image = None
         self.manager_img = None
         self.company_name_text = None  # Initialize company_name_text attribute
-        self.current_question_index = 0  # Initialize the current question index
         self.db_data = {}  # Initialize db_data as an empty dictionary
-        self.selected_values = {}  # Initialize selected_values as an empty dictionary
-
 
         # Construct the full path to the image file
         img_path = os.path.join(
@@ -120,103 +117,6 @@ class CreativeLoginApp:
         self.original_company_logo_image = Image.open(img_path)
         self.resize_canvas_and_image_main()
 
-    def load_image_common(self):
-        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-
-        try:
-            self.original_common_image = Image.open(img_path)
-        except Exception as e:
-            print(f"Error loading image: {e}")
-        
-    def resize_canvas_and_image_common(self,username,role):
-        window_width = self.common_canvas.winfo_width()
-        window_height = self.common_canvas.winfo_height()
-        self.common_canvas.config(width=window_width, height=window_height)
-
-        resized_image = self.original_common_image.resize((window_width, window_height))
-        self.common_image = ImageTk.PhotoImage(resized_image)
-
-        self.common_canvas.delete("all")
-        self.common_canvas.create_image(0, 0, image=self.common_image, anchor="nw")
-        
-        if username=="Default" or role=="Default":
-            return
-        # Add text to the top center of the canvas
-        text_content = f"Hello, {username}"
-        text_position = (window_width // 2, 20)  # Top center of the canvas
-        self.common_canvas.create_text(text_position, text=text_content, anchor="center")
-        self.common_canvas.itemconfig(self.common_canvas.find_all()[-1], fill="white")
-        
-        # if role=="employee":
-        #     list=self.getdata(username)
-        #     text1=f"EID: {list[0]}\nName: {username}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}\nSurvey: {list[7]}"
-        #     self.common_canvas.create_text(
-        #         10,  # X-coordinate (left)
-        #         self.common_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
-        #         font=("Helvetica", 15, "bold"),
-        #         text=text1,
-        #         fill="white",
-        #         anchor="sw"  # Anchor to bottom left
-        #     )
-    
-    def getdata(self,username,role):
-        if role=="employee":
-            emp_ref = db.reference("/employee")
-            list=[]
-            list.append(emp_ref.child(username).child("emp_id").get())
-            list.append(emp_ref.child(username).child("designation").get())
-            list.append(emp_ref.child(username).child("salary").get())
-            list.append(emp_ref.child(username).child("hours_attended").get())
-            list.append(emp_ref.child(username).child("bonus").get())
-            list.append(emp_ref.child(username).child("sick_days").get())
-            list.append(emp_ref.child(username).child("vacation_days").get())
-            list.append(emp_ref.child(username).child("survey").child("available").get())
-            
-            return list
-        elif role=="manager":
-            manager_ref = db.reference("/manager")
-            list=[]
-            list.append(manager_ref.child(username).child("manager_id").get())
-            list.append(manager_ref.child(username).child("designation").get())
-            list.append(manager_ref.child(username).child("salary").get())
-            list.append(manager_ref.child(username).child("hours_attended").get())
-            list.append(manager_ref.child(username).child("bonus").get())
-            list.append(manager_ref.child(username).child("sick_days").get())
-            list.append(manager_ref.child(username).child("vacation_days").get())
-            
-            return list
-        elif role=="HR":
-            hr_ref = db.reference("/HR")
-            list=[]
-            list.append(hr_ref.child(username).child("hr_id").get())
-            list.append(hr_ref.child(username).child("designation").get())
-            list.append(hr_ref.child(username).child("salary").get())
-            list.append(hr_ref.child(username).child("hours_attended").get())
-            list.append(hr_ref.child(username).child("bonus").get())
-            list.append(hr_ref.child(username).child("sick_days").get())
-            list.append(hr_ref.child(username).child("vacation_days").get())
-            
-            return list
-    
-    def on_window_resize_common(self,username,role, event=None):
-        self.resize_canvas_and_image_common(username,role)
-    
-    def create_common_window(self, title,username,role):
-    
-        common_window = tk.Tk()
-        common_window.geometry("800x600")
-        common_window.title(title)
-
-        self.common_canvas = tk.Canvas(common_window, bg="white", highlightthickness=0)
-        self.common_canvas.pack(fill=tk.BOTH, expand=True)
-
-        common_window.bind("<Configure>",lambda event,username=username,role=role:self.on_window_resize_common(username,role))
-
-        self.load_image_common()
-        self.resize_canvas_and_image_common(username,role)
-        
-        return common_window, self.common_canvas
-        
     def center_window_all(self, window):
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
