@@ -1255,6 +1255,89 @@ class HR_class:
     def survey_feedback(this):
         messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
 
+    def profile(self,username,role):
+        # Create a new Toplevel window for the profile
+        profile_dialog = tk.Toplevel()
+        profile_dialog.title("Profile")
+        profile_dialog.geometry("800x600")
+        
+        # Create a canvas that resizes with the window
+        self.profile_canvas = tk.Canvas(profile_dialog, bg="white", highlightthickness=0)
+        self.profile_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Import the image as the background on the canvas
+        self.load_image_profile(username,role)
+        
+        # Bind window resize event to function
+        profile_dialog.bind("<Configure>", lambda event: self.on_window_resize_profile(username,role, event))
+        
+        # Create an exit button in canvas and place at middle of screen
+        exit_button = tk.Button(
+            self.profile_canvas,
+            text="Exit",
+            command=profile_dialog.destroy,
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="#FF4500",
+            activebackground="#FF6347",
+        )
+        exit_button.place(relx=0.5, rely=1.0, anchor="s")
+        
+        # Focus on window
+        profile_dialog.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(profile_dialog)
+        
+        # Bind the Escape key to the exit function
+        profile_dialog.bind("<Escape>", lambda event: profile_dialog.destroy())
+        
+        # Run the main loop for the profile window
+        profile_dialog.mainloop()
+        
+    def load_image_profile(self,username,role):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_profile_image = Image.open(img_path)
+        self.resize_canvas_and_image_profile(username,role)
+        
+    def resize_canvas_and_image_profile(self,username,role, event=None):
+        # Get the profile window size
+        window_width = self.profile_canvas.winfo_width()
+        window_height = self.profile_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.profile_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_profile_image.resize((window_width, window_height))
+        self.profile_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.profile_canvas.delete("all")
+        self.profile_canvas.create_image(0, 0, image=self.profile_image, anchor="nw")
+
+        list=self.getdata(username,role)
+        text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
+        if role=="employee":
+            text1+=f"\nSurvey: {list[7]}"
+        self.profile_canvas.create_text(
+            10,  # X-coordinate (left)
+            self.profile_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
+            font=("Helvetica", 15, "bold"),
+            text=text1,
+            fill="white",
+            anchor="sw"  # Anchor to bottom left
+        )
+        
+    def on_window_resize_profile(self,username,role, event=None):
+        self.resize_canvas_and_image_profile(username,role)
+
     # def create_all_hr(this):
     #     # create a new window
     #     create_remove_hr_window = tk.Toplevel()
