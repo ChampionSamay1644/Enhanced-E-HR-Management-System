@@ -826,25 +826,25 @@ class HR_class:
 
     def approve_bonus(self):
         #Create a window to approve the bonus of the employee
-        approve_bonus_window = tk.Toplevel()
-        approve_bonus_window.geometry("400x300")
-        approve_bonus_window.title("Approve Bonus")
+        self.approve_bonus_window = tk.Toplevel()
+        self.approve_bonus_window.geometry("400x300")
+        self.approve_bonus_window.title("Approve Bonus")
         
         #Create a canvas that resizes with the window
-        self.approve_bonus_canvas = tk.Canvas(approve_bonus_window, bg="white", highlightthickness=0)
+        self.approve_bonus_canvas = tk.Canvas(self.approve_bonus_window, bg="white", highlightthickness=0)
         self.approve_bonus_canvas.pack(fill=tk.BOTH, expand=True)
         
         #Load the image as the background on the canvas
         self.load_image_approve_bonus()
         
         #Bind window resize event to function
-        approve_bonus_window.bind("<Configure>", lambda event: self.on_window_resize_approve_bonus(event))
+        self.approve_bonus_window.bind("<Configure>", lambda event: self.on_window_resize_approve_bonus(event))
 
         #Center the window with function center_window_test
-        self.center_window_all(approve_bonus_window)
+        self.center_window_all(self.approve_bonus_window)
         
         #focus on window
-        approve_bonus_window.focus_force()
+        self.approve_bonus_window.focus_force()
         
         self.treeview_bonus = None
         
@@ -885,9 +885,6 @@ class HR_class:
             # Pack the Treeview to the scrollable frame
             self.treeview_bonus.pack(fill="both", expand=True)
 
-        # bind the treeview select event to function
-        self.treeview_bonus.bind("<<TreeviewSelect>>", self.on_treeview_select)
-        
         #Create 2 buttons for approve and deny that are disabled by default and enabled when a row is selected
         self.approve_bonus_button = tk.Button(
             self.approve_bonus_canvas,
@@ -918,6 +915,22 @@ class HR_class:
         )
         self.deny_bonus_button.place(relx=0.7, rely=0.9, anchor="s")
         self.deny_bonus_button["state"] = "disabled"
+        
+        #Create a button named Grant Bonus to grant bonus to the managers
+        self.grant_bonus_button = tk.Button(
+            self.approve_bonus_canvas,
+            text="Grant Bonus",
+            command=lambda:self.grant_bonus(),
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        self.grant_bonus_button.place(relx=0.5, rely=0.9, anchor="s")
+        self.grant_bonus_button["state"] = "disabled"
         
         # Configure grid row and column weights
         self.scrollable_frame_bonus.grid_rowconfigure(0, weight=1)
@@ -950,18 +963,27 @@ class HR_class:
         
         self.role_entry_bonus.bind("<<ComboboxSelected>>", self.role_selected_bonus)
         
-        #Bind the escape key to the exit function
-        approve_bonus_window.bind("<Escape>", lambda event: approve_bonus_window.destroy())
+        # bind the treeview select event to function
+        self.treeview_bonus.bind("<<TreeviewSelect>>",self.on_treeview_select)
         
-        #Run the main loop for the approve_bonus_window
-        approve_bonus_window.mainloop()
+        #Bind the escape key to the exit function
+        self.approve_bonus_window.bind("<Escape>", lambda event: self.approve_bonus_window.destroy())
+        
+        #Run the main loop for the self.approve_bonus_window
+        self.approve_bonus_window.mainloop()
             
     def on_treeview_select(self, event):
         selected_items = self.treeview_bonus.selection()
         if selected_items:
-            # Enable buttons if a row is selected
-            self.approve_bonus_button["state"] = "normal"
-            self.deny_bonus_button["state"] = "normal"
+            role= self.role_entry_bonus.get()
+            if role == "manager":
+                self.approve_bonus_button["state"] = "disabled"
+                self.deny_bonus_button["state"] = "disabled"
+                self.grant_bonus_button["state"] = "normal"
+            else:
+                self.approve_bonus_button["state"] = "normal"
+                self.deny_bonus_button["state"] = "normal"
+                self.grant_bonus_button["state"] = "disabled"
         else:
             # Disable buttons if no row is selected
             self.approve_bonus_button["state"] = "disabled"
@@ -1016,17 +1038,165 @@ class HR_class:
         employee_data = [user for user in emp_ref.get() if self.get_employee_data(user, "bonus_req") > 0]
         return employee_data
 
-
     def get_employee_data(self, username, data_type):
         emp_ref = db.reference("/employee")
         data = emp_ref.child(username).child(data_type).get()
         return data if data is not None else 0
     
+    def grant_bonus(self):
+        #create a window to grant bonus to the managers
+        grant_bonus_window = tk.Toplevel()
+        grant_bonus_window.geometry("400x300")
+        grant_bonus_window.title("Grant Bonus")
+        
+        #create a canvas that resizes with the window
+        self.grant_bonus_canvas = tk.Canvas(grant_bonus_window, bg="white", highlightthickness=0)
+        self.grant_bonus_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        #load the image as the background on the canvas
+        self.load_image_grant_bonus()
+        
+        #bind window resize event to function
+        grant_bonus_window.bind("<Configure>", lambda event: self.on_window_resize_grant_bonus(event))
+        
+        #center the window with function center_window_test
+        self.center_window_all(grant_bonus_window)
+        
+        #focus on window
+        grant_bonus_window.focus_force()
+        
+        #create a label for the bonus amount
+        bonus_amount_label = tk.Label(
+            self.grant_bonus_canvas,
+            text="Bonus Amount",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        bonus_amount_label.pack(
+            pady=20
+        )
+        bonus_amount_label.place(relx=0.5, rely=0.3, anchor="center")
+        
+        #create an entry for the bonus amount
+        self.bonus_amount_entry = tk.Entry(
+            grant_bonus_window, font=("Helvetica", 12, "bold")
+        )
+        self.bonus_amount_entry.pack(
+            pady=20
+        )
+        self.bonus_amount_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.bonus_amount_entry.insert(0, "")
+        
+        #create a submit button to grant the bonus
+        submit_button = tk.Button(
+            self.grant_bonus_canvas,
+            text="Submit",
+            command=lambda:self.grant_bonus_to_manager(grant_bonus_window),
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        submit_button.place(relx=0.5, rely=0.9, anchor="s")
+        
+        #bind the enter key to the submit button
+        grant_bonus_window.bind("<Return>", lambda event: self.grant_bonus_to_manager(grant_bonus_window))
+        
+        #bind the escape key to the exit function
+        grant_bonus_window.bind("<Escape>", lambda event: grant_bonus_window.destroy())
+        
+        #run the main loop for the grant_bonus_window
+        grant_bonus_window.mainloop()
+        
+    def grant_bonus_to_manager(self, grant_bonus_window):
+        #Get the bonus amount from the entry
+        bonus_amount = self.bonus_amount_entry.get()
+        #Ask for confirmation
+        if bonus_amount == "":
+            messagebox.showinfo("Grant Bonus", "Please enter the bonus amount.")
+        elif messagebox.askyesno("Confirm", f"Are you sure you want to grant a bonus of {bonus_amount} to the manager?"):
+            #Grant the bonus in the database
+            db.reference("/manager").child(self.treeview_bonus.item(self.treeview_bonus.selection())["values"][0]).child("bonus").set(bonus_amount)
+            messagebox.showinfo("Grant Bonus", "Bonus granted successfully.")
+        #Close the window
+        grant_bonus_window.destroy()
+        #focus on the salary management window
+        self.approve_bonus_window.focus_force()
+        
+    def load_image_grant_bonus(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_grant_bonus_image = Image.open(img_path)
+        self.resize_canvas_and_image_grant_bonus()
+        
+    def resize_canvas_and_image_grant_bonus(self):
+        # Get the grant_bonus window size
+        window_width = self.grant_bonus_canvas.winfo_width()
+        window_height = self.grant_bonus_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.grant_bonus_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_grant_bonus_image.resize(
+            (window_width, window_height)
+        )
+        self.grant_bonus_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.grant_bonus_canvas.delete("all")
+        self.grant_bonus_canvas.create_image(
+            0, 0, image=self.grant_bonus_image, anchor="nw"
+        )
+        
+    def on_window_resize_grant_bonus(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_grant_bonus()
+        
     def approve_bonus_btn(self):
-        messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
+        #Get the selected employee
+        selected_employee = self.treeview_bonus.item(self.treeview_bonus.selection())["values"][0]
+        #Get the bonus amount
+        bonus_amount = self.treeview_bonus.item(self.treeview_bonus.selection())["values"][1]
+        
+        #Ask for confirmation
+        if messagebox.askyesno("Approve Bonus", f"Are you sure you want to approve the bonus of {selected_employee} for {bonus_amount}?"):
+            #Approve the bonus in the database
+            db.reference("/employee").child(selected_employee).child("bonus").set(bonus_amount)
+            db.reference("/employee").child(selected_employee).child("bonus_req").set(0)
+            db.reference("/employee").child(selected_employee).child("bonus_reason").set("")
+            messagebox.showinfo("Approve Bonus", "Bonus approved successfully.")
+            #Refresh the list
+            self.populate_employee_list_bonus(self.role_entry_bonus.get())
+            self.approve_bonus_button["state"] = "disabled"
+            self.deny_bonus_button["state"] = "disabled"
+        #focus on window
+        self.approve_bonus_window.focus_force()    
         
     def deny_bonus_btn(self):
-        messagebox.showinfo("HR Window", "Deny Bonus Button Pressed")
+        #Get the selected employee
+        selected_employee = self.treeview_bonus.item(self.treeview_bonus.selection())["values"][0]
+        #Ask for reason for denying the bonus
+        reason = simpledialog.askstring("Deny Bonus", f"Please enter the reason for denying the bonus of {selected_employee}")
+        if reason is not None:
+            #Deny the bonus in the database
+            db.reference("/employee").child(selected_employee).child("bonus").set(0)
+            db.reference("/employee").child(selected_employee).child("bonus_req").set(0)
+            db.reference("/employee").child(selected_employee).child("bonus_deny_reason").set(reason)
+            db.reference("/employee").child(selected_employee).child("bonus_reason").set("")
+            messagebox.showinfo("Deny Bonus", "Bonus denied successfully.")
+            #Refresh the list
+            self.populate_employee_list_bonus(self.role_entry_bonus.get())
+            self.approve_bonus_button["state"] = "disabled"
+            self.deny_bonus_button["state"] = "disabled"
+        else:
+            messagebox.showinfo("Deny Bonus", "Reason not provided.")
+        self.approve_bonus_window.focus_force()
         
     def load_image_approve_bonus(self):
         # Construct the full path to the image file based on role and username
@@ -1565,8 +1735,7 @@ class HR_class:
     # def on_window_resize_remove_be(self, event):
     #     # Handle window resize event
     #     self.resize_canvas_and_image_remove_be()
-        
-
+    
 def main(role,username):
     # Create a new window
     hr=HR_class()
