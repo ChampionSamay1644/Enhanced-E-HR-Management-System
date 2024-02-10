@@ -957,6 +957,18 @@ class Manager_class:
     def on_window_resize_employee_details_new2(self,employee_name, event):
         # Handle window resize event
         self.resize_canvas_and_image_employee_details_new2(employee_name)
+
+    def center_window_all(self, window):
+        # Get the width and height of the screen
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+
+        # Calculate the x and y coordinates to center the main window
+        x = (screen_width / 2) - (900 / 2)
+        y = (screen_height / 2) - (600 / 2)
+
+        # Set the dimensions of the screen and where it is placed
+        window.geometry("%dx%d+%d+%d" % (900, 600, x, y))
         
 def main(role,username):
     manager=Manager_class()

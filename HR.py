@@ -113,7 +113,7 @@ class HR_class:
 
         #buttons of HR window
         this.salary_management_button = tk.Button(
-            this.hr_logo_canvas, text="Employe Management", command=lambda:this.salary_management(), font=("Helvetica", 14)
+            this.hr_logo_canvas, text="Employee Management", command=lambda:this.salary_management(), font=("Helvetica", 14)
         )
         this.salary_management_button.pack(
             pady=20
@@ -1034,6 +1034,11 @@ class HR_class:
         return employee_data
 
 
+    def get_employee_data(self, username, data_type):
+        emp_ref = db.reference("/employee")
+        data = emp_ref.child(username).child(data_type).get()
+        return data if data is not None else 0
+    
     def approve_bonus_btn(this):
         messagebox.showinfo("HR Window", "Approve Bonus Button Pressed")
         
@@ -1494,6 +1499,7 @@ class HR_class:
     # def on_window_resize_remove_be(this, event):
     #     # Handle window resize event
     #     this.resize_canvas_and_image_remove_be()
+        
 
 def main(role,username):
     # Create a new window
