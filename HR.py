@@ -25,6 +25,45 @@ class HR_class:
         y = (screen_height / 2) - (600 / 2)
         window.geometry("%dx%d+%d+%d" % (900, 600, x, y))
        
+    def getdata(self,username,role):
+        if role=="employee":
+            emp_ref = db.reference("/employee")
+            list=[]
+            list.append(emp_ref.child(username).child("emp_id").get())
+            list.append(emp_ref.child(username).child("designation").get())
+            list.append(emp_ref.child(username).child("salary").get())
+            list.append(emp_ref.child(username).child("hours_attended").get())
+            list.append(emp_ref.child(username).child("bonus").get())
+            list.append(emp_ref.child(username).child("sick_days").get())
+            list.append(emp_ref.child(username).child("vacation_days").get())
+            list.append(emp_ref.child(username).child("survey").child("available").get())
+            
+            return list
+        elif role=="manager":
+            manager_ref = db.reference("/manager")
+            list=[]
+            list.append(manager_ref.child(username).child("manager_id").get())
+            list.append(manager_ref.child(username).child("designation").get())
+            list.append(manager_ref.child(username).child("salary").get())
+            list.append(manager_ref.child(username).child("hours_attended").get())
+            list.append(manager_ref.child(username).child("bonus").get())
+            list.append(manager_ref.child(username).child("sick_days").get())
+            list.append(manager_ref.child(username).child("vacation_days").get())
+            
+            return list
+        elif role=="HR":
+            hr_ref = db.reference("/HR")
+            list=[]
+            list.append(hr_ref.child(username).child("hr_id").get())
+            list.append(hr_ref.child(username).child("designation").get())
+            list.append(hr_ref.child(username).child("salary").get())
+            list.append(hr_ref.child(username).child("hours_attended").get())
+            list.append(hr_ref.child(username).child("bonus").get())
+            list.append(hr_ref.child(username).child("sick_days").get())
+            list.append(hr_ref.child(username).child("vacation_days").get())
+            
+            return list
+    
     def open_hr_window(this,role, username):
         # this.root.destroy()  # Close the main login window
         if hasattr(this, "root"):
