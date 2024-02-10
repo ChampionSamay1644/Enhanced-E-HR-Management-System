@@ -10,6 +10,10 @@ from firebase_admin import db, credentials
 import threading
 from tkinter import Label
 from tkinter import Tk, Canvas, PhotoImage
+from HR import *
+from Manager import *
+from Employee import *
+
 
 class Admin_class():
     def __init__(self):
@@ -195,11 +199,16 @@ class Admin_class():
         role = self.role_entry.get()
         admin_window.destroy()
         if role == "HR":
-            self.open_hr_window(role, username)
+            # Create an instance of HR_class
+            hr_instance = HR_class()
+            # Call the open_hr_window method on the instance
+            hr_instance.open_hr_window(role, username)
         elif role == "manager":
-            self.open_manager_window(role, username)
+            manager_instance = Manager_class()
+            manager_instance.open_manager_window(role, username)
         elif role == "employee":
-            self.open_employee_window(role, username)
+            employee_instance = Employee_class()
+            employee_instance.open_employee_window(role, username)
             
     def load_image_admin(self, username):
         try:
