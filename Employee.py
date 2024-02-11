@@ -766,7 +766,7 @@ class Employee_class:
         # Check if there are any unanswered questions
         if stored_value is None or not stored_value in ["Very Poor", "Poor", "Average", "Good", "Very Good"]:
 
-            self.buttons_created = False
+            #self.buttons_created = False
 
             # If any question is not answered, show a messagebox and return without submitting
             messagebox.showwarning("Incomplete Survey", "Please answer all survey questions before submitting.")
