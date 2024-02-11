@@ -636,6 +636,28 @@ class Employee_class:
         
         # Bind the Escape key to the exit function
         submit_survey_window.bind("<Escape>", lambda event: submit_survey_window.destroy())
+
+        # Check if buttons have already been created
+        if not hasattr(self, 'buttons_created_down') or not self.buttons_created_down:
+            # Create a frame within the canvas to contain the buttons
+            button_frame = tk.Frame(self.submit_survey_canvas, bg="white")
+            button_frame.pack(pady=20, side=tk.BOTTOM)
+
+           
+            # In the part where you create the next_button, make it an attribute of the class
+            self.next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question_button(survey_questions_keys, survey_questions, username))
+            self.next_button.grid(row=0, column=1)
+
+            # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
+            previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question_button(survey_questions_keys, survey_questions, username))
+            previous_button.grid(row=0, column=0)
+
+            # Create a button to submit the survey at the bottom center of the window
+            submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.submit_survey_request(username))
+            submit_button.grid(row=0, column=2)
+
+        # Set the flag to indicate that buttons have been created
+        self.buttons_created_down = True
         
         # Focus on the window
         submit_survey_window.focus_force()
@@ -716,21 +738,20 @@ class Employee_class:
                     command=lambda value=option: self.store_selected_value(value)
                 ).place(x=20, y=50 + i * 30)
 
-            
-            # Create a button to go to the next question
-            next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions, username))
-            next_button.grid(row=0, column=1)
-
-            # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
-            previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions, username))
-            previous_button.grid(row=0, column=0)
-
-            # Create a button to submit the survey at the bottom center of the window
-            submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.submit_survey_request(username))
-            submit_button.grid(row=0, column=2)
 
         # Set the flag to indicate that buttons have been created
         self.buttons_created = True
+
+    def next_question_button(self, survey_questions_keys, survey_questions, username):
+        # If the user is on the final question, disable the next button
+        if self.current_question_index == len(survey_questions_keys) - 1:
+            self.next_button.config(state="disabled")
+        else:
+            self.next_button.config(state="normal", command=lambda: self.next_question(survey_questions_keys, survey_questions, username))
+
+
+    def previous_question_button(self, survey_questions_keys, survey_questions, username):
+        self.previous_question(survey_questions_keys, survey_questions, username)
 
                 
     def next_question(self,survey_questions_keys, survey_questions,username):
@@ -763,6 +784,7 @@ class Employee_class:
         else:
             # Otherwise, clear the selected radio button by setting the variable to None
             self.radio_var.set(None)
+
 
     def on_window_resize_submit_survey(self, event):
         # Handle window resize event
@@ -799,6 +821,8 @@ class Employee_class:
     def store_selected_value(self, value):
         #store the selected value in relation to the question index
         self.selected_values[self.current_question_index] = value
+
+    
 
     def submit_complaint(self):
         # Create a new window for the submit_complaint top level
