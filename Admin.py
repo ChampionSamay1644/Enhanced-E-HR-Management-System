@@ -122,7 +122,7 @@ class Admin_class():
 
         #create a button on the canvas
         self.create_all_admin_button = tk.Button(
-            self.admin_logo_canvas, text="Create/Remove HR Login", command=lambda:self.manage_login(), font=("Helvetica", 14)
+            self.admin_logo_canvas, text="Create/Remove Login", command=lambda:self.manage_login(), font=("Helvetica", 14)
         )
         self.create_all_admin_button.pack(
             pady=20
