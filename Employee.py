@@ -607,6 +607,14 @@ class Employee_class:
         messagebox.showinfo("Employee Window", "Task Status set to Completed")
         
     def submit_survey(self, username):
+        #check if a submit survey window is already open, if it is open destroy it
+        if hasattr(self, "submit_survey_window"):
+            try:
+                if self.submit_survey_window.winfo_exists():
+                    self.submit_survey_window.destroy()  # Close the main login window
+            except:
+                pass
+
         # Create a new window for the submit_survey top level
         submit_survey_window = tk.Toplevel()
         submit_survey_window.geometry("800x600")  # Set the window size
@@ -762,16 +770,15 @@ class Employee_class:
 
     def submit_survey_request(self, username):
 
-        stored_value = self.selected_values.get(self.current_question_index)
-        # Check if there are any unanswered questions
-        if stored_value is None or not stored_value in ["Very Poor", "Poor", "Average", "Good", "Very Good"]:
-
-            #self.buttons_created = False
-
-            # If any question is not answered, show a messagebox and return without submitting
-            messagebox.showwarning("Incomplete Survey", "Please answer all survey questions before submitting.")
+        stored_value = self.store_selected_value(self.radio_var.get())
+        # Check if there is a value present for every question in the store_selected_value function
+        if stored_value is None:
+            #keep the window to the front
             self.submit_survey_window.focus_force()
-            return
+            # Show a message that the survey has been submitted
+            messagebox.showinfo("Employee Window", "Please select a value for every question.")
+            self.buttons_created = False
+      
 
         else:# Show a message that the survey has been submitted
             messagebox.showinfo("Employee Window", "Survey submitted successfully.")
