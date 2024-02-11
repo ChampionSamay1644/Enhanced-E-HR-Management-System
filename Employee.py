@@ -627,6 +627,12 @@ class Employee_class:
 
         # Pull child classes from Survey_Qs in the db using the .get function
         survey_questions = db.reference("/Survey_Qs").get()
+        #count the number of keys pulled
+        count = 0
+        for key in survey_questions:
+            count += 1
+        print(count)
+
 
         # Store the keys of the survey questions in a list
         survey_questions_keys = list(survey_questions.keys())
