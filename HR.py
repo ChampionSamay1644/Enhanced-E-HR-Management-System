@@ -3,6 +3,7 @@ import tkinter as tk
 from tkcalendar import Calendar, DateEntry
 from tkinter import END, IntVar, Listbox, Radiobutton, messagebox
 from tkinter import simpledialog, ttk,scrolledtext
+from tkinter.simpledialog import SimpleDialog
 from PIL import Image, ImageTk
 import os
 import firebase_admin
@@ -1400,7 +1401,23 @@ class HR_class:
         messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
 
     def survey_feedback(self):
-        messagebox.showinfo("HR Window", "Survey/Feedback Button Pressed")
+        # Delete the existing survey questions
+        db.reference("/Survey_Qs").delete()
+        
+        # Create a messagebox to ask for the number of questions
+        self.number_of_questions = simpledialog.askinteger("Survey Feedback", "Please enter the number of questions in the survey")
+        if self.number_of_questions is not None:
+            for i in range(self.number_of_questions):
+                question= simpledialog.askstring("Survey Feedback", f"Please enter question {i+1}", parent=self.hr_logo_canvas, initialvalue="")
+                if question is not None:
+                    # Add the question to the database
+                    db.reference("/Survey_Qs").child(f"Q{i+1}").set(question)
+                else:
+                    messagebox.showinfo("Survey Question", "Question not provided.")
+                    break 
+            messagebox.showinfo("HR Window", "Survey Questions Added")
+        else:
+            messagebox.showinfo("Survey Feedback", "Number of questions not provided.")
 
     def profile(self,username,role):
         # Create a new Toplevel window for the profile
