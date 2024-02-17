@@ -1434,13 +1434,22 @@ class HR_class:
             self.next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(username))
             self.next_button.grid(row=0, column=1)
 
-            previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(username))
-            previous_button.grid(row=0, column=0)
+            self.previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(username))
+            self.previous_button.grid(row=0, column=0)
 
-            submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.survey_feedback_request(username))
-            submit_button.grid(row=0, column=2)
+            self.submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.survey_feedback_request(username))
+            self.submit_button.grid(row=0, column=2)
 
         self.buttons_created_down = True
+        
+        self.survey_feedback_window.bind("<Escape>", lambda event: self.survey_feedback_window.destroy())
+        if self.current_question_index == 0:
+            self.previous_button["state"] = "disabled"
+            
+        if self.current_question_index < len(self.questions) - 1:
+            self.survey_feedback_window.bind("<Return>", lambda event: self.next_question(username))
+        else:
+            self.survey_feedback_window.bind("<Return>", lambda event: self.survey_feedback_request(username))
         
         survey_feedback_window.focus_force()
 
