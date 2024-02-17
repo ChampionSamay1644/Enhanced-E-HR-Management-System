@@ -78,6 +78,12 @@ class HR_class:
         hr_window.geometry("800x600")  # Set the window size
         hr_window.title("HR Window")
         self.treeview = None
+        self.selected_values = {}
+        self.current_question_index = 0
+        self.buttons_created_down = False
+        self.buttons_created = False
+        self.questions = [f"Question {i+1}" for i in range(10)]  # Assuming there are 10 questions
+        self.answers = {}
         
         #create a canvas that resizes with the window
         self.hr_logo_canvas = tk.Canvas(hr_window, bg="white", highlightthickness=0)
@@ -128,7 +134,7 @@ class HR_class:
             relx=0.75, rely=0.525, anchor="center", width=300, height=30
         )
         self.survey_feedback_button = tk.Button(
-            self.hr_logo_canvas, text="Survey/Feedback", command=lambda:self.survey_feedback(), font=("Helvetica", 14)
+            self.hr_logo_canvas, text="Survey/Feedback", command=lambda:self.survey_feedback(username), font=("Helvetica", 14)
         )
         self.survey_feedback_button.pack(
             pady=20
@@ -1399,26 +1405,144 @@ class HR_class:
 
     def check_hours_attended(self):
         messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
+    
+    def survey_feedback(self, username):
+        if hasattr(self, "survey_feedback_window"):
+            try:
+                if self.survey_feedback_window.winfo_exists():
+                    self.survey_feedback_window.destroy()
+            except:
+                pass
 
-    def survey_feedback(self):
-        # Delete the existing survey questions
-        db.reference("/Survey_Qs").delete()
+        survey_feedback_window = tk.Toplevel()
+        survey_feedback_window.geometry("800x600")
+        survey_feedback_window.title("Submit Survey")
+        self.survey_feedback_window = survey_feedback_window
+
+        self.survey_feedback_canvas = tk.Canvas(survey_feedback_window, bg="white", highlightthickness=0)
+        self.survey_feedback_canvas.pack(fill=tk.BOTH, expand=True)
+
+        self.current_question_index = 0
+
+        survey_feedback_window.bind("<Configure>", lambda event: self.display_survey_questions())
+        survey_feedback_window.bind("<Escape>", lambda event: survey_feedback_window.destroy())
+
+        if not hasattr(self, 'buttons_created_down') or not self.buttons_created_down:
+            button_frame = tk.Frame(self.survey_feedback_canvas, bg="white")
+            button_frame.pack(pady=20, side=tk.BOTTOM)
+
+            self.next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(username))
+            self.next_button.grid(row=0, column=1)
+
+            previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(username))
+            previous_button.grid(row=0, column=0)
+
+            submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.survey_feedback_request(username))
+            submit_button.grid(row=0, column=2)
+
+        self.buttons_created_down = True
         
-        # Create a messagebox to ask for the number of questions
-        self.number_of_questions = simpledialog.askinteger("Survey Feedback", "Please enter the number of questions in the survey")
-        if self.number_of_questions is not None:
-            for i in range(self.number_of_questions):
-                question= simpledialog.askstring("Survey Feedback", f"Please enter question {i+1}", parent=self.hr_logo_canvas, initialvalue="")
-                if question is not None:
-                    # Add the question to the database
-                    db.reference("/Survey_Qs").child(f"Q{i+1}").set(question)
-                else:
-                    messagebox.showinfo("Survey Question", "Question not provided.")
-                    break 
-            messagebox.showinfo("HR Window", "Survey Questions Added")
-        else:
-            messagebox.showinfo("Survey Feedback", "Number of questions not provided.")
+        survey_feedback_window.focus_force()
 
+        self.center_window_all(survey_feedback_window)
+
+        survey_feedback_window.mainloop()
+
+    def resize_canvas_and_image_survey_feedback(self):
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+        self.original_survey_feedback_logo_image = Image.open(img_path)
+
+        window_width = self.survey_feedback_canvas.winfo_width()
+        window_height = self.survey_feedback_canvas.winfo_height()
+
+        resized_image = self.original_survey_feedback_logo_image.resize((window_width, window_height))
+        self.survey_feedback_logo_image = ImageTk.PhotoImage(resized_image)
+
+        self.survey_feedback_canvas.create_image(0, 0, image=self.survey_feedback_logo_image, anchor="nw")
+
+    def display_survey_questions(self):
+        self.survey_feedback_canvas.delete("all")
+        self.resize_canvas_and_image_survey_feedback()
+
+        if self.current_question_index < 0:
+            self.current_question_index = 0
+        elif self.current_question_index >= len(self.questions):
+            self.current_question_index = len(self.questions) - 1
+
+        question_text = self.questions[self.current_question_index]
+        self.survey_feedback_canvas.create_text(10, 10, text=question_text, font=("Helvetica", 14, "bold"), fill="white", anchor="nw")
+
+        if not hasattr(self, 'buttons_created') or not self.buttons_created:
+            self.survey_question_entry = tk.Entry(self.survey_feedback_canvas, font=("Helvetica", 12, "bold"), width=80)
+            self.survey_question_entry.pack(pady=20)
+            self.survey_question_entry.place(relx=0.5, rely=0.2, anchor="center")
+            
+            # Display previously entered answer, if any
+            answer = self.answers.get(self.current_question_index, "")
+            self.survey_question_entry.insert(0, answer)
+
+        self.buttons_created = True
+
+    def next_question(self, username):
+        # Store the answer for the current question
+        answer = self.survey_question_entry.get()
+        self.answers[self.current_question_index] = answer
+        self.survey_question_entry.delete(0, tk.END)
+
+        self.current_question_index += 1 
+        #Disable the next button if the last question is reached
+        if self.current_question_index == len(self.questions) - 1:
+            self.next_button["state"] = "disabled"
+        else:
+            self.next_button["state"] = "normal"    
+        self.display_survey_questions()
+        # Retrieve the answer for the next question, if any
+        next_answer = self.answers.get(self.current_question_index, "")
+
+        # Update the entry with the previous answer
+        self.survey_question_entry.delete(0, tk.END)
+        self.survey_question_entry.insert(0, next_answer)
+
+    def previous_question(self, username):
+        # Disable the previous button if it is the first question
+        if self.current_question_index == 0:
+            return
+        
+        # Store the answer for the current question
+        answer = self.survey_question_entry.get()
+        self.answers[self.current_question_index] = answer
+
+        self.current_question_index -= 1
+
+        # Display the previous question
+        self.display_survey_questions()
+
+        # Retrieve the answer for the previous question, if any
+        previous_answer = self.answers.get(self.current_question_index, "")
+
+        # Update the entry with the previous answer
+        self.survey_question_entry.delete(0, tk.END)
+        self.survey_question_entry.insert(0, previous_answer)
+
+    def survey_feedback_request(self, username):
+        # Store the answer for the current question
+        answer = self.survey_question_entry.get()
+        self.answers[self.current_question_index] = answer
+
+        # Check if all questions have been answered
+        if len(self.answers) < len(self.questions) or "" in self.answers.values():
+            messagebox.showinfo("Survey Feedback", "Please answer all questions before submitting.")
+            self.survey_feedback_window.focus_force()
+            return
+        else:
+            #Update the survey Questions in the database
+            for i in range(len(self.questions)):
+                db.reference("Survey_Qs").child(f"q{i}").set(self.answers[i])
+                db.reference("survey_uni").child("available").set("Yes")
+            messagebox.showinfo("Survey Feedback", "Survey feedback submitted successfully.")
+            self.survey_feedback_window.destroy()
+            return
+        
     def profile(self,username,role):
         # Create a new Toplevel window for the profile
         profile_dialog = tk.Toplevel()
