@@ -1084,6 +1084,7 @@ class Employee_class:
                 "constructed_feedback": constructed_feedback,
                 "goals_for_future": goals_for_future
             })
+            db.reference("/employee").child(username).child("performance_review").child(selected_option).child("filled").set("Yes")
             messagebox.showinfo("Employee Window", "Performance review submitted successfully.")
 
             # Close the submit_performance_review_window
