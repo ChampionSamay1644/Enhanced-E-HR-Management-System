@@ -227,6 +227,7 @@ class Manager_class:
         employee_data_8 = self.get_employee_data_with_quarter_review()
         employee_data_9 = self.get_employee_data_with_half_yearly_review()
 
+
         # Call the method with different rely values and click handlers for each list
         self.display_employee_list_on_canvas(
             self.review_approval_logo_canvas,
@@ -293,13 +294,19 @@ class Manager_class:
     
     def get_employee_data_with_quarter_review(self):
         emp_ref = db.reference("/employee")
-        employee_data_8 = [user for user in emp_ref.get() if self.get_employee_data_review(user, "quarter_review") == "yes"]
+        employee_data_8 = [user for user in emp_ref.get() if self.has_performance_review_available(user, "Quarterly Review")]
         return employee_data_8
-    
+
     def get_employee_data_with_half_yearly_review(self):
         emp_ref = db.reference("/employee")
-        employee_data_9 = [user for user in emp_ref.get() if self.get_employee_data_review(user, "annual_review") == "yes"]
+        employee_data_9 = [user for user in emp_ref.get() if self.has_performance_review_available(user, "Annual Review")]
         return employee_data_9
+
+    def has_performance_review_available(self, username, review_type):
+        emp_ref = db.reference("/employee")
+        performance_review_data = emp_ref.child(username).child("performance_review").get()
+        return performance_review_data is not None and review_type in performance_review_data
+
     
     def open_employee_details_window_review(self, employee_info):
         # create a new window to show employee details along with 2 radio buttons to approve or deny the request
