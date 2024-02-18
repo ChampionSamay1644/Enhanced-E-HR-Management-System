@@ -208,7 +208,163 @@ class Manager_class:
         self.resize_canvas_and_image_manager(username)
 
     def perform_review_approval(self):
-        messagebox.showinfo("manager Window", "Performance Review Approval Button Pressed")
+        # create a new window to show the performance review approval
+        review_approval_window = tk.Toplevel()
+        review_approval_window.geometry("800x600")  # Set the window size
+        review_approval_window.title("Performance Review Approval")
+
+        #create a canvas that resizes with the window
+        self.review_approval_logo_canvas = tk.Canvas(review_approval_window, bg="white", highlightthickness=0)
+        self.review_approval_logo_canvas.pack(fill=tk.BOTH, expand=True)
+
+        # bind window resize event to function
+        review_approval_window.bind("<Configure>", lambda event: self.on_window_resize_review_approval(event))
+
+        # import the image as the background on the canvas
+        self.load_image_review_approval()
+
+        # Assuming you have values for the employee data
+        employee_data_8 = self.get_employee_data_with_quarter_review()
+        employee_data_9 = self.get_employee_data_with_half_yearly_review()
+
+        # Call the method with different rely values and click handlers for each list
+        self.display_employee_list_on_canvas(
+            self.review_approval_logo_canvas,
+            employee_data_8,
+            rely=0.5,
+            click_handler=self.open_employee_details_window_review
+        )
+
+        self.display_employee_list_on_canvas(
+            self.review_approval_logo_canvas,
+            employee_data_9,
+            rely=0.8,
+            click_handler=self.open_employee_details_window_review
+        )
+
+
+        # Bind the Escape key to the exit function
+        review_approval_window.bind(
+            "<Escape>", lambda event: review_approval_window.destroy()
+        )
+        # focus on window
+        review_approval_window.focus_force()
+        # Center the window with function center_window_test
+        self.center_window_all(review_approval_window)
+        # Run the main loop for the create_remove_hr_window
+        review_approval_window.mainloop()
+
+    def load_image_review_approval(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_review_approval_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_review_approval()
+
+    def resize_canvas_and_image_review_approval(self):
+        # Get the manager window size
+        window_width = self.review_approval_logo_canvas.winfo_width()
+        window_height = self.review_approval_logo_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.review_approval_logo_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_review_approval_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.review_approval_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.review_approval_logo_canvas.delete("all")
+        self.review_approval_logo_canvas.create_image(
+            0, 0, image=self.review_approval_logo_image, anchor="nw"
+        )
+
+    def on_window_resize_review_approval(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_review_approval()
+
+    def get_employee_data_review(self, username, data_type):
+        emp_ref = db.reference("/employee")
+        data = emp_ref.child(username).child(data_type).get()
+        return data if data is not None else "no"
+    
+    def get_employee_data_with_quarter_review(self):
+        emp_ref = db.reference("/employee")
+        employee_data_8 = [user for user in emp_ref.get() if self.get_employee_data_review(user, "quarter_review") == "yes"]
+        return employee_data_8
+    
+    def get_employee_data_with_half_yearly_review(self):
+        emp_ref = db.reference("/employee")
+        employee_data_9 = [user for user in emp_ref.get() if self.get_employee_data_review(user, "annual_review") == "yes"]
+        return employee_data_9
+    
+    def open_employee_details_window_review(self, employee_info):
+        # create a new window to show employee details along with 2 radio buttons to approve or deny the request
+        employee_details_window = tk.Toplevel()
+        employee_details_window.geometry("800x600")  # Set the window size
+
+        #create a canvas that resizes with the window
+        self.employee_details_logo_canvas = tk.Canvas(employee_details_window, bg="white", highlightthickness=0)
+        self.employee_details_logo_canvas.pack(fill=tk.BOTH, expand=True)
+
+        # bind window resize event to function
+        employee_details_window.bind("<Configure>", lambda event: self.on_window_resize_employee_details(event))
+
+        # import the image as the background on the canvas
+        self.load_image_employee_details()
+
+        # show the username of the employee using label on the canvas
+        username_label = tk.Label(
+            self.employee_details_logo_canvas,
+            text="Username",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        username_label.pack(pady=20)
+        username_label.place(relx=0.5, rely=0.35, anchor="center")
+
+        self.username_entry = tk.Entry(
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.username_entry.pack(pady=20)
+        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+
+        # Get the username from the employee data
+        username_data = employee_info
+        self.username_entry.insert(0, username_data)
+
+        # Make the entry widget read-only
+        self.username_entry.configure(state="readonly")
+
+        # show the reason for performance review of the employee using label on the canvas
+        reason_for_performance_review_label = tk.Label(
+            self.employee_details_logo_canvas,
+            text="Reason for Performance Review",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        reason_for_performance_review_label.pack(pady=20)
+        reason_for_performance_review_label.place(relx=0.5, rely=0.5, anchor="center")
+
+        self.reason_for_performance_review_entry = tk.Entry(
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.reason_for_performance_review_entry.pack(pady=20)
+        self.reason_for_performance_review_entry.place(relx=0.5, rely=0.55, anchor="center")
+
+        # Get the reason for performance review from the employee data
+        reason_for_performance_review = self.get_employee_data(employee_info, "performance_review_reason")
+
+        # Insert the text into the entry widget
+        self.reason_for_performance_review_entry.insert(0, reason_for_performance_review)
+
+        # Make the entry widget read-only
+        self.reason_for_performance_review_entry.configure(state="readonly")
+
+
 
     def approve_vacations_sick_leaves(self, role, username):
         approve_window = tk.Toplevel()  # Use Tk() to create a new window
