@@ -385,6 +385,11 @@ class Employee_class:
                 # Close the apply_for_vacation_days_window
                 apply_for_vacation_days_window.destroy()
 
+    def get_employee_data(self, username, data_type):
+        emp_ref = db.reference("/employee")
+        data = emp_ref.child(username).child(data_type).get()
+        return data if data is not None else 0
+
     def apply_for_resignation(self,username):
         # Create a new window for the apply_for_resignation top level
         apply_for_resignation_window = tk.Toplevel()
