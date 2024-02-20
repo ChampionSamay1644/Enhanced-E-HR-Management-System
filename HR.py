@@ -103,7 +103,7 @@ class HR_class:
             pady=20
         )
         self.salary_management_button.place(
-            relx=0.75, rely=0.3, anchor="center", width=300, height=30
+            relx=0.5, rely=0.3, anchor="center", width=300, height=30
         )
         self.approve_bonus_button = tk.Button(
             self.hr_logo_canvas, text="Approve Bonus", command=lambda:self.approve_bonus(), font=("Helvetica", 14)
@@ -113,7 +113,7 @@ class HR_class:
         )
         self.approve_bonus_button.place(
 
-            relx=0.75, rely=0.375, anchor="center", width=300, height=30
+            relx=0.5, rely=0.375, anchor="center", width=300, height=30
         )
         self.approve_resignation_button = tk.Button(
             self.hr_logo_canvas, text="Approve Resignation", command=lambda:self.approve_resignation(), font=("Helvetica", 14)
@@ -122,7 +122,7 @@ class HR_class:
             pady=20
         )
         self.approve_resignation_button.place(
-            relx=0.75, rely=0.450, anchor="center", width=300, height=30
+            relx=0.5, rely=0.450, anchor="center", width=300, height=30
         )
         self.check_hours_attended_button = tk.Button(
             self.hr_logo_canvas, text="Check Employee Hours Attended", command=lambda:self.check_hours_attended(), font=("Helvetica", 14)
@@ -131,7 +131,7 @@ class HR_class:
             pady=20
         )
         self.check_hours_attended_button.place(
-            relx=0.75, rely=0.525, anchor="center", width=300, height=30
+            relx=0.5, rely=0.525, anchor="center", width=300, height=30
         )
         self.survey_feedback_button = tk.Button(
             self.hr_logo_canvas, text="Survey/Feedback", command=lambda:self.survey_feedback(username), font=("Helvetica", 14)
@@ -140,7 +140,7 @@ class HR_class:
             pady=20
         )
         self.survey_feedback_button.place(
-            relx=0.75, rely=0.6, anchor="center", width=300, height=30
+            relx=0.5, rely=0.6, anchor="center", width=300, height=30
         )
         # self.addbe_button = tk.Button(
         #     self.hr_logo_canvas, text="Add manager/Employee", command=lambda:self.create_all_hr(), font=("Helvetica", 14)
@@ -149,7 +149,7 @@ class HR_class:
         #     pady=20
         # )
         # self.addbe_button.place(
-        #     relx=0.75, rely=0.675, anchor="center", width=300, height=30
+        #     relx=0.5, rely=0.675, anchor="center", width=300, height=30
         # )
         # self.removebe_button = tk.Button(
         #     self.hr_logo_canvas, text="Remove manager/Employee", command=lambda:self.remove_all_hr(), font=("Helvetica", 14)
@@ -158,7 +158,7 @@ class HR_class:
         #     pady=20
         # )
         # self.removebe_button.place(
-        #     relx=0.75, rely=0.750, anchor="center", width=300, height=30
+        #     relx=0.5, rely=0.750, anchor="center", width=300, height=30
         # )
 
         #create an exit button in canvas and place at bottom middle
