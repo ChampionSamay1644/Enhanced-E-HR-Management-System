@@ -51,8 +51,8 @@ class Admin_class():
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
         x = (screen_width / 2) - (900 / 2)
-        y = (screen_height / 2) - (600 / 2)
-        window.geometry("%dx%d+%d+%d" % (900, 600, x, y))
+        y = (screen_height / 2) - (700 / 2)
+        window.geometry("%dx%d+%d+%d" % (900, 700, x, y))
         
     def resize_canvas_and_image_common(self,username,role):
         window_width = self.common_canvas.winfo_width()

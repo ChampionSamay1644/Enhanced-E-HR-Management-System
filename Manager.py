@@ -1167,10 +1167,10 @@ class Manager_class:
 
         # Calculate the x and y coordinates to center the main window
         x = (screen_width / 2) - (900 / 2)
-        y = (screen_height / 2) - (600 / 2)
+        y = (screen_height / 2) - (700 / 2)
 
         # Set the dimensions of the screen and where it is placed
-        window.geometry("%dx%d+%d+%d" % (900, 600, x, y))
+        window.geometry("%dx%d+%d+%d" % (900, 700, x, y))
         
 
     def profile(self,username,role):
