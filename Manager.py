@@ -148,6 +148,23 @@ class Manager_class:
     )
         exit_button.place(relx=0.5, rely=1.0, anchor="s")
 
+        profile_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "profile.png" #change jpg to png for main background
+        )
+        profile_img = PhotoImage(file=profile_path)
+        
+        resized_profile_img = profile_img.subsample(4, 4)
+        
+        profile_btn = tk.Button(
+            self.manager_logo_canvas, image=resized_profile_img, command=lambda:self.profile(username,role),borderwidth=0, font=("Helvetica", 14)
+        )
+        profile_btn.pack(
+            pady=20
+        )
+        profile_btn.place(
+            relx=0.95, rely=0.05, anchor="center", width=50, height=50
+        )
+        
         # focus on window
         manager_window.focus_force()
 
@@ -307,7 +324,6 @@ class Manager_class:
         performance_review_data = emp_ref.child(username).child("performance_review").get()
         return performance_review_data is not None and review_type in performance_review_data
 
-    
     def open_employee_details_window_review(self, employee_info):
         # create a new window to show employee details along with 2 radio buttons to approve or deny the request
         employee_details_window = tk.Toplevel()
@@ -370,8 +386,6 @@ class Manager_class:
 
         # Make the entry widget read-only
         self.reason_for_performance_review_entry.configure(state="readonly")
-
-
 
     def approve_vacations_sick_leaves(self, role, username):
         approve_window = tk.Toplevel()  # Use Tk() to create a new window
@@ -961,8 +975,6 @@ class Manager_class:
 
         # Run the main loop for the bonus_request_window
         bonus_request_window.mainloop()
-
-
         
     def load_image_bonus_request(self):
             
@@ -1171,7 +1183,6 @@ class Manager_class:
         # Set the dimensions of the screen and where it is placed
         window.geometry("%dx%d+%d+%d" % (900, 700, x, y))
         
-
     def profile(self,username,role):
         # Create a new Toplevel window for the profile
         profile_dialog = tk.Toplevel()
@@ -1187,6 +1198,19 @@ class Manager_class:
         
         # Bind window resize event to function
         profile_dialog.bind("<Configure>", lambda event: self.on_window_resize_profile(username,role, event))
+        
+        # Create a change password button in canvas and place at top right
+        change_password_button = tk.Button(
+            self.profile_canvas,
+            text="Change Password",
+            command=lambda:self.change_password(username),
+            font=("Helvetica", 14),
+            bd=0,
+            fg="white",
+            bg="black",  # You can change the color as needed
+            activebackground="black",  # You can change the color as needed
+        )
+        change_password_button.place(relx=0.9, rely=0.1, anchor="center")
         
         # Create an exit button in canvas and place at middle of screen
         exit_button = tk.Button(
@@ -1214,7 +1238,7 @@ class Manager_class:
         
         # Run the main loop for the profile window
         profile_dialog.mainloop()
-        
+    
     def load_image_profile(self,username,role):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -1241,11 +1265,10 @@ class Manager_class:
 
         list=self.getdata(username,role)
         text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
-        if role=="employee":
-            text1+=f"\nSurvey: {list[7]}"
         self.profile_canvas.create_text(
-            10,  # X-coordinate (left)
-            self.profile_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
+            # Place the text in the bottom left corner
+            10,
+            window_height - 10,
             font=("Helvetica", 15, "bold"),
             text=text1,
             fill="white",
@@ -1254,6 +1277,115 @@ class Manager_class:
         
     def on_window_resize_profile(self,username,role, event=None):
         self.resize_canvas_and_image_profile(username,role)
+        
+    def change_password(self,username):
+        # Create a new window for the change_password top level
+        self.change_password_window = tk.Toplevel()
+        self.change_password_window.geometry("800x600")
+        self.change_password_window.title("Change Password")
+        
+        # Create the canvas
+        self.change_password_canvas = tk.Canvas(self.change_password_window, bg="white", highlightthickness=0)
+        self.change_password_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Load the image
+        self.change_password_load_image()
+        
+        # Create entry widgets for the old password, new password, and confirm new password
+        entry_labels = ["Old Password", "New Password", "Confirm New Password"]
+        entry_variables = [tk.StringVar() for _ in range(3)]
+        entry_widgets = []
+
+        for i in range(3):
+            entry_widget = tk.Entry(self.change_password_canvas, width=50, font=("Helvetica", 14), textvariable=entry_variables[i])
+            entry_widget.pack(pady=40, side=tk.TOP, anchor=tk.CENTER)
+            entry_widget.insert(0, entry_labels[i])
+            entry_widget.bind("<FocusIn>", lambda event, entry_widget=entry_widget, default_text=entry_labels[i]: self.entry_del(entry_widget, default_text))
+
+            entry_widgets.append(entry_widget)
+            
+        # Create a button to submit the change password request
+        submit_button = tk.Button(self.change_password_canvas, text="Submit", command=lambda: self.change_password_request(username, entry_variables, self.change_password_window))
+        submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+
+        # Bind the Escape key to the exit function
+        self.change_password_window.bind("<Escape>", lambda event: self.change_password_window.destroy())
+        
+        # bind window resize event to function
+        self.change_password_window.bind("<Configure>", lambda event: self.on_window_resize_change_password(event))
+        
+        #Bind the return key to the submit button
+        self.change_password_window.bind("<Return>", lambda event: self.change_password_request(username, entry_variables, self.change_password_window))
+        
+        # focus on window
+        self.change_password_window.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(self.change_password_window)
+        
+        # Run the main loop for the self.change_password_window
+        self.change_password_window.mainloop()
+    
+    def change_password_load_image(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_change_password_image = Image.open(img_path)
+        self.resize_canvas_and_image_change_password()
+        
+    def resize_canvas_and_image_change_password(self, event=None):
+        # Get the change_password window size
+        window_width = self.change_password_canvas.winfo_width()
+        window_height = self.change_password_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.change_password_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_change_password_image.resize((window_width, window_height))
+        self.change_password_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.change_password_canvas.delete("all")
+        self.change_password_canvas.create_image(0, 0, image=self.change_password_image, anchor="nw")
+        
+    def on_window_resize_change_password(self, event=None):
+        self.resize_canvas_and_image_change_password()
+        
+    def change_password_request(self, username, entry_variables, window):
+        # Get the entered values from the Entry widgets
+        old_password = entry_variables[0].get()
+        new_password = entry_variables[1].get()
+        confirm_new_password = entry_variables[2].get()
+        
+        #Check if the entered values are valid
+        if old_password == "Old Password" or new_password == "New Password" or confirm_new_password == "Confirm New Password":
+            messagebox.showerror("Error", "Please enter valid values for the password")
+        elif old_password == "" or new_password == "" or confirm_new_password == "":
+            messagebox.showerror("Error", "Please enter valid values for the password")
+        elif old_password == new_password:
+            messagebox.showerror("Error", "Old Password and New Password cannot be the same")
+        elif new_password != confirm_new_password:
+            messagebox.showerror("Error", "New Password and Confirm New Password do not match")
+        else:
+            # Update the database with the new password
+            mng_ref = db.reference("/manager")
+            mng_ref.child(username).update({"password": new_password})
+            # Close the change password window
+            window.destroy()
+            # Show a message that the password has been changed
+            messagebox.showinfo("Password Change", "Password Changed Successfully")
+            self.change_password_window.destroy()
+        self.change_password_window.destroy()
+        self.profile_canvas.focus_force()
+            
+    def entry_del(self, entry_widget, default_text):
+        current_content = entry_widget.get()
+        if current_content == default_text:
+            entry_widget.delete(0, tk.END)
+            
+    
 def main(role,username):
     manager=Manager_class()
     manager.open_manager_window(role,username)
