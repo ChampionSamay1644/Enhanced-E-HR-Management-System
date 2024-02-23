@@ -285,6 +285,8 @@ class HR_class:
             self.treeview.column("Employee", width=200, anchor="center")
             self.treeview.tag_configure("clickable", foreground="blue", font=("Helvetica", 12, "underline"))
             self.treeview.bind("<Double-1>", lambda event: self.open_employee_details_window(self.treeview.item(self.treeview.selection())["values"][0]))
+            #Call the enable_buttons function when a row is selected
+            self.treeview.bind("<<TreeviewSelect>>", lambda event: self.enable_buttons())
 
             # Add a vertical scrollbar to the Treeview
             scrollbar = ttk.Scrollbar(self.scrollable_frame, orient="vertical", command=self.treeview.yview)
@@ -338,9 +340,30 @@ class HR_class:
             bg="black",
             activebackground="black",
         )
-        add_login_button.place(relx=0.5, rely=0.9, anchor="s")
+        add_login_button.place(relx=0.35, rely=0.9, anchor="s")
         #center the window
         self.center_window_all(salary_management_frame)
+        
+        try:
+            #Create a remove login button to remove the login of the employee
+            self.remove_login_button_new = tk.Button(
+                self.salary_management_canvas,
+                text="Remove Login",
+                command=lambda:self.remove_login(self.treeview.item(self.treeview.selection())["values"][0], salary_management_frame),
+                font=("Helvetica", 14),
+                width=15,
+                height=2,
+                bd=0,
+                fg="white",
+                bg="black",
+                activebackground="black",
+                state="disabled",
+            )
+            self.remove_login_button_new.place(relx=0.65, rely=0.9, anchor="s")
+        #Display an error message saying to select a row
+        except:
+            print("Error")
+            messagebox.showinfo("Error","Please select a row")
         
         #focus on window
         salary_management_frame.focus_force()
@@ -351,7 +374,19 @@ class HR_class:
         # Run the main loop for the salary_management_frame
         salary_management_frame.mainloop()
 
+    def enable_buttons(self):
+        # Enable the remove login button if the role is not HR
+        if hasattr(self, "remove_login_button_new") and self.remove_login_button_new is not None:
+            print("Role:", self.role_entry_emp_mng)  # Debug print statement
+            if self.role_entry_emp_mng.get() != "HR":  # Assuming role_entry_emp_mng is a tkinter StringVar
+                self.remove_login_button_new.config(state="normal")
+            else:
+                self.remove_login_button_new.config(state="disabled")
+
+
+            
     def role_selected(self, event):
+        self.remove_login_button_new.config(state="disabled")
         if self.role_entry_emp_mng is not None:
             selected_role = self.role_entry_emp_mng.get()
             if selected_role:
@@ -360,6 +395,7 @@ class HR_class:
             print("Role entry is None")
 
     def populate_employee_list(self, role):
+        self.remove_login_button_new.config(state="disabled")
         # Clear the existing items in the Treeview
         if self.treeview is not None:
             self.treeview.delete(*self.treeview.get_children())
@@ -406,22 +442,22 @@ class HR_class:
             bg="black",
             activebackground="black",
         )
-        edit_salary_button.place(relx=0.2, rely=0.9, anchor="s")
+        edit_salary_button.place(relx=0.5, rely=0.9, anchor="s")
         
-        #create an remove login button to remove the login of the employee
-        remove_login_button = tk.Button(
-            self.employee_details_canvas,
-            text="Remove Login",
-            command=lambda:self.remove_login(employee_name, employee_details_window),
-            font=("Helvetica", 14),
-            width=15,
-            height=2,
-            bd=0,
-            fg="white",
-            bg="black",
-            activebackground="black",
-        )
-        remove_login_button.place(relx=0.5, rely=0.9, anchor="s")
+        # #create an remove login button to remove the login of the employee
+        # remove_login_button = tk.Button(
+        #     self.employee_details_canvas,
+        #     text="Remove Login",
+        #     command=lambda:self.remove_login(employee_name, employee_details_window),
+        #     font=("Helvetica", 14),
+        #     width=15,
+        #     height=2,
+        #     bd=0,
+        #     fg="white",
+        #     bg="black",
+        #     activebackground="black",
+        # )
+        # remove_login_button.place(relx=0.5, rely=0.9, anchor="s")
         
         #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
@@ -672,6 +708,8 @@ class HR_class:
             
     def remove_login(self, employee_name, employee_details_window):
         #Function to remove the login of the employee or manager
+        if employee_name == None:
+            messagebox.showinfo("Error","Please select a row")
         if messagebox.askyesno("Remove Login", f"Are you sure you want to remove the login of {employee_name}?"):
             #Remove the login from the database
             if db.reference("/employee").child(employee_name).get() is not None:

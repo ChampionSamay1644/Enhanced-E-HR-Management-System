@@ -409,7 +409,7 @@ class Admin_class():
         self.role_entry = ttk.Combobox(
             self.add_login_from_admincanvas, font=("Helvetica", 12), state="readonly"
         )
-        self.role_entry["values"] = ("manager", "employee")
+        self.role_entry["values"] = ("None","HR","manager", "employee")
         self.role_entry.current(0)
         self.role_entry.pack(pady=10)
         self.role_entry.place(relx=0.7, rely=0.4, anchor="center")
@@ -474,7 +474,29 @@ class Admin_class():
         salary = self.new_salary_label.get()
         designation = self.new_designation_label.get()
 
-        if role == "manager":
+        if role == "None" or username == "" or password == "" or salary == "" or designation == "":
+            messagebox.showinfo(
+                "Add Login", "Please fill in all the fields."
+            )
+        elif role == "HR":
+            hr_ref = db.reference("/HR")
+            if hr_ref.child(username).get():
+                messagebox.showinfo(
+                    "Add Login", "Username already exists. Choose a different username."
+                )
+            else:
+                hr_ref.child(username).set(
+                    {
+                        "password": password,
+                        "role": role,
+                        "designation": designation,
+                        "salary": salary,
+                    }
+                )
+                messagebox.showinfo(
+                    "Add Login", "HR login added successfully!"
+                )
+        elif role == "manager":
             manager_ref = db.reference("/manager")
             if manager_ref.child(username).get():
                 messagebox.showinfo(
@@ -896,13 +918,24 @@ class Admin_class():
             messagebox.showinfo(
                 "Add HR Login", "Username already exists. Choose a different username."
             )
-        elif username == "" or password == "" or role == "" or designation == "" or salary == "":
+        elif username == "" or password == "" or role == "None" or designation == "" or salary == "":
             messagebox.showinfo("Add HR Login", "Please fill in all the fields.")
         elif not salary.isdigit():
             messagebox.showinfo("Add HR Login", "Salary should be a number.")
         else:
             # Add the new login to the database
-            if role == "manager":
+            if role == "HR":
+                hr_ref.child(username).set(
+                    {
+                        "password": password,
+                        "role": role,
+                        "designation": designation,
+                        "salary": salary,
+                        "emp_ids": emp_uni + 1,
+                    }
+                )
+                emp_id_ref.child("emp_id").set(emp_uni + 1)
+            elif role == "manager":
                 manager_ref.child(username).set(
                     {
                         "password": password,

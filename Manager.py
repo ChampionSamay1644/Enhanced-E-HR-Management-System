@@ -1154,7 +1154,6 @@ class Manager_class:
             font=("Helvetica", 18, "bold"),
             fill="white",
         )
-        
 
     def on_window_resize_employee_details_new2(self,employee_name, event):
         # Handle window resize event
