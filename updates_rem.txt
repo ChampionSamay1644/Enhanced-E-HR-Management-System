@@ -1,0 +1,13 @@
+HR- 
+    Approve promotion
+    Approve performance review
+    Fix approve resignation
+
+Manager-
+    progress on task and assign task
+    approve resignation
+    performance review approval
+
+Employee-
+    Fix survey 
+    Update based on db update(resignation approved,review approved etc)
