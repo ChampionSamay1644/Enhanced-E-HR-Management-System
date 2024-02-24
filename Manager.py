@@ -106,7 +106,7 @@ class Manager_class:
             relx=0.5, rely=0.5, anchor="center", width=200, height=30
         )
         self.assign_promotion_button = tk.Button(
-            self.manager_logo_canvas, text="Assign Promotion", command=lambda:self.assign_promotion(), font=("Helvetica", 14)
+            self.manager_logo_canvas, text="Assign Promotion", command=lambda:self.assign_promotion(username), font=("Helvetica", 14)
         )
         self.assign_promotion_button.pack(
             pady=20
@@ -906,9 +906,285 @@ class Manager_class:
     def progress_on_task(self):
         messagebox.showinfo("manager Window", "Progress on Task Button Pressed")
 
-    def assign_promotion(self):
-        messagebox.showinfo("manager Window", "Approve Promotion Button Pressed")
+    def assign_promotion(self,username):
+        self.treeview_promotion_request=None
+        # create a new window to show the promotion request
+        self.promotion_request_window = tk.Toplevel()
+        self.promotion_request_window.geometry("800x600")  # Set the window size
+        self.promotion_request_window.title("Request for Promotion")
+        
+        #create a canvas that resizes with the window
+        self.promotion_request_logo_canvas = tk.Canvas(self.promotion_request_window, bg="white", highlightthickness=0)
+        self.promotion_request_logo_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        #load the image as the background on the canvas
+        self.load_image_promotion_request()
+        
+        # bind window resize event to function
+        self.promotion_request_window.bind("<Configure>", lambda event: self.on_window_resize_promotion_request(event))
+        
+        # bind the escape key to the exit function
+        self.promotion_request_window.bind("<Escape>", lambda event: self.promotion_request_window.destroy())
+        
+        # focus on window
+        self.promotion_request_window.focus_force()
 
+        # Center the window with function center_window_test
+        self.center_window_all(self.promotion_request_window)
+        
+        # Create a scrollable frame to hold the treeview
+        scrollable_frame = tk.Frame(self.promotion_request_logo_canvas, bg="white")
+        scrollable_frame.pack(fill="both", expand=True)
+        scrollable_frame.place(relx=0.5, rely=0.5, anchor="center", width=600, height=400)
+
+        # Create a new treeview to show the list of employees
+        if self.treeview_promotion_request is None:
+            self.treeview_promotion_request = ttk.Treeview(
+                scrollable_frame, columns=("Employee",), show="headings", selectmode="browse"
+            )
+            self.treeview_promotion_request.heading("Employee", text="Employee")
+            self.treeview_promotion_request.column("Employee", width=200, anchor="center")
+            self.treeview_promotion_request.tag_configure("clickable", foreground="blue", font=("Helvetica", 12, "underline"))
+
+            # Add a vertical scrollbar to the Treeview
+            scrollbar = ttk.Scrollbar(scrollable_frame, orient="vertical", command=self.treeview_promotion_request.yview)
+            scrollbar.pack(side="right", fill="y")
+            self.treeview_promotion_request.configure(yscrollcommand=scrollbar.set)
+
+            # Pack the Treeview to the scrollable frame
+            self.treeview_promotion_request.pack(fill="both", expand=True)
+            self.treeview_promotion_request.bind("<<TreeviewSelect>>", self.enable_promotion_request_button)
+
+        # Configure grid row and column weights
+        scrollable_frame.grid_rowconfigure(0, weight=1)
+        scrollable_frame.grid_columnconfigure(0, weight=1)
+
+        # Now you can safely use self.treeview
+        self.treeview_promotion_request.delete(*self.treeview_promotion_request.get_children())
+
+        # Populate the treeview with employee data
+        self.populate_employee_list("employee")
+        
+        #Create a new button for promoting the employee
+        self.promote_button = tk.Button(
+            self.promotion_request_window,
+            text="Promote",
+            command=lambda:self.promote_employee(username),
+            state="disabled",
+            font=("Helvetica", 14),
+        )
+        self.promote_button.pack(
+            pady=20
+        )
+        self.promote_button.place(relx=0.5, rely=0.9, anchor="center", width=100, height=30)
+
+        # Run the main loop for the self.promotion_request_window
+        self.promotion_request_window.mainloop()
+        
+    def load_image_promotion_request(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_promotion_request_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_promotion_request()
+        
+    def resize_canvas_and_image_promotion_request(self):
+        # Get the promotion_request window size
+        window_width = self.promotion_request_logo_canvas.winfo_width()
+        window_height = self.promotion_request_logo_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.promotion_request_logo_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_promotion_request_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.promotion_request_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.promotion_request_logo_canvas.delete("all")
+        self.promotion_request_logo_canvas.create_image(
+            0, 0, image=self.promotion_request_logo_image, anchor="nw"
+        )
+        
+    def on_window_resize_promotion_request(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_promotion_request()
+
+    def populate_employee_list(self, role):
+        employees = list((db.reference("/employee").get()).keys())
+        for employee in employees:
+            self.treeview_promotion_request.insert("", "end", values=(employee,), tags=("clickable",))
+            
+    def enable_promotion_request_button(self, event):
+        self.promote_button.config(state="normal")
+        
+    def promote_employee(self,username):
+        # get the selected employee from the treeview
+        selected_employee = self.treeview_promotion_request.item(self.treeview_promotion_request.selection())["values"][0]
+        if db.reference("/employee").child(selected_employee).child("promotion_request").child("Request").get() == "Pending":
+            messagebox.showinfo("Promote Employee", "Promotion Request already sent")
+            self.promotion_request_window.focus_force()
+            return
+        elif db.reference("/employee").child(selected_employee).child("promotion_request").child("Request").get() == "Approved":
+            messagebox.showinfo("Promote Employee", "Employee already promoted")
+            self.promotion_request_window.focus_force()
+            return
+        elif db.reference("/employee").child(selected_employee).child("promotion_request").child("Request").get() == "Denied":
+            messagebox.showinfo("Promote Employee", "Promotion Request Denied")
+            self.promotion_request_window.focus_force()
+            return
+        # create a new window to show the promotion request
+        self.promote_employee_window = tk.Toplevel()
+        self.promote_employee_window.geometry("800x600")  # Set the window size
+        self.promote_employee_window.title("Promote Employee")
+        
+        #create a canvas that resizes with the window
+        self.promote_employee_logo_canvas = tk.Canvas(self.promote_employee_window, bg="white", highlightthickness=0)
+        self.promote_employee_logo_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # import the image as the background on the canvas
+        self.load_image_promote_employee()
+        
+        # bind window resize event to function
+        self.promote_employee_window.bind("<Configure>", lambda event: self.on_window_resize_promote_employee(event))
+        
+        # bind the escape key to the exit function
+        self.promote_employee_window.bind("<Escape>", lambda event: self.promote_employee_window.destroy())
+        
+        # focus on window
+        self.promote_employee_window.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(self.promote_employee_window)
+        
+        # Create a new label to show the employee name
+        self.employee_name_label = tk.Label(
+            self.promote_employee_logo_canvas,
+            text=f"Employee Name: {selected_employee}",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        self.employee_name_label.pack(pady=20)
+        self.employee_name_label.place(relx=0.5, rely=0.15, anchor="center")
+
+        # Create a new label to show the employee's current role
+        self.current_role_label = tk.Label(
+            self.promote_employee_logo_canvas,
+            text="Current Role: Employee",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        self.current_role_label.pack(pady=20)
+        self.current_role_label.place(relx=0.5, rely=0.25, anchor="center")
+
+        # Create a checkbutton to select if the employee should be promoted to manager
+        self.promote_to_manager = tk.IntVar()
+        self.promote_to_manager_checkbutton = tk.Checkbutton(
+            self.promote_employee_logo_canvas,
+            text="Promote to Manager",
+            variable=self.promote_to_manager,
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        self.promote_to_manager_checkbutton.pack(pady=20)
+        self.promote_to_manager_checkbutton.place(relx=0.5, rely=0.35, anchor="center")
+
+        # Create a new entry for new salary and designation
+        self.new_salary_entry = tk.Entry(
+            self.promote_employee_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.new_salary_entry.pack(pady=20)
+        self.new_salary_entry.place(relx=0.5, rely=0.45, anchor="center")
+        self.new_salary_entry.insert(0, "New Salary")
+
+        # Create a new entry for new designation
+        self.new_designation_entry = tk.Entry(
+            self.promote_employee_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.new_designation_entry.pack(pady=20)
+        self.new_designation_entry.place(relx=0.5, rely=0.55, anchor="center")
+        self.new_designation_entry.insert(0, "New Designation")
+
+        # Create a comment box for the manager to add reason for promotion
+        self.comment_box = tk.Text(
+            self.promote_employee_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.comment_box.pack(pady=20)
+        self.comment_box.place(relx=0.5, rely=0.7, anchor="center", relwidth=0.8, relheight=0.2)
+        self.comment_box.insert(tk.END, "Reason for Promotion")
+
+        # Create a new button for promoting the employee
+        promote_button = tk.Button(
+            self.promote_employee_logo_canvas,
+            text="Promote",
+            command=lambda:self.promote_employee_request(username),
+            font=("Helvetica", 14),
+        )
+        promote_button.pack(pady=20)
+        promote_button.place(relx=0.5, rely=0.9, anchor="center", width=100, height=30)
+
+    
+        # Run the main loop for the self.promote_employee_window
+        self.promote_employee_window.mainloop()
+        
+    def promote_employee_request(self,username_mngr):
+        #Get the entered values from the self.promote_employee_window
+        new_salary = self.new_salary_entry.get()
+        new_designation = self.new_designation_entry.get()
+        comment = self.comment_box.get("1.0", "end-1c")
+        promote_to_manager = self.promote_to_manager.get()
+        username=self.treeview_promotion_request.item(self.treeview_promotion_request.selection())["values"][0]
+        #Ask for confirmation before promoting the employee
+        if messagebox.askokcancel("Promote Employee", "Are you sure you want to promote the employee?"):
+            #Update the promotion request in the database
+            emp_ref = db.reference("/employee")
+            emp_ref.child(username).child("promotion_request").set({
+                "Request": "Pending",
+                "new_salary": new_salary,
+                "new_designation": new_designation,
+                "comment": comment,
+                "promote_to_manager": promote_to_manager,
+                "request_by": username_mngr,
+            })
+            messagebox.showinfo("Promote Employee", "Employee Promoted")
+        self.promote_employee_window.destroy()
+        self.promotion_request_window.focus_force()
+        
+    def load_image_promote_employee(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_promote_employee_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_promote_employee()
+        
+    def resize_canvas_and_image_promote_employee(self):
+        # Get the promote_employee window size
+        window_width = self.promote_employee_logo_canvas.winfo_width()
+        window_height = self.promote_employee_logo_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.promote_employee_logo_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_promote_employee_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.promote_employee_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.promote_employee_logo_canvas.delete("all")
+        self.promote_employee_logo_canvas.create_image(
+            0, 0, image=self.promote_employee_logo_image, anchor="nw"
+        )
+        
+    def on_window_resize_promote_employee(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_promote_employee()
+        
     def approve_resignatin(self):
         messagebox.showinfo("manager Window", "Approve Resignation Button Pressed")
 
@@ -1014,7 +1290,6 @@ class Manager_class:
         for employee in employees:
             self.treeview2.insert("", "end", values=(employee,), tags=("clickable",))
 
-
     def open_employee_details_window2(self, employee_name):
         #Function to open another window with employee details
         employee_details_window2 = tk.Toplevel()
@@ -1113,7 +1388,6 @@ class Manager_class:
             # Show a message that the bonus request has been submitted
             messagebox.showinfo("Bonus Request", "Bonus Request Submitted")
             
-
     def load_image_employee_details_new2(self,employee_name):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -1385,7 +1659,6 @@ class Manager_class:
         if current_content == default_text:
             entry_widget.delete(0, tk.END)
             
-    
 def main(role,username):
     manager=Manager_class()
     manager.open_manager_window(role,username)
