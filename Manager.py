@@ -1135,7 +1135,10 @@ class Manager_class:
         new_salary = self.new_salary_entry.get()
         new_designation = self.new_designation_entry.get()
         comment = self.comment_box.get("1.0", "end-1c")
-        promote_to_manager = self.promote_to_manager.get()
+        if self.promote_to_manager.get() == 1:
+            new_role = "Manager"
+        else:
+            new_role = "Employee"
         username=self.treeview_promotion_request.item(self.treeview_promotion_request.selection())["values"][0]
         #Ask for confirmation before promoting the employee
         if messagebox.askokcancel("Promote Employee", "Are you sure you want to promote the employee?"):
@@ -1146,7 +1149,7 @@ class Manager_class:
                 "new_salary": new_salary,
                 "new_designation": new_designation,
                 "comment": comment,
-                "promote_to_manager": promote_to_manager,
+                "new_role": new_role,
                 "request_by": username_mngr,
             })
             messagebox.showinfo("Promote Employee", "Employee Promoted")
