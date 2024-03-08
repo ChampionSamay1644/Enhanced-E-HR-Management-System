@@ -1628,10 +1628,13 @@ class HR_class:
         #Load the image
         self.load_image_approve_promotion()
         
+        #Center the window
+        self.center_window_all(self.approve_promotion_window)
+        
         #Create a scrollable frame
         self.scrollable_frame_promotion = tk.Frame(self.approve_promotion_canvas, bg="white")
-        self.scrollable_frame_promotion.pack(fill=tk.BOTH, expand=True)
-        self.scrollable_frame_promotion.place(relx=0.5, rely=0.5, anchor="center")
+        self.scrollable_frame_promotion.pack(fill="both", expand=True)
+        self.scrollable_frame_promotion.place(relx=0.5, rely=0.5, anchor="center",width=600, height=400)
         
         #Create a treeview to display the employees
         if self.treeview_promotion is None:
@@ -1687,8 +1690,23 @@ class HR_class:
             bg="black",
             activebackground="black",
         )
-        self.approve_promotion_button.place(relx=0.5, rely=0.9, anchor="s")
+        self.approve_promotion_button.place(relx=0.35, rely=0.9, anchor="s")
         self.approve_promotion_button["state"] = "disabled"
+        
+        self.deny_promotion_button = tk.Button(
+            self.approve_promotion_canvas,
+            text="Deny Promotion",
+            command=lambda:self.deny_promotion_btn(),
+            font=("Helvetica", 14),
+            width=20,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        self.deny_promotion_button.place(relx=0.65, rely=0.9, anchor="s")
+        self.deny_promotion_button["state"] = "disabled"
         
         #Bind the escape key to the exit function
         self.approve_promotion_window.bind("<Escape>", lambda event: self.approve_promotion_window.destroy())
@@ -1701,31 +1719,39 @@ class HR_class:
         if selected_items:
             #Enable buttons if a row is selected
             self.approve_promotion_button["state"] = "normal"
+            self.deny_promotion_button["state"] = "normal"
         else:
             #Disable buttons if no row is selected
             self.approve_promotion_button["state"] = "disabled"
+            self.deny_promotion_button["state"] = "disabled"
             
     def populate_employee_list_promotion(self):
         #Clear the existing items in the Treeview
         if self.treeview_promotion is not None:
             self.treeview_promotion.delete(*self.treeview_promotion.get_children())
         
-        #Get only the keys of the employees that have applied for promotion
-        employees = list(( db.reference("/employee").get()).keys())
-        employees_with_promotion = []
-        for employee in employees:
-            #Check if apply_for_promotion value exists and is not empty
-            if db.reference("/employee").child(employee).child("promotion_request").child("Request").get() =="Pending":
-                employees_with_promotion.append(employee)
-        #Populate the Treeview with employee names
-        for employee in employees_with_promotion:
-            #Add the employee name,role with tag selectable
-            new_role = db.reference("/employee").child(employee).child("promotion_request").child("New Role").get()
-            new_designation = db.reference("/employee").child(employee).child("promotion_request").child("New Designation").get()
-            new_salary = db.reference("/employee").child(employee).child("promotion_request").child("New salary").get()
-            comment = db.reference("/employee").child(employee).child("promotion_request").child("Comment").get()
-            request_by = db.reference("/employee").child(employee).child("promotion_request").child("Request by").get()
-            self.treeview_promotion.insert("", "end", values=(employee, new_role,new_designation,new_salary,comment,request_by), tags=("selectable",))
+        # if self.role_selected_promotion.get() == "Employee":
+            #Get only the keys of the employees that have applied for promotion
+            employees = list(( db.reference("/employee").get()).keys())
+            employees_with_promotion = []
+            for employee in employees:
+                #Check if apply_for_promotion value exists and is not empty
+                if db.reference("/employee").child(employee).child("promotion_request").child("Request").get() =="Pending":
+                    employees_with_promotion.append(employee)
+            #Populate the Treeview with employee names
+            for employee in employees_with_promotion:
+                #Add the employee name,role with tag selectable
+                new_role = db.reference("/employee").child(employee).child("promotion_request").child("new_role").get()
+                new_designation = db.reference("/employee").child(employee).child("promotion_request").child("new_designation").get()
+                new_salary = db.reference("/employee").child(employee).child("promotion_request").child("new_salary").get()
+                comment = db.reference("/employee").child(employee).child("promotion_request").child("comment").get()
+                request_by = db.reference("/employee").child(employee).child("promotion_request").child("request_by").get()
+                self.treeview_promotion.insert("", "end", values=(employee, new_role,new_designation,new_salary,comment,request_by), tags=("selectable",))
+        # else:
+        #     #List out all the managers present in the database
+        #     managers = list(( db.reference("/manager").get()).keys())
+        #     for manager in managers:
+        #         self.treeview_promotion.insert("", "end", values=(manager, "Manager"), tags=("selectable",))
             
     def approve_promotion_btn(self):
         #Get the selected employee
@@ -1735,6 +1761,14 @@ class HR_class:
             #Approve the promotion in the database by deleting the employee details from employee and adding to manager
             db.reference("/manager").child(selected_employee).set(db.reference("/employee").child(selected_employee).get())
             db.reference("/employee").child(selected_employee).delete()
+            new_role = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_role").get()
+            new_designation = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_designation").get()
+            new_salary = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_salary").get()
+            db.reference("/manager").child(selected_employee).child("role").set(new_role)
+            db.reference("/manager").child(selected_employee).child("designation").set(new_designation)
+            db.reference("/manager").child(selected_employee).child("salary").set(new_salary)
+            db.reference("/manager").child(selected_employee).child("promotion_request").delete()
+            db.reference("/manager").child(selected_employee).child("promotion_request").child("Request").set("Approved")
             messagebox.showinfo("Approve Promotion", "Promotion approved successfully.")
             #Refresh the list
             self.populate_employee_list_promotion()
@@ -1760,33 +1794,36 @@ class HR_class:
         self.approve_promotion_window.focus_force()
         
     def load_image_approve_promotion(self):
-        #Construct the full path to the image file based on role and username
+        # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
 
-        #Load image and adjust canvas size
+        # Load image and adjust canvas size
         self.original_approve_promotion_image = Image.open(img_path)
         self.resize_canvas_and_image_approve_promotion()
-        
-    def resize_canvas_and_image_approve_promotion(self):
-        #Get the approve_promotion window size
-        window_width = self.approve_promotion_canvas.winfo_width()
-        window_height = self.approve_promotion_canvas.winfo_height()
 
-        #Resize the canvas to the current window size
+        # Bind window resize event to function
+        self.approve_promotion_window.bind("<Configure>", self.on_window_resize_approve_promotion)
+
+    def on_window_resize_approve_promotion(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_approve_promotion()
+
+    def resize_canvas_and_image_approve_promotion(self):
+        # Get the approve_promotion window size
+        window_width = self.approve_promotion_window.winfo_width()
+        window_height = self.approve_promotion_window.winfo_height()
+
+        # Resize the canvas to the current window size
         self.approve_promotion_canvas.config(width=window_width, height=window_height)
 
-        #Resize the image if needed
+        # Resize the image if needed
         resized_image = self.original_approve_promotion_image.resize((window_width, window_height))
         self.approve_promotion_image = ImageTk.PhotoImage(resized_image)
 
-        #Update the image on the canvas
+        # Update the image on the canvas
         self.approve_promotion_canvas.delete("all")
         self.approve_promotion_canvas.create_image(0, 0, image=self.approve_promotion_image, anchor="nw")
-        
-    def on_window_resize_approve_promotion(self, event):
-        #Handle window resize event
-        self.resize_canvas_and_image_approve_promotion()
-        
+
     def profile(self,username,role):
         # Create a new Toplevel window for the profile
         profile_dialog = tk.Toplevel()

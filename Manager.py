@@ -1152,7 +1152,7 @@ class Manager_class:
                 "new_role": new_role,
                 "request_by": username_mngr,
             })
-            messagebox.showinfo("Promote Employee", "Employee Promoted")
+            messagebox.showinfo("Promote Employee", "Employee Promotion Request Sent")
         self.promote_employee_window.destroy()
         self.promotion_request_window.focus_force()
         
