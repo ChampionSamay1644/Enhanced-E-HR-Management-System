@@ -14,3 +14,4 @@ Employee-
 
 Bug fixes-
     Error in apply for bonus where wrong input submits the request
+    Promote employee placeholder text 
