@@ -11,3 +11,6 @@ Manager-
 Employee-
     Fix survey 
     Update based on db update(resignation approved,review approved etc)
+
+Bug fixes-
+    Error in apply for bonus where wrong input submits the request
