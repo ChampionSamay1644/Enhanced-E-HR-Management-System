@@ -1080,17 +1080,17 @@ class Manager_class:
         self.current_role_label.pack(pady=20)
         self.current_role_label.place(relx=0.5, rely=0.25, anchor="center")
 
-        # Create a checkbutton to select if the employee should be promoted to manager
-        self.promote_to_manager = tk.IntVar()
-        self.promote_to_manager_checkbutton = tk.Checkbutton(
-            self.promote_employee_logo_canvas,
-            text="Promote to Manager",
-            variable=self.promote_to_manager,
-            font=("Helvetica", 12, "bold"),
-            bg="white",
-        )
-        self.promote_to_manager_checkbutton.pack(pady=20)
-        self.promote_to_manager_checkbutton.place(relx=0.5, rely=0.35, anchor="center")
+        # # Create a checkbutton to select if the employee should be promoted to manager
+        # self.promote_to_manager = tk.IntVar()
+        # self.promote_to_manager_checkbutton = tk.Checkbutton(
+        #     self.promote_employee_logo_canvas,
+        #     text="Promote to Manager",
+        #     variable=self.promote_to_manager,
+        #     font=("Helvetica", 12, "bold"),
+        #     bg="white",
+        # )
+        # self.promote_to_manager_checkbutton.pack(pady=20)
+        # self.promote_to_manager_checkbutton.place(relx=0.5, rely=0.35, anchor="center")
 
         # Create a new entry for new salary and designation
         self.new_salary_entry = tk.Entry(
@@ -1135,10 +1135,6 @@ class Manager_class:
         new_salary = self.new_salary_entry.get()
         new_designation = self.new_designation_entry.get()
         comment = self.comment_box.get("1.0", "end-1c")
-        if self.promote_to_manager.get() == 1:
-            new_role = "Manager"
-        else:
-            new_role = "Employee"
         username=self.treeview_promotion_request.item(self.treeview_promotion_request.selection())["values"][0]
         #Ask for confirmation before promoting the employee
         if messagebox.askokcancel("Promote Employee", "Are you sure you want to promote the employee?"):
@@ -1149,7 +1145,6 @@ class Manager_class:
                 "new_salary": new_salary,
                 "new_designation": new_designation,
                 "comment": comment,
-                "new_role": new_role,
                 "request_by": username_mngr,
             })
             messagebox.showinfo("Promote Employee", "Employee Promotion Request Sent")
