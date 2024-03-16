@@ -1679,7 +1679,7 @@ class HR_class:
         self.role_entry_promotion = ttk.Combobox(
             self.approve_promotion_canvas,
             textvariable=self.role_selected_promotion,
-            values=("None","Employee", "Manager"),
+            values=("None","Approve Promotion","Promote to Manager", "Promote Manager"),
             font=("Helvetica", 12),
         )
         
@@ -1736,12 +1736,15 @@ class HR_class:
         selected_items = self.treeview_promotion.selection()
         selected_role = self.role_selected_promotion.get()
         if selected_items:
-            if selected_role == "Manager":
+            if selected_role == "Promote Manager":
                 self.approve_promotion_button["state"] = "normal"
                 self.deny_promotion_button["state"] = "disabled"
-            if selected_role == "Employee":
+            elif selected_role == "Approve Promotion":
                 self.approve_promotion_button["state"] = "normal"
                 self.deny_promotion_button["state"] = "normal"
+            elif selected_role == "Promote to Manager":
+                self.approve_promotion_button["state"] = "normal"
+                self.deny_promotion_button["state"] = "disabled"
         else:
             #Disable buttons if no row is selected
             self.approve_promotion_button["state"] = "disabled"
@@ -1754,7 +1757,7 @@ class HR_class:
         
         if role=="None":
             return
-        elif role == "Employee":
+        elif role == "Approve Promotion":
             #Get only the keys of the employees that have applied for promotion
             employees = list(( db.reference("/employee").get()).keys())
             employees_with_promotion = []
@@ -1771,7 +1774,7 @@ class HR_class:
                 comment = db.reference("/employee").child(employee).child("promotion_request").child("comment").get()
                 request_by = db.reference("/employee").child(employee).child("promotion_request").child("request_by").get()
                 self.treeview_promotion.insert("", "end", values=(employee, new_role,new_designation,new_salary,comment,request_by), tags=("selectable",))
-        else:
+        elif role == "Promote Manager":
             #List out all the managers present in the database
             managers = list(( db.reference("/manager").get()).keys())
             for manager in managers:
@@ -1779,33 +1782,57 @@ class HR_class:
                 salary = db.reference("/manager").child(manager).child("salary").get()
                 designation = db.reference("/manager").child(manager).child("designation").get()
                 self.treeview_promotion.insert("", "end", values=(manager, "Manager",designation,salary), tags=("selectable",))
+        elif role == "Promote to Manager":
+            #List out all the employees present in the database
+            employees = list(( db.reference("/employee").get()).keys())
+            for employee in employees:
+                #Get the salary,designation of the employee
+                salary = db.reference("/employee").child(employee).child("salary").get()
+                designation = db.reference("/employee").child(employee).child("designation").get()
+                self.treeview_promotion.insert("", "end", values=(employee, "Employee",designation,salary), tags=("selectable",))
             
     def approve_promotion_btn(self):
         #Get the selected employee
         selected_employee = self.treeview_promotion.item(self.treeview_promotion.selection())["values"][0]
-        selected_role = db.reference("/employee").child(selected_employee).child("role").get()
+        selected_role = self.role_selected_promotion.get()
+        print(selected_role)
         if selected_role == "None":
             messagebox.showinfo("Approve Promotion", "Please select a role.")
-        elif selected_role == "employee":
+        elif selected_role == "Approve Promotion":
             #Ask for confirmation
             if messagebox.askyesno("Approve Promotion", f"Are you sure you want to approve the promotion of {selected_employee}?"):
-                #Approve the promotion in the database by deleting the employee details from employee and adding to manager
-                db.reference("/manager").child(selected_employee).set(db.reference("/employee").child(selected_employee).get())
-                db.reference("/employee").child(selected_employee).delete()
-                new_role = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_role").get()
-                new_designation = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_designation").get()
-                new_salary = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_salary").get()
-                db.reference("/manager").child(selected_employee).child("role").set(new_role)
-                db.reference("/manager").child(selected_employee).child("designation").set(new_designation)
-                db.reference("/manager").child(selected_employee).child("salary").set(new_salary)
-                db.reference("/manager").child(selected_employee).child("promotion_request").delete()
-                db.reference("/manager").child(selected_employee).child("promotion_request").child("Request").set("Approved")
+                #Update the details in the database
+                db.reference("/employee").child(selected_employee).child("promotion_request").child("Request").set("Approved")
+                new_designation = db.reference("/employee").child(selected_employee).child("promotion_request").child("new_designation").get()
+                new_salary = db.reference("/employee").child(selected_employee).child("promotion_request").child("new_salary").get()
+                db.reference("/employee").child(selected_employee).child("designation").set(new_designation)
+                db.reference("/employee").child(selected_employee).child("salary").set(new_salary)
                 messagebox.showinfo("Approve Promotion", "Promotion approved successfully.")
                 #Refresh the list
-                self.populate_employee_list_promotion()
+                self.populate_employee_list_promotion(selected_role)
                 self.approve_promotion_button["state"] = "disabled"
-        else:
+                self.deny_promotion_button["state"] = "disabled"
+            # #Ask for confirmation
+            # if messagebox.askyesno("Approve Promotion", f"Are you sure you want to approve the promotion of {selected_employee}?"):
+            #     #Approve the promotion in the database by deleting the employee details from employee and adding to manager
+            #     db.reference("/manager").child(selected_employee).set(db.reference("/employee").child(selected_employee).get())
+            #     db.reference("/employee").child(selected_employee).delete()
+            #     new_role = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_role").get()
+            #     new_designation = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_designation").get()
+            #     new_salary = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_salary").get()
+            #     db.reference("/manager").child(selected_employee).child("role").set(new_role)
+            #     db.reference("/manager").child(selected_employee).child("designation").set(new_designation)
+            #     db.reference("/manager").child(selected_employee).child("salary").set(new_salary)
+            #     db.reference("/manager").child(selected_employee).child("promotion_request").delete()
+            #     db.reference("/manager").child(selected_employee).child("promotion_request").child("Request").set("Approved")
+            #     messagebox.showinfo("Approve Promotion", "Promotion approved successfully.")
+            #     #Refresh the list
+            #     self.populate_employee_list_promotion()
+            #     self.approve_promotion_button["state"] = "disabled"
+        elif selected_role == "Promote Manager":
             self.promote_manager(selected_employee) 
+        elif selected_role == "Promote to Manager":
+            self.promote_to_manager(selected_employee)
         #Focus on window
         self.approve_promotion_window.focus_force()
         
@@ -1996,6 +2023,154 @@ class HR_class:
     def on_window_resize_promote_manager(self, event):
         self.resize_canvas_and_image_promote_manager()
         
+    def promote_to_manager(self,selected_employee):
+        self.promote_to_manager_window = tk.Toplevel()
+        self.promote_to_manager_window.geometry("400x300")
+        self.promote_to_manager_window.title("Promote to Manager")
+        
+        #Create a canvas that resizes with the window
+        self.promote_to_manager_canvas = tk.Canvas(self.promote_to_manager_window, bg="white", highlightthickness=0)
+        self.promote_to_manager_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        #Load the image as the background on the canvas
+        self.load_image_promote_to_manager()
+        
+        #Bind window resize event to function
+        self.promote_to_manager_window.bind("<Configure>", lambda event: self.on_window_resize_promote_to_manager(event))
+        
+        #Center the window with function center_window_test
+        self.center_window_all(self.promote_to_manager_window)
+        
+        #focus on window
+        self.promote_to_manager_window.focus_force()
+        
+        #Create a label for employee name
+        employee_name_label = tk.Label(
+            self.promote_to_manager_canvas,
+            text=f"Employee: {selected_employee}",
+            font=("Helvetica", 12),
+            bg="white",
+        )
+        employee_name_label.place(relx=0.5, rely=0.1, anchor="center")
+        
+        #Create a label for current role
+        current_role_label = tk.Label(
+            self.promote_to_manager_canvas,
+            text="Current Role: Employee",
+            font=("Helvetica", 12),
+            bg="white",
+        )
+        current_role_label.place(relx=0.5, rely=0.2, anchor="center")
+        
+        #Create an entry for new salary and designation
+        new_salary_label = tk.Label(
+            self.promote_to_manager_canvas,
+            text="New Salary:",
+            font=("Helvetica", 12),
+            bg="white",
+        )
+        new_salary_label.place(relx=0.3, rely=0.3, anchor="center")
+        
+        self.new_salary_entry = tk.Entry(self.promote_to_manager_canvas, font=("Helvetica", 12), width=20)
+        self.new_salary_entry.place(relx=0.7, rely=0.3, anchor="center")
+        
+        #Create a designation entry
+        self.new_designation_label = tk.Label(
+            self.promote_to_manager_canvas,
+            text="New Designation:",
+            font=("Helvetica", 12),
+            bg="white",
+        )
+        self.new_designation_label.place(relx=0.3, rely=0.35, anchor="center")
+        
+        self.new_designation_entry = tk.Entry(self.promote_to_manager_canvas, font=("Helvetica", 12), width=20)
+        self.new_designation_entry.place(relx=0.7, rely=0.35, anchor="center")
+        
+        #Create a comment entry
+        comment_label = tk.Label(
+            self.promote_to_manager_canvas,
+            text="Comment:",
+            font=("Helvetica", 12),
+            bg="white",
+        )
+        comment_label.place(relx=0.3, rely=0.4, anchor="center")
+        
+        self.comment_entry = tk.Entry(self.promote_to_manager_canvas, font=("Helvetica", 12), width=20)
+        self.comment_entry.place(relx=0.7, rely=0.4, anchor="center")
+        
+        #Create a button for promote
+        promote_button = tk.Button(
+            self.promote_to_manager_canvas,
+            text="Promote",
+            command=lambda:self.promote_to_manager_btn(selected_employee),
+            font=("Helvetica", 14),
+            width=20,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        promote_button.place(relx=0.5, rely=0.9, anchor="s")
+        
+        #Bind the escape key to the exit function
+        self.promote_to_manager_window.bind("<Escape>", lambda event: self.promote_to_manager_window.destroy())
+        
+        #Run the main loop for the promote_to_manager_window
+        self.promote_to_manager_window.mainloop()
+        
+    def promote_to_manager_btn(self,selected_employee):
+        #Get the new salary and comment
+        new_designation = self.new_designation_entry.get()
+        new_salary = self.new_salary_entry.get()
+        comment = self.comment_entry.get()
+        #Ask for confirmation
+        if messagebox.askyesno("Promote to Manager", f"Are you sure you want to promote {selected_employee} to Manager?"):
+            #Approve the promotion in the database by deleting the employee details from employee and adding to manager
+            new_role = "manager"
+            new_designation = self.new_designation_entry.get()
+            new_salary = self.new_salary_entry.get()
+            db.reference("/manager").child(selected_employee).set(db.reference("/employee").child(selected_employee).get())
+            db.reference("/employee").child(selected_employee).delete()
+            db.reference("/manager").child(selected_employee).child("role").set(new_role)
+            db.reference("/manager").child(selected_employee).child("designation").set(new_designation)
+            db.reference("/manager").child(selected_employee).child("salary").set(new_salary)
+            db.reference("/manager").child(selected_employee).child("comment_for_promotion").set(comment)
+            messagebox.showinfo("Promote to Manager", "Employee promoted to Manager successfully.")
+            #Refresh the list
+            self.populate_employee_list_promotion(self.role_selected_promotion.get())
+            self.approve_promotion_button["state"] = "disabled"
+        self.promote_to_manager_window.destroy()
+        #Focus on promotion window
+        self.approve_promotion_window.focus_force()
+        
+    def load_image_promote_to_manager(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_promote_to_manager_image = Image.open(img_path)
+        self.resize_canvas_and_image_promote_to_manager()
+        
+    def resize_canvas_and_image_promote_to_manager(self):
+        # Get the promote_to_manager window size
+        window_width = self.promote_to_manager_canvas.winfo_width()
+        window_height = self.promote_to_manager_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.promote_to_manager_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_promote_to_manager_image.resize((window_width, window_height))
+        self.promote_to_manager_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.promote_to_manager_canvas.delete("all")
+        self.promote_to_manager_canvas.create_image(0, 0, image=self.promote_to_manager_image, anchor="nw")
+        
+    def on_window_resize_promote_to_manager(self, event):
+        self.resize_canvas_and_image_promote_to_manager()
+    
     def profile(self,username,role):
         # Create a new Toplevel window for the profile
         profile_dialog = tk.Toplevel()
