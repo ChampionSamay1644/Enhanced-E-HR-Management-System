@@ -1,4 +1,4 @@
-import datetime
+import datetime,timedelta
 import tkinter as tk
 from tkcalendar import Calendar, DateEntry
 from tkinter import END, IntVar, Listbox, Radiobutton, messagebox
@@ -709,7 +709,6 @@ class HR_class:
                         "vacation_days": 0,
                         "bonus": 0,
                         "hours_attended": 0,
-                        "apply_for_resignation": "",
                         "apply_for_vacation": 0,
                         "progress_on_task": 0,
                         "survey": db.reference("survey_uni").child("available").get(),
@@ -1301,63 +1300,66 @@ class HR_class:
 
     def approve_resignation(self):
         #Create a window to approve the resignation of the employee
-        approve_resignation_window = tk.Toplevel()
-        approve_resignation_window.geometry("400x300")
-        approve_resignation_window.title("Approve Resignation")
+        self.approve_resignation_window = tk.Toplevel()
+        self.approve_resignation_window.geometry("400x300")
+        self.approve_resignation_window.title("Approve Resignation")
         
         #Create a canvas that resizes with the window
-        self.approve_resignation_canvas = tk.Canvas(approve_resignation_window, bg="white", highlightthickness=0)
+        self.approve_resignation_canvas = tk.Canvas(self.approve_resignation_window, bg="white", highlightthickness=0)
         self.approve_resignation_canvas.pack(fill=tk.BOTH, expand=True)
 
         #Load the image as the background on the canvas
         self.load_image_approve_resignation()
         
         #Bind window resize event to function
-        approve_resignation_window.bind("<Configure>", lambda event: self.on_window_resize_approve_resignation(event))
+        self.approve_resignation_window.bind("<Configure>", lambda event: self.on_window_resize_approve_resignation(event))
         
         #Center the window with function center_window_test
-        self.center_window_all(approve_resignation_window)
+        self.center_window_all(self.approve_resignation_window)
         
         #focus on window
-        approve_resignation_window.focus_force()
-        
-        self.treeview_resignation = None
+        self.approve_resignation_window.focus_force()
         
         # create a scrollable frame
         self.scrollable_frame_resignation = tk.Frame(self.approve_resignation_canvas, bg="white")
         self.scrollable_frame_resignation.pack(fill=tk.BOTH, expand=True)
-        self.scrollable_frame_resignation.place(relx=0.5, rely=0.5, anchor="center")
+        self.scrollable_frame_resignation.place(width=600, height=400,relx=0.5, rely=0.5, anchor="center")
         
         # create a treeview to display the employees
-        if self.treeview_resignation is None:
-            self.treeview_resignation = ttk.Treeview(
-                self.scrollable_frame_resignation, columns=("Employee",), show="headings", selectmode="browse"
-            )
-            self.treeview_resignation.heading("Employee", text="Employee")
-            #Create columns for name,reason,if role is employee then add a column for hours attended and a button for approve
-            self.treeview_resignation["columns"] = ("Employee", "Reason")
-            self.treeview_resignation.column("Employee", width=100, anchor="center")
-            self.treeview_resignation.column("Reason", width=100, anchor="center")
-            self.treeview_resignation.heading("Employee", text="Employee")
-            self.treeview_resignation.heading("Reason", text="Reason")
-            self.treeview_resignation.tag_configure("selectable", foreground="blue", font=("Helvetica", 12, "underline"))
-            # self.treeview_resignation.bind("<Double-1>", lambda event: self.open_employee_details_window(self.treeview_resignation.item(self.treeview_resignation.selection())["values"][0]))
-            
-            # Add a vertical scrollbar to the Treeview
-            scrollbar_resignation_y = ttk.Scrollbar(self.scrollable_frame_resignation, orient="vertical", command=self.treeview_resignation.yview)
-            scrollbar_resignation_y.pack(side="right", fill="y")
-            self.treeview_resignation.configure(yscrollcommand=scrollbar_resignation_y.set)
-            
-            # Add a horizontal scrollbar to the Treeview
-            scrollbar_resignation_x = ttk.Scrollbar(self.scrollable_frame_resignation, orient="horizontal", command=self.treeview_resignation.xview)
-            scrollbar_resignation_x.pack(side="bottom", fill="x")
-            self.treeview_resignation.configure(xscrollcommand=scrollbar_resignation_x.set)
-
-            # Pack the Treeview to the scrollable frame
-            self.treeview_resignation.pack(fill="both", expand=True)
-            
-        # bind the treeview select event to function
-        self.treeview_resignation.bind("<<TreeviewSelect>>", self.on_treeview_select_resignation)
+        #if self.treeview_resignation is None:
+        self.treeview_resignation = ttk.Treeview(
+            self.scrollable_frame_resignation, columns=("Employee",), show="headings", selectmode="browse"
+        )
+        self.treeview_resignation.heading("Employee", text="Employee")
+        #Create columns for name,reason,if role is employee then add a column for hours attended and a button for approve
+        self.treeview_resignation["columns"] = ("Employee","Role", "Reason")
+        self.treeview_resignation.column("Employee", width=200, anchor="center")
+        self.treeview_resignation.column("Role", width=100, anchor="center")
+        self.treeview_resignation.column("Reason", width=600, anchor="center")
+        self.treeview_resignation.heading("Employee", text="Employee")
+        self.treeview_resignation.heading("Role", text="Role")
+        self.treeview_resignation.heading("Reason", text="Reason")
+        #Place the reason heading to the left
+        self.treeview_resignation.column("Reason", anchor="w")
+        self.treeview_resignation.tag_configure("selectable", foreground="blue", font=("Helvetica", 12, "underline"))
+        self.treeview_resignation.tag_configure("clickable", foreground="blue", font=("Helvetica", 12, "underline"))
+        # self.treeview_resignation.bind("<Double-1>", lambda event: self.open_employee_details_window(self.treeview_resignation.item(self.treeview_resignation.selection())["values"][0]))
+        
+        # Add a vertical scrollbar to the Treeview
+        scrollbar_resignation_y = ttk.Scrollbar(self.scrollable_frame_resignation, orient="vertical", command=self.treeview_resignation.yview)
+        scrollbar_resignation_y.pack(side="right", fill="y")
+        self.treeview_resignation.configure(yscrollcommand=scrollbar_resignation_y.set)
+        
+        # Add a horizontal scrollbar to the Treeview
+        scrollbar_resignation_x = ttk.Scrollbar(self.scrollable_frame_resignation, orient="horizontal", command=self.treeview_resignation.xview)
+        scrollbar_resignation_x.pack(side="bottom", fill="x")
+        self.treeview_resignation.configure(xscrollcommand=scrollbar_resignation_x.set)
+        
+        # Pack the Treeview to the scrollable frame
+        self.treeview_resignation.pack(fill="both", expand=True)
+        
+        #Bind the treeview select event to function
+        self.treeview_resignation.bind("<<TreeviewSelect>>",self.on_treeview_select_resignation)   
         
         #Populate the list with who applied for resignation, execute only once
         self.populate_employee_list_resignation()
@@ -1383,10 +1385,10 @@ class HR_class:
         self.scrollable_frame_resignation.grid_columnconfigure(0, weight=1)
                 
         #Bind the escape key to the exit function
-        approve_resignation_window.bind("<Escape>", lambda event: approve_resignation_window.destroy())
+        self.approve_resignation_window.bind("<Escape>", lambda event: self.approve_resignation_window.destroy())
         
-        #Run the main loop for the approve_resignation_window
-        approve_resignation_window.mainloop()
+        #Run the main loop for the self.approve_resignation_window
+        self.approve_resignation_window.mainloop()
         
     def on_treeview_select_resignation(self, event):
         selected_items = self.treeview_resignation.selection()
@@ -1402,33 +1404,72 @@ class HR_class:
         if self.treeview_resignation is not None:
             self.treeview_resignation.delete(*self.treeview_resignation.get_children())
         
-        #Get only the keys of the employees,managers that have applied for resignation
-        employees = list(( db.reference("/employee").get()).keys())
-        managers = list(( db.reference("/manager").get()).keys())
+        # Get the keys of employees and managers who have applied for resignation
+        employees = list(db.reference("/employee").get().keys())
+        managers = list(db.reference("/manager").get().keys())
         employees_with_resignation = []
         managers_with_resignation = []
+
+        # Check if employees or managers have applied for resignation
         for employee in employees:
-            #check if apply_fpr_resignation value exists and is not empty
-            if db.reference("/employee").child(employee).child("apply_for_resignation").get() != "":
+            resignation_status = db.reference("/employee").child(employee).child("resignation_request").child("resignation_status").get()
+            if resignation_status == "Approved by Manager":
                 employees_with_resignation.append(employee)
         for manager in managers:
-            if db.reference("/manager").child(manager).child("apply_for_resignation").get() != "":
+            resignation_request = db.reference("/manager").child(manager).child("resignation_request").get()
+            if resignation_request is not None:
                 managers_with_resignation.append(manager)
-        #add the employees and managers to the list
-        employees = employees_with_resignation + managers_with_resignation
+        
+        # Combine employees and managers who have applied for resignation
+        people_with_resignation = employees_with_resignation + managers_with_resignation
 
-        # Populate the Treeview with employee names
-        for person in employees:
-            # Determine if the person is an employee or a manager
+        # Populate the Treeview with employee names, reasons, and roles
+        for person in people_with_resignation:
+            reason = ""
+            role = ""
             if person in employees_with_resignation:
-                reason = db.reference("/employee").child(person).child("reason").get()
-            else:
-                reason = db.reference("/manager").child(person).child("reason").get()
-            #Add the employee name,reason with tag selectable
-            self.treeview_resignation.insert("", "end", values=(person, reason), tags=("clickable",))
+                reason = db.reference("/employee").child(person).child("resignation_request").child("resignation_reason").get()
+                role = "Employee"
+            elif person in managers_with_resignation:
+                reason = db.reference("/manager").child(person).child("resignation_request").child("resignation_reason").get()
+                role = "Manager"
+
+            # Add the employee name, reason, and role with tag selectable
+            self.treeview_resignation.insert("", "end", values=(person, role, reason), tags=("clickable",))
+
             
     def approve_resignation_btn(self):
-        messagebox.showinfo("HR Window", "Approve Resignation Button Pressed")
+        #Get the selected employee
+        selected_employee = self.treeview_resignation.item(self.treeview_resignation.selection())["values"][0]
+        role= self.treeview_resignation.item(self.treeview_resignation.selection())["values"][1]
+        #Ask for confirmation
+        if messagebox.askyesno("Approve Resignation", f"Are you sure you want to approve the resignation of {selected_employee}?"):
+            #Approve the resignation in the database
+            if role == "Employee" and db.reference("/employee").child(selected_employee).child("resignation_request").child("resignation_status").get() =="Approved by Manager":
+                print("yes")
+                db.reference("/employee").child(selected_employee).child("resignation_request").child("resignation_status").set("Approved by HR")
+                #Set the resigning date to 4 weeks from the current date
+                current_datetime = datetime.datetime.now()
+                new_date = current_datetime + datetime.timedelta(weeks=4)
+                current_datetime = new_date.strftime('%Y-%m-%d')
+                db.reference("/employee").child(selected_employee).child("resignation_request").child("resignation_date").set(current_datetime)
+                messagebox.showinfo("Approve Resignation", "Resignation approved successfully.")
+                #Refresh the list
+                self.populate_employee_list_resignation()
+                self.approve_resignation_button["state"] = "disabled"
+            if role=="Manager" and db.reference("/manager").child(selected_employee).child("resignation_request").get() != None:
+                db.reference("/manager").child(selected_employee).child("resignation_request").child("resignation_status").set("Approved by HR")
+                #Set the resigning date to 4 weeks from the current date
+                current_datetime = datetime.datetime.now()
+                new_date = current_datetime + datetime.timedelta(weeks=4)
+                current_datetime = new_date.strftime('%Y-%m-%d')
+                db.reference("/manager").child(selected_employee).child("resignation_date").set(current_datetime)
+                messagebox.showinfo("Approve Resignation", "Resignation approved successfully.")
+                #Refresh the list
+                self.populate_employee_list_resignation()
+                self.approve_resignation_button["state"] = "disabled"
+        #focus on window
+        self.approve_resignation_window.focus_force()
         
     def deny_resignation_btn(self):
         messagebox.showinfo("HR Window", "Deny Resignation Button Pressed")
@@ -1985,6 +2026,12 @@ class HR_class:
         new_designation = self.new_designation_entry.get()
         new_salary = self.new_salary_entry.get()
         comment = self.comment_entry.get()
+        if new_designation == "" or new_salary == "" or comment == "":
+            messagebox.showinfo("Promote Manager", "Please fill in all the details.")
+            return
+        if not new_salary.isdigit():
+            messagebox.showinfo("Promote Manager", "Please enter a valid number for salary.")
+            return
         #Ask for confirmation
         if messagebox.askyesno("Promote Manager", f"Are you sure you want to promote {selected_employee}?"):
             #Promote the manager in the database
@@ -1994,7 +2041,7 @@ class HR_class:
             messagebox.showinfo("Promote Manager", "Manager promoted successfully.")
             self.promote_manager_window.destroy()
         #Focus on window
-        self.promote_manager_window.focus_force()
+        self.approve_promotion.focus_force()
         
     def load_image_promote_manager(self):
         # Construct the full path to the image file based on role and username
@@ -2124,6 +2171,12 @@ class HR_class:
         new_designation = self.new_designation_entry.get()
         new_salary = self.new_salary_entry.get()
         comment = self.comment_entry.get()
+        if new_designation == "" or new_salary == "" or comment == "":
+            messagebox.showinfo("Promote to Manager", "Please fill in all the details.")
+            return
+        if not new_salary.isdigit():
+            messagebox.showinfo("Promote to Manager", "Please enter a valid number for salary.")
+            return
         #Ask for confirmation
         if messagebox.askyesno("Promote to Manager", f"Are you sure you want to promote {selected_employee} to Manager?"):
             #Approve the promotion in the database by deleting the employee details from employee and adding to manager

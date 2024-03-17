@@ -958,7 +958,6 @@ class Admin_class():
                         "vacation_days": 0,
                         "bonus": 0,
                         "hours_attended": 0,
-                        "apply_for_resignation": "",
                         "apply_for_vacation": 0,
                         "progress_on_task": 0,
                         "survey": db.reference("survey_uni").child("available").get(),

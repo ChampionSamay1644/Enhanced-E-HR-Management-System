@@ -1,5 +1,4 @@
 HR- 
-    Approve promotion
     Approve performance review
     Fix approve resignation
 
@@ -13,5 +12,4 @@ Employee-
     Update based on db update(resignation approved,review approved etc)
 
 Bug fixes-
-    Error in apply for bonus where wrong input submits the request
-    Promote employee placeholder text 
+    

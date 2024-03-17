@@ -349,7 +349,7 @@ class Employee_class:
             messagebox.showinfo("Employee Window", "Please enter a valid number of days.")
         elif not reason:
             messagebox.showinfo("Employee Window", "Please enter a reason.")
-        elif number_of_days == "0":
+        elif number_of_days == "0" :
             messagebox.showinfo("Employee Window", "Please enter a number of days.")
         elif reason == "Vacation reason":
             messagebox.showinfo("Employee Window", "Please enter a reason.")
@@ -484,7 +484,7 @@ class Employee_class:
             messagebox.showinfo("Employee Window", "Please enter a reason.")
         elif date == "Date of resignation":
             messagebox.showinfo("Employee Window", "Please enter a date.")
-        elif db.reference("/employee").child(username).child("apply_for_resignation").get() != 0:
+        elif db.reference("/employee").child(username).child("resignation_request").child("resignation_status").get() == "pending":
             messagebox.showinfo("Employee Window", "You have already applied for resignation.")
         else:
             # Convert date string to datetime object
@@ -499,8 +499,9 @@ class Employee_class:
                 messagebox.showinfo("Employee Window", "Please enter a date at least 2 weeks from now.")
             else:
                 # Add the resignation request to the database
-                db.reference("/employee").child(username).child("apply_for_resignation").set(date_str_formatted)
-                db.reference("/employee").child(username).child("resignation_reason").set(reason)
+                db.reference("/employee").child(username).child("resignation_request").child("apply_for_resignation").set(date_str_formatted)
+                db.reference("/employee").child(username).child("resignation_request").child("resignation_reason").set(reason)
+                db.reference("/employee").child(username).child("resignation_request").child("resignation_status").set("pending")
                 messagebox.showinfo("Employee Window", "Resignation request submitted successfully.")
 
         apply_for_resignation_window.destroy()
@@ -760,11 +761,9 @@ class Employee_class:
         else:
             self.next_button.config(state="normal", command=lambda: self.next_question(survey_questions_keys, survey_questions, username))
 
-
     def previous_question_button(self, survey_questions_keys, survey_questions, username):
         self.previous_question(survey_questions_keys, survey_questions, username)
-
-                
+    
     def next_question(self,survey_questions_keys, survey_questions,username):
         # Increment the current question index
         self.current_question_index += 1     
@@ -795,7 +794,6 @@ class Employee_class:
         else:
             # Otherwise, clear the selected radio button by setting the variable to None
             self.radio_var.set(None)
-
 
     def on_window_resize_submit_survey(self, event):
         # Handle window resize event
@@ -832,8 +830,6 @@ class Employee_class:
     def store_selected_value(self, value):
         #store the selected value in relation to the question index
         self.selected_values[self.current_question_index] = value
-
-    
 
     def submit_complaint(self):
         # Create a new window for the submit_complaint top level

@@ -1099,6 +1099,9 @@ class Manager_class:
         self.new_salary_entry.pack(pady=20)
         self.new_salary_entry.place(relx=0.5, rely=0.45, anchor="center")
         self.new_salary_entry.insert(0, "New Salary")
+        
+        #Delete the text in the entry widget when clicked
+        self.new_salary_entry.bind("<Button-1>", lambda event: self.new_salary_entry.delete(0, tk.END))
 
         # Create a new entry for new designation
         self.new_designation_entry = tk.Entry(
@@ -1107,6 +1110,9 @@ class Manager_class:
         self.new_designation_entry.pack(pady=20)
         self.new_designation_entry.place(relx=0.5, rely=0.55, anchor="center")
         self.new_designation_entry.insert(0, "New Designation")
+        
+        #Delete the text in the entry widget when clicked
+        self.new_designation_entry.bind("<Button-1>", lambda event: self.new_designation_entry.delete(0, tk.END))
 
         # Create a comment box for the manager to add reason for promotion
         self.comment_box = tk.Text(
@@ -1114,7 +1120,10 @@ class Manager_class:
         )
         self.comment_box.pack(pady=20)
         self.comment_box.place(relx=0.5, rely=0.7, anchor="center", relwidth=0.8, relheight=0.2)
-        self.comment_box.insert(tk.END, "Reason for Promotion")
+        self.comment_box.insert(tk.END, "Reason for Promotion") 
+        
+        #Delete the text in the entry widget when clicked
+        self.comment_box.bind("<Button-1>", lambda event: self.comment_box.delete("1.0", tk.END))
 
         # Create a new button for promoting the employee
         promote_button = tk.Button(
@@ -1183,8 +1192,145 @@ class Manager_class:
         # Handle window resize event
         self.resize_canvas_and_image_promote_employee()
         
-    def approve_resignatin(self):
-        messagebox.showinfo("manager Window", "Approve Resignation Button Pressed")
+    def approve_resignation(self):
+        # create a new window to show the resignation request
+        self.approve_resignation_window = tk.Toplevel()
+        self.approve_resignation_window.geometry("800x600")  # Set the window size
+        self.approve_resignation_window.title("Approve Resignation")
+        
+        #create a canvas that resizes with the window
+        self.approve_resignation_logo_canvas = tk.Canvas(self.approve_resignation_window, bg="white", highlightthickness=0)
+        self.approve_resignation_logo_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # import the image as the background on the canvas
+        self.load_image_approve_resignation()
+        
+        # bind window resize event to function
+        self.approve_resignation_window.bind("<Configure>", lambda event: self.on_window_resize_approve_resignation(event))
+        
+        # bind the escape key to the exit function
+        self.approve_resignation_window.bind("<Escape>", lambda event: self.approve_resignation_window.destroy())
+        
+        # focus on window
+        self.approve_resignation_window.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(self.approve_resignation_window)
+        
+        # Create a scrollable frame to hold the treeview
+        scrollable_frame = tk.Frame(self.approve_resignation_window, bg="white")
+        scrollable_frame.pack(fill="both", expand=True)
+        scrollable_frame.place(relx=0.5, rely=0.5, anchor="center", width=600, height=400)
+        
+        # Create a new treeview to show the list of employees
+        self.treeview_approve_resignation = ttk.Treeview(
+            scrollable_frame, columns=("Employee","Reason"), show="headings", selectmode="browse"
+        )
+        self.treeview_approve_resignation.heading("Employee", text="Employee")
+        self.treeview_approve_resignation.heading("Reason", text="Reason")
+        self.treeview_approve_resignation.column("Employee", width=200, anchor="center")
+        self.treeview_approve_resignation.column("Reason", width=600, anchor="center")
+        self.treeview_approve_resignation.tag_configure("clickable", foreground="blue", font=("Helvetica", 12, "underline"))
+        #self.treeview_approve_resignation.bind("<Double-1>", lambda event: self.open_employee_details_window(self.treeview_approve_resignation.item(self.treeview_approve_resignation.selection())["values"][0]))
+        
+        #bind the treeview to a function that enables the approve button
+        self.treeview_approve_resignation.bind("<<TreeviewSelect>>", lambda event: self.enable_approve_resignation_button())
+        
+        # Add a vertical scrollbar to the Treeview
+        scrollbar = ttk.Scrollbar(scrollable_frame, orient="vertical", command=self.treeview_approve_resignation.yview)
+        scrollbar.pack(side="right", fill="y")
+        self.treeview_approve_resignation.configure(yscrollcommand=scrollbar.set)
+        
+        # Add a horizontal scrollbar to the Treeview
+        scrollbar = ttk.Scrollbar(scrollable_frame, orient="horizontal", command=self.treeview_approve_resignation.xview)
+        scrollbar.pack(side="bottom", fill="x")
+        self.treeview_approve_resignation.configure(xscrollcommand=scrollbar.set)
+        
+        # Pack the Treeview to the scrollable frame
+        self.treeview_approve_resignation.pack(fill="both", expand=True)
+        
+        # Configure grid row and column weights
+        scrollable_frame.grid_rowconfigure(0, weight=1)
+        scrollable_frame.grid_columnconfigure(0, weight=1)
+        
+        # Now you can safely use self.treeview
+        self.treeview_approve_resignation.delete(*self.treeview_approve_resignation.get_children())
+        
+        # Populate the treeview with employee data
+        self.populate_employee_resignation_list()
+        
+        # Create a new button for approving the resignation
+        self.approve_button = tk.Button(
+            self.approve_resignation_window,
+            text="Approve",
+            command=lambda:self.approve_resignation_request(),
+            font=("Helvetica", 14),
+            state="disabled",
+        )
+        self.approve_button.pack(
+            pady=20
+        )
+        self.approve_button.place(relx=0.5, rely=0.9, anchor="center", width=100, height=30)
+        
+        # Run the main loop for the approve_resignation_window
+        self.approve_resignation_window.mainloop()
+    
+    def enable_approve_resignation_button(self):
+        self.approve_button.config(state="normal")
+        
+    def populate_employee_resignation_list(self):
+        employees = list((db.reference("/employee").get()).keys())
+        for employee in employees:
+            if db.reference("/employee").child(employee).child("resignation_request").child("resignation_status").get() == "pending":
+                reason = db.reference("/employee").child(employee).child("resignation_request").child("resignation_reason").get()
+                self.treeview_approve_resignation.insert("", "end", values=(employee,reason), tags=("clickable",))
+        
+    def approve_resignation_request(self):
+        # get the selected employee from the treeview
+        selected_employee = self.treeview_approve_resignation.item(self.treeview_approve_resignation.selection())["values"][0]
+        if db.reference("/employee").child(selected_employee).child("resignation_request").child("resignation_status").get() == "Approved by Manager":
+            messagebox.showinfo("Approve Resignation", "Resignation Request already approved")
+            self.approve_resignation_window.focus_force()
+            return
+        if messagebox.askokcancel("Approve Resignation", "Are you sure you want to approve the resignation request?"):
+            if db.reference("/employee").child(selected_employee).child("resignation_request").child("resignation_status").get() == "pending":
+                #Update the resignation request in the database
+                emp_ref = db.reference("/employee")
+                emp_ref.child(selected_employee).child("resignation_request").update({"resignation_status": "Approved by Manager"})
+                messagebox.showinfo("Approve Resignation", "Resignation Request Approved")
+        self.approve_resignation_window.focus_force()
+    
+    def load_image_approve_resignation(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_approve_resignation_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_approve_resignation()
+        
+    def resize_canvas_and_image_approve_resignation(self):
+        # Get the approve_resignation window size
+        window_width = self.approve_resignation_logo_canvas.winfo_width()
+        window_height = self.approve_resignation_logo_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.approve_resignation_logo_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_approve_resignation_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.approve_resignation_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.approve_resignation_logo_canvas.delete("all")
+        self.approve_resignation_logo_canvas.create_image(
+            0, 0, image=self.approve_resignation_logo_image, anchor="nw"
+        )
+        
+    def on_window_resize_approve_resignation(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_approve_resignation()
 
     def request_bonus(self):
         # create a new window to show the bonus request
@@ -1361,10 +1507,19 @@ class Manager_class:
         amount_bonus = self.bonus_amount_entry.get()
         reason_bonus = self.reason_entry.get()
         
-
-        #put if conditions to handle non integer values, non input in the amount_bonus
+        if amount_bonus == "" or reason_bonus == "":
+            messagebox.showerror("Error", "Please enter a valid amount and reason for the bonus")
+            return
         if amount_bonus == "":
             messagebox.showerror("Error", "Please enter a valid amount for the bonus")
+            return
+        if amount_bonus.isnumeric() == False:
+            messagebox.showerror("Error", "Please enter a valid amount for the bonus")
+            return
+        if db.reference("/employee").child(employee_name).child("bonus_req").get() != None:
+            messagebox.showerror("Error", "Bonus Request already sent")
+            return
+        #put if conditions to handle non integer values, non input in the amount_bonus
         else:
             try:
                 amount_bonus = int(amount_bonus)
