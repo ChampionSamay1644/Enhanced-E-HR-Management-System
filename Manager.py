@@ -10,6 +10,8 @@ from firebase_admin import db, credentials
 import threading
 from tkinter import Label
 from tkinter import Tk, Canvas, PhotoImage
+import main as Main
+from main import * 
 
 class Manager_class:
     def __init__(self):
@@ -96,13 +98,13 @@ class Manager_class:
         self.approve_vacations_sick_leaves_button.place(
             relx=0.5, rely=0.4, anchor="center", width=320, height=30
         )
-        self.progress_on_task_button = tk.Button(
-            self.manager_logo_canvas, text="Progress on Task", command=lambda:self.progress_on_task(), font=("Helvetica", 14)
+        self.progress_on_resignation_button = tk.Button(
+            self.manager_logo_canvas, text="Apply for Resignation", command=lambda:self.apply_for_resignation(username), font=("Helvetica", 14)
         )
-        self.progress_on_task_button.pack(
+        self.progress_on_resignation_button.pack(
             pady=20
         )
-        self.progress_on_task_button.place(
+        self.progress_on_resignation_button.place(
             relx=0.5, rely=0.5, anchor="center", width=200, height=30
         )
         self.assign_promotion_button = tk.Button(
@@ -164,6 +166,22 @@ class Manager_class:
         profile_btn.place(
             relx=0.95, rely=0.05, anchor="center", width=50, height=50
         )
+        
+        logout_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "logout.png")
+        logout_image = Image.open(logout_path)
+        logout_image = logout_image.resize((50, 50))
+        logout_image = ImageTk.PhotoImage(logout_image)
+        logout_button = tk.Button(
+            self.manager_logo_canvas,
+            image=logout_image,
+            command=lambda: self.logout(manager_window),
+            bd=0,
+            bg="white",
+            activebackground="white",
+        )
+        logout_button.image = logout_image
+        logout_button.pack()
+        logout_button.place(relx=0.95, rely=0.95, anchor="se")
         
         # focus on window
         manager_window.focus_force()
@@ -903,8 +921,109 @@ class Manager_class:
         # show a message that the vacation days have been denied
         messagebox.showinfo("Deny Sick Days", "Sick Days Denied")
 
-    def progress_on_task(self):
-        messagebox.showinfo("manager Window", "Progress on Task Button Pressed")
+    def apply_for_resignation(self,username):
+        self.resignation_window = tk.Toplevel()
+        self.resignation_window.geometry("800x600")  # Set the window size
+        self.resignation_window.title("Resignation Progress")
+        
+        #create a canvas that resizes with the window
+        self.resignation_logo_canvas = tk.Canvas(self.resignation_window, bg="white", highlightthickness=0)
+        self.resignation_logo_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        #load the image as the background on the canvas
+        self.load_image_resignation()
+        
+        # bind window resize event to function
+        self.resignation_window.bind("<Configure>", lambda event: self.on_window_resize_resignation(event))
+        
+        # bind the escape key to the exit function
+        self.resignation_window.bind("<Escape>", lambda event: self.resignation_window.destroy())
+        
+        # focus on window
+        self.resignation_window.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(self.resignation_window)
+        
+        #Create a new entry widget for the reason for resignation
+        self.reason_for_resignation_entry = tk.Entry(
+            self.resignation_window, font=("Helvetica", 12, "bold")
+        )
+        self.reason_for_resignation_entry.pack(pady=20)
+        self.reason_for_resignation_entry.place(relx=0.5, rely=0.5, anchor="center", width=400, height=30)
+        
+        #Create a new button for submitting the resignation
+        self.submit_resignation_button = tk.Button(
+            self.resignation_window,
+            text="Submit",
+            command=lambda:self.submit_resignation(username),
+            font=("Helvetica", 14),
+        )
+        self.submit_resignation_button.pack(
+            pady=20
+        )
+        self.submit_resignation_button.place(relx=0.5, rely=0.6, anchor="center", width=100, height=30)
+        
+        # Run the main loop for the self.resignation_window
+        self.resignation_window.mainloop()
+        
+    def submit_resignation(self,username):
+        # Get the reason for resignation from the entry widget
+        reason_for_resignation = self.reason_for_resignation_entry.get()
+        if db.reference("/manager").child(username).child("resignation_request").child("resignation_reason").get() == "pending":
+            # Show an error message if the resignation is already pending
+            messagebox.showerror("Error", "Your resignation is already pending.")
+            return
+        if not reason_for_resignation:
+            # Show an error message if the reason is empty
+            messagebox.showerror("Error", "Please enter a reason for resignation.")
+            return
+        if reason_for_resignation == "no":
+            # Show an error message if the reason is empty
+            messagebox.showerror("Error", "Please enter a reason for resignation.")
+            return
+        # Update the resignation reason in the database
+        mng_ref = db.reference("/manager")
+        mng_ref.child(username).child("resignation_request").child("resignation_reason").set(reason_for_resignation)
+        mng_ref.child(username).child("resignation_request").child("resignation_status").set("pending")
+        
+        # Close the resignation window
+        self.resignation_window.destroy()
+        
+        # Show a message that the resignation has been submitted
+        messagebox.showinfo("Resignation Submitted", "Your resignation has been submitted successfully.")
+        
+    def load_image_resignation(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_resignation_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_resignation()
+        
+    def resize_canvas_and_image_resignation(self):
+        # Get the resignation window size
+        window_width = self.resignation_logo_canvas.winfo_width()
+        window_height = self.resignation_logo_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.resignation_logo_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_resignation_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.resignation_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.resignation_logo_canvas.delete("all")
+        self.resignation_logo_canvas.create_image(
+            0, 0, image=self.resignation_logo_image, anchor="nw"
+        )
+        
+    def on_window_resize_resignation(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_resignation()
 
     def assign_promotion(self,username):
         self.treeview_promotion_request=None
@@ -1812,6 +1931,11 @@ class Manager_class:
         if current_content == default_text:
             entry_widget.delete(0, tk.END)
             
+    def logout(self,manager_window):
+        #Close all windows
+        manager_window.destroy()
+        Main.main(True)
+        
 def main(role,username):
     manager=Manager_class()
     manager.open_manager_window(role,username)

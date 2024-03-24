@@ -11,6 +11,7 @@ from firebase_admin import db, credentials
 import threading
 from tkinter import Label
 from tkinter import Tk, Canvas, PhotoImage
+from main import main as Main
 
 class HR_class:
     def __init__(self):
@@ -94,7 +95,16 @@ class HR_class:
         
         #bind window resize event to function
         hr_window.bind("<Configure>", lambda event: self.on_window_resize_hr(event,username))
+        
+        # focus on window
+        hr_window.focus_force()
 
+        # Center the window with function center_window_test
+        self.center_window_all(hr_window)
+
+        # Bind the Escape key to the exit function
+        hr_window.bind("<Escape>", lambda event: hr_window.destroy())
+        
         #buttons of HR window
         self.salary_management_button = tk.Button(
             self.hr_logo_canvas, text="Employee Management", command=lambda:self.salary_management(), font=("Helvetica", 14)
@@ -151,6 +161,15 @@ class HR_class:
         self.approve_promotion_button.place(
             relx=0.5, rely=0.675, anchor="center", width=300, height=30
         )
+        self.apply_for_resignation_button = tk.Button(
+            self.hr_logo_canvas, text="Apply for Resignation", command=lambda:self.apply_for_resignation(username), font=("Helvetica", 14)
+        )
+        self.apply_for_resignation_button.pack(
+            pady=20
+        )
+        self.apply_for_resignation_button.place(
+            relx=0.5, rely=0.750, anchor="center", width=300, height=30
+        )
         # self.addbe_button = tk.Button(
         #     self.hr_logo_canvas, text="Add manager/Employee", command=lambda:self.create_all_hr(), font=("Helvetica", 14)
         # )
@@ -187,6 +206,22 @@ class HR_class:
             relx=0.95, rely=0.05, anchor="center", width=50, height=50
         )
         
+        logout_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "logout.png")
+        logout_image = Image.open(logout_path)
+        logout_image = logout_image.resize((50, 50))
+        logout_image = ImageTk.PhotoImage(logout_image)
+        logout_button = tk.Button(
+            self.hr_logo_canvas,
+            image=logout_image,
+            command=lambda: self.logout(hr_window),
+            bd=0,
+            bg="white",
+            activebackground="white",
+        )
+        logout_button.image = logout_image
+        logout_button.pack()
+        logout_button.place(relx=0.95, rely=0.95, anchor="se")
+        
         #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
         self.hr_logo_canvas,
@@ -219,14 +254,17 @@ class HR_class:
             relx=0.95, rely=0.05, anchor="center", width=50, height=50
         )
 
-        # focus on window
-        hr_window.focus_force()
-
-        # Center the window with function center_window_test
-        self.center_window_all(hr_window)
-
-        # Bind the Escape key to the exit function
-        hr_window.bind("<Escape>", lambda event: hr_window.destroy())
+        #print(db.reference("/HR").child(username).child("resignation_request").child("resignation_status").get())
+        if db.reference("/HR").child(username).child("resignation_request").child("resignation_status").get() == "Approved by Admin":
+            date=db.reference("/HR").child(username).child("resignation_request").child("resignation_date").get()
+            messagebox.showinfo(f"Resignation Request", "Resignation request has been approved by Admin and you will be logged out on "+date)
+            
+            #Check if the date is today or past
+            #If yes, then logout the user
+            if datetime.datetime.now().date() >= datetime.datetime.strptime(date, "%Y-%m-%d").date():
+                messagebox.showinfo("Resignation Request", "You have been logged out as per your resignation request and cannot login again.")
+                hr_window.destroy()
+                return
 
         #  Run the main loop for the HR window
         hr_window.mainloop()
@@ -1437,7 +1475,6 @@ class HR_class:
             # Add the employee name, reason, and role with tag selectable
             self.treeview_resignation.insert("", "end", values=(person, role, reason), tags=("clickable",))
 
-            
     def approve_resignation_btn(self):
         #Get the selected employee
         selected_employee = self.treeview_resignation.item(self.treeview_resignation.selection())["values"][0]
@@ -1463,7 +1500,7 @@ class HR_class:
                 current_datetime = datetime.datetime.now()
                 new_date = current_datetime + datetime.timedelta(weeks=4)
                 current_datetime = new_date.strftime('%Y-%m-%d')
-                db.reference("/manager").child(selected_employee).child("resignation_date").set(current_datetime)
+                db.reference("/manager").child(selected_employee).child("resignation_request").child("resignation_date").set(current_datetime)
                 messagebox.showinfo("Approve Resignation", "Resignation approved successfully.")
                 #Refresh the list
                 self.populate_employee_list_resignation()
@@ -2224,6 +2261,101 @@ class HR_class:
     def on_window_resize_promote_to_manager(self, event):
         self.resize_canvas_and_image_promote_to_manager()
     
+    def apply_for_resignation(self,username):
+        #Create a new window for the apply_for_resignation top level
+        self.apply_for_resignation_window = tk.Toplevel()
+        self.apply_for_resignation_window.geometry("800x600")
+        self.apply_for_resignation_window.title("Apply for Resignation")
+        
+        #Create the canvas
+        self.apply_for_resignation_canvas = tk.Canvas(self.apply_for_resignation_window, bg="white", highlightthickness=0)
+        self.apply_for_resignation_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        #Load the image
+        self.load_image_apply_for_resignation()
+        
+        #Bind window resize event to function
+        self.apply_for_resignation_window.bind("<Configure>", lambda event: self.on_window_resize_apply_for_resignation(event))
+        
+        #Center the window
+        self.center_window_all(self.apply_for_resignation_window)
+        
+        #Create an entry for the reason for resignation
+        self.reason_entry = tk.Entry(self.apply_for_resignation_canvas, font=("Helvetica", 12), width=50)
+        self.reason_entry.place(relx=0.5, rely=0.5, anchor="center")
+        self.reason_entry.insert(0, "Reason for resignation")
+        self.reason_entry.bind("<FocusIn>", lambda event: self.entry_del(self.reason_entry, "Reason for resignation"))
+
+        #Create a button for apply for resignation
+        apply_for_resignation_button = tk.Button(
+            self.apply_for_resignation_canvas,
+            text="Apply for Resignation",
+            command=lambda:self.apply_for_resignation_btn(username),
+            font=("Helvetica", 14),
+            width=20,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        apply_for_resignation_button.place(relx=0.5, rely=0.9, anchor="s")
+        
+        #Bind the escape key to the exit function
+        self.apply_for_resignation_window.bind("<Escape>", lambda event: self.apply_for_resignation_window.destroy())
+        
+        #Run the main loop for the apply_for_resignation_window
+        self.apply_for_resignation_window.mainloop()
+        
+    def apply_for_resignation_btn(self,username):
+        #Get the reason for resignation
+        reason = self.reason_entry.get()
+        if db.reference("/HR").child(username).child("resignation_request").child("Request").get() == "pending":
+            messagebox.showinfo("Apply for Resignation", "You have already applied for resignation.")
+            return
+        if reason == "Reason for resignation" or reason == "":
+            messagebox.showinfo("Apply for Resignation", "Please enter the reason for resignation.")
+            return
+        #Ask for confirmation
+        if messagebox.askyesno("Apply for Resignation", "Are you sure you want to apply for resignation?"):
+            #Apply for resignation in the database
+            db.reference("/HR").child(username).child("resignation_request").child("resignation_status").set("pending")
+            db.reference("/HR").child(username).child("resignation_request").child("resignation_reason").set(reason)
+            messagebox.showinfo("Apply for Resignation", "Resignation applied successfully.")
+            self.apply_for_resignation_window.destroy()
+        
+    def load_image_apply_for_resignation(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_apply_for_resignation_image = Image.open(img_path)
+        self.resize_canvas_and_image_apply_for_resignation()
+        
+    def resize_canvas_and_image_apply_for_resignation(self):
+        # Get the apply_for_resignation window size
+        window_width = self.apply_for_resignation_canvas.winfo_width()
+        window_height = self.apply_for_resignation_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.apply_for_resignation_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_apply_for_resignation_image.resize((window_width, window_height))
+        self.apply_for_resignation_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.apply_for_resignation_canvas.delete("all")
+        self.apply_for_resignation_canvas.create_image(0, 0, image=self.apply_for_resignation_image, anchor="nw")
+        
+    def on_window_resize_apply_for_resignation(self, event):
+        self.resize_canvas_and_image_apply_for_resignation()
+        
+    def entry_del(self,entry_widget, default_text):
+        #Delete the default text in the entry widget
+        if entry_widget.get() == default_text:
+            entry_widget.delete(0, tk.END)
+        
     def profile(self,username,role):
         # Create a new Toplevel window for the profile
         profile_dialog = tk.Toplevel()
@@ -2426,7 +2558,12 @@ class HR_class:
         current_content = entry_widget.get()
         if current_content == default_text:
             entry_widget.delete(0, tk.END)
-            
+          
+    def logout(self,hr_window):
+        #Close all windows
+        hr_window.destroy()
+        Main(True)
+    
     # def create_all_hr(self):
     #     # create a new window
     #     create_remove_hr_window = tk.Toplevel()

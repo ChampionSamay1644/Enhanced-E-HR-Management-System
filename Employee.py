@@ -10,6 +10,8 @@ from firebase_admin import db, credentials
 import threading
 from tkinter import Label
 from tkinter import Tk, Canvas, PhotoImage
+import main as Main
+from main import *
 
 class Employee_class:
     def __init__(self):
@@ -100,6 +102,22 @@ class Employee_class:
         profile_btn.place(
             relx=0.95, rely=0.05, anchor="center", width=50, height=50
         )
+        
+        logout_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "logout.png")
+        logout_image = Image.open(logout_path)
+        logout_image = logout_image.resize((50, 50))
+        logout_image = ImageTk.PhotoImage(logout_image)
+        logout_button = tk.Button(
+            self.employee_logo_canvas,
+            image=logout_image,
+            command=lambda: self.logout(employee_window),
+            bd=0,
+            bg="white",
+            activebackground="white",
+        )
+        logout_button.image = logout_image
+        logout_button.pack()
+        logout_button.place(relx=0.95, rely=0.95, anchor="se")
         
         # Bind the Escape key to the exit function
         employee_window.bind("<Escape>", lambda event: employee_window.destroy())
@@ -409,19 +427,19 @@ class Employee_class:
         self.reason_entry.insert(0, "Reason for resignation")  # Default value
         self.reason_entry.bind("<FocusIn>", lambda event: self.reason_entry_del())  # Delete the default value when the user clicks on the entry widget
 
-        # Create a DateEntry widget for the resignation date (bigger size)
-        self.date_entry = DateEntry(
-        self.apply_for_resignation_canvas,
-        width=15,
-        background="darkblue",
-        foreground="white",
-        borderwidth=2,
-        year=2024,
-        font=("Helvetica", 14),
-        date_pattern='dd/mm/yyyy'  # Set the date format here
-        )
-        self.date_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
-        self.date_entry.bind("<FocusIn>", lambda event: self.date_entry_del())  # Delete the default value when the user clicks on the entry widget
+        # # Create a DateEntry widget for the resignation date (bigger size)
+        # self.date_entry = DateEntry(
+        # self.apply_for_resignation_canvas,
+        # width=15,
+        # background="darkblue",
+        # foreground="white",
+        # borderwidth=2,
+        # year=2024,
+        # font=("Helvetica", 14),
+        # date_pattern='dd/mm/yyyy'  # Set the date format here
+        # )
+        # self.date_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        # self.date_entry.bind("<FocusIn>", lambda event: self.date_entry_del())  # Delete the default value when the user clicks on the entry widget
 
         # Create a button to submit the resignation request
         submit_button = tk.Button(self.apply_for_resignation_canvas, text="Submit", command=lambda: self.submit_resignation_request(apply_for_resignation_window, username))
@@ -477,29 +495,29 @@ class Employee_class:
     def submit_resignation_request(self, apply_for_resignation_window, username):
         # Retrieve the entered values
         reason = self.reason_entry.get()
-        date = self.date_entry.get()
+        #date = self.date_entry.get()
 
         # Check if the date is at least 2 weeks from now
         if not reason:
             messagebox.showinfo("Employee Window", "Please enter a reason.")
-        elif date == "Date of resignation":
-            messagebox.showinfo("Employee Window", "Please enter a date.")
+        # elif date == "Date of resignation":
+        #     messagebox.showinfo("Employee Window", "Please enter a date.")
         elif db.reference("/employee").child(username).child("resignation_request").child("resignation_status").get() == "pending":
             messagebox.showinfo("Employee Window", "You have already applied for resignation.")
         else:
             # Convert date string to datetime object
-            date_format = "%d/%m/%Y"
-            date_obj = datetime.datetime.strptime(date, date_format)
+            # date_format = "%d/%m/%Y"
+            # date_obj = datetime.datetime.strptime(date, date_format)
 
-            # Convert datetime object back to string in the desired format
-            date_str_formatted = date_obj.strftime("%d/%m/%Y")
+            # # Convert datetime object back to string in the desired format
+            # date_str_formatted = date_obj.strftime("%d/%m/%Y")
 
-            # Check if the date is at least 2 weeks from now
-            if date_obj < datetime.datetime.now() + datetime.timedelta(weeks=2):
-                messagebox.showinfo("Employee Window", "Please enter a date at least 2 weeks from now.")
-            else:
+            # # Check if the date is at least 2 weeks from now
+            # if date_obj < datetime.datetime.now() + datetime.timedelta(weeks=2):
+            #     messagebox.showinfo("Employee Window", "Please enter a date at least 2 weeks from now.")
+            #else:
                 # Add the resignation request to the database
-                db.reference("/employee").child(username).child("resignation_request").child("apply_for_resignation").set(date_str_formatted)
+                #db.reference("/employee").child(username).child("resignation_request").child("apply_for_resignation").set(date_str_formatted)
                 db.reference("/employee").child(username).child("resignation_request").child("resignation_reason").set(reason)
                 db.reference("/employee").child(username).child("resignation_request").child("resignation_status").set("pending")
                 messagebox.showinfo("Employee Window", "Resignation request submitted successfully.")
@@ -1356,6 +1374,11 @@ class Employee_class:
         
     def on_window_resize_profile(self,username,role, event=None):
         self.resize_canvas_and_image_profile(username,role)
+        
+    def logout(self,employee_window):
+        #Close all windows
+        employee_window.destroy()
+        Main.main(True)
         
 def main(role,username):
     employee=Employee_class()

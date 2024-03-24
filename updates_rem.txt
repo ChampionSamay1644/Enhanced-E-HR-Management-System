@@ -1,10 +1,8 @@
 HR- 
     Approve performance review
-    Fix approve resignation
 
 Manager-
-    progress on task and assign task
-    approve resignation
+    progress on task and assign task(future aspect)
     performance review approval
 
 Employee-

@@ -16,14 +16,21 @@ import threading
 from tkinter import Label
 from tkinter import Tk, Canvas, PhotoImage
 
-# Initialize Firebase Admin SDK
-cred = credentials.Certificate("credentials.json")  # Path: credentials.json
-firebase_admin.initialize_app(
-    cred,
-    {
-        "databaseURL": "https://hr-management-system-f7c9f-default-rtdb.asia-southeast1.firebasedatabase.app/"
-    },
-)
+# Global variable to track Firebase initialization
+firebase_initialized = False
+
+def initialize_firebase():
+    global firebase_initialized
+    if not firebase_initialized:
+        # Initialize Firebase Admin SDK
+        cred = credentials.Certificate("credentials.json")  # Path: credentials.json
+        firebase_admin.initialize_app(
+            cred,
+            {
+                "databaseURL": "https://hr-management-system-f7c9f-default-rtdb.asia-southeast1.firebasedatabase.app/"
+            },
+        )
+        firebase_initialized = True
 
 class CreativeLoginApp:  
     def __init__(self, root):
@@ -343,12 +350,13 @@ class CreativeLoginApp:
             "Login Failed", "Invalid username or password. Please try again."
         )
 
-def main():
-    
+def main(firebase_initialized):
+    if not firebase_initialized:
+        initialize_firebase()
     root = tk.Tk()
     root.geometry("900x600")  # Set the window size
     app = CreativeLoginApp(root)
     root.mainloop()
 
 if __name__ == "__main__":
-    main()
+    main(firebase_initialized)
