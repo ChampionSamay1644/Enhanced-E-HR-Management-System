@@ -1309,6 +1309,7 @@ class Admin_class():
     def logout(self,admin_window):
         #Close all windows
         admin_window.destroy()
+        messagebox.showinfo("Logout", "You have been logged out successfully!")
         Main(True)
 
 def main(role, username):

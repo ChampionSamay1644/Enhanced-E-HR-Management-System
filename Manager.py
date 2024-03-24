@@ -192,6 +192,17 @@ class Manager_class:
         # Bind the Escape key to the exit function
         manager_window.bind("<Escape>", lambda event: manager_window.destroy())
 
+        if db.reference("/manager").child(username).child("resignation_request").child("resignation_status").get() == "Approved by HR":
+            date=db.reference("/manager").child(username).child("resignation_request").child("resignation_date").get()
+            messagebox.showinfo(f"Resignation Request", "Resignation request has been approved by Admin.\nYou will be logged out on "+date)
+            
+            #Check if the date is today or past
+            #If yes, then logout the user
+            if datetime.datetime.now().date() >= datetime.datetime.strptime(date, "%Y-%m-%d").date():
+                messagebox.showinfo("Resignation Request", "You have been logged out as per your resignation request and cannot login again.")
+                manager_window.destroy()
+                return
+            
         # Run the main loop for the manager window
         manager_window.mainloop()
 
@@ -1810,7 +1821,10 @@ class Manager_class:
         self.profile_canvas.create_image(0, 0, image=self.profile_image, anchor="nw")
 
         list=self.getdata(username,role)
+        resigning_date=db.reference("/employee").child(username).child("resignation_request").child("resignation_date").get()
         text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
+        if resigning_date != None:
+            text1=text1+f"\nResignation Date: {resigning_date}"
         self.profile_canvas.create_text(
             # Place the text in the bottom left corner
             10,
@@ -1934,6 +1948,7 @@ class Manager_class:
     def logout(self,manager_window):
         #Close all windows
         manager_window.destroy()
+        messagebox.showinfo("Logout", "You have been logged out")
         Main.main(True)
         
 def main(role,username):

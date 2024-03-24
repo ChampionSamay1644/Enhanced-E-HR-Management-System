@@ -257,7 +257,7 @@ class HR_class:
         #print(db.reference("/HR").child(username).child("resignation_request").child("resignation_status").get())
         if db.reference("/HR").child(username).child("resignation_request").child("resignation_status").get() == "Approved by Admin":
             date=db.reference("/HR").child(username).child("resignation_request").child("resignation_date").get()
-            messagebox.showinfo(f"Resignation Request", "Resignation request has been approved by Admin and you will be logged out on "+date)
+            messagebox.showinfo(f"Resignation Request", "Resignation request has been approved by Admin/\nYou will be logged out on "+date)
             
             #Check if the date is today or past
             #If yes, then logout the user
@@ -2437,7 +2437,10 @@ class HR_class:
         self.profile_canvas.create_image(0, 0, image=self.profile_image, anchor="nw")
 
         list=self.getdata(username,role)
+        resigning_date=db.reference("/HR").child(username).child("resignation_request").child("resignation_date").get()
         text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
+        if resigning_date is not None:
+            text1+=f"\nResignation Date: {resigning_date}"
         if role=="employee":
             text1+=f"\nSurvey: {list[7]}"
         self.profile_canvas.create_text(
@@ -2562,6 +2565,7 @@ class HR_class:
     def logout(self,hr_window):
         #Close all windows
         hr_window.destroy()
+        messagebox.showinfo("Logout", "You have been logged out successfully.")
         Main(True)
     
     # def create_all_hr(self):
