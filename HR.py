@@ -170,6 +170,15 @@ class HR_class:
         self.apply_for_resignation_button.place(
             relx=0.5, rely=0.750, anchor="center", width=300, height=30
         )
+        self.approve_review_button = tk.Button(
+            self.hr_logo_canvas, text="Approve Review", command=lambda:self.approve_review(), font=("Helvetica", 14)
+        )
+        self.approve_review_button.pack(
+            pady=20
+        )
+        self.approve_review_button.place(
+            relx=0.5, rely=0.825, anchor="center", width=300, height=30
+        )
         # self.addbe_button = tk.Button(
         #     self.hr_logo_canvas, text="Add manager/Employee", command=lambda:self.create_all_hr(), font=("Helvetica", 14)
         # )
@@ -2350,12 +2359,334 @@ class HR_class:
         
     def on_window_resize_apply_for_resignation(self, event):
         self.resize_canvas_and_image_apply_for_resignation()
+     
+    def approve_review(self):
+        # Create a new window for the approve_review top level
+        self.approve_review_window = tk.Toplevel()
+        self.approve_review_window.geometry("800x600")
+        self.approve_review_window.title("Approve Review")
         
+        # Create the canvas
+        self.approve_review_canvas = tk.Canvas(self.approve_review_window, bg="white", highlightthickness=0)
+        self.approve_review_canvas.pack(fill=tk.BOTH, expand=True)
+
+        # Load the image
+        self.load_image_approve_review()
+    
+        # Bind window resize event to function
+        self.approve_review_window.bind("<Configure>", lambda event: self.on_window_resize_approve_review(event))
+        
+        # Center the window
+        self.center_window_all(self.approve_review_window)
+        
+        # Bind the escape key to the exit function
+        self.approve_review_window.bind("<Escape>", lambda event: self.approve_review_window.destroy())
+        
+        # Create a scrollable frame for treeview
+        self.approve_review_frame = tk.Frame(self.approve_review_canvas, bg="white")
+        self.approve_review_frame.pack(fill="both", expand=True)
+        self.approve_review_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        # Create a Treeview widget
+        self.treeview_approve_review = ttk.Treeview(self.approve_review_frame, columns=("Employee", "Role", "Type"), show="headings",xscrollcommand=self.approve_review_canvas.xview, yscrollcommand=self.approve_review_canvas.yview)
+        self.treeview_approve_review.heading("Employee", text="Employee")
+        self.treeview_approve_review.heading("Role", text="Role")
+        self.treeview_approve_review.pack(fill="both", expand=True)
+        self.treeview_approve_review.column("Employee", width=400)
+        self.treeview_approve_review.column("Role", width=200)
+        self.treeview_approve_review.tag_configure("selectable", background="white", foreground="blue")
+        self.treeview_approve_review.bind("<Double-1>", lambda event:self.on_treeview_select_approve_review(event))
+
+        # # Add a vertical scrollbar to the Treeview
+        treeview_scrollbar_y = ttk.Scrollbar(self.approve_review_frame, orient="vertical", command=self.treeview_approve_review.yview)
+        treeview_scrollbar_y.pack(side="right", fill="y")
+        self.treeview_approve_review.configure(yscrollcommand=treeview_scrollbar_y.set)
+
+        # Add a horizontal scrollbar to the Treeview
+        treeview_scrollbar_x = ttk.Scrollbar(self.approve_review_frame, orient="horizontal", command=self.treeview_approve_review.xview)
+        treeview_scrollbar_x.pack(side="bottom", fill="x")
+        self.treeview_approve_review.configure(xscrollcommand=treeview_scrollbar_x.set)
+        
+        # Configure grid row and column weights
+        # self.approve_review_frame.grid_rowconfigure(0, weight=1)
+        # self.approve_review_frame.grid_columnconfigure(0, weight=1)
+        
+        # Create a combo box to select the type of performance review
+        self.review_type = tk.StringVar()
+        self.review_type.set("None")
+        self.review_type_combo = ttk.Combobox(self.approve_review_window, textvariable=self.review_type, values=["None","Quarterly Review", "Annual Review"])
+        self.review_type_combo.pack(pady=20)
+        self.review_type_combo.place(x=400, y=120, anchor="center")  # Adjust the x and y coordinates as needed 
+        self.review_type_combo.bind("<<ComboboxSelected>>", self.on_review_type_selected)
+
+        # Run the main loop for the approve_review_window
+        self.approve_review_window.mainloop()
+
+       
+    def on_review_type_selected(self,event):
+        if self.review_type.get() == "None":
+            self.treeview_approve_review.delete(*self.review_treeview.get_children())
+        elif self.review_type.get() == "Quarterly Review":
+            self.populate_employee_list_review("Quarterly Review")
+        elif self.review_type.get() == "Annual Review":
+            self.populate_employee_list_review("Annual Review")
+        
+    def populate_employee_list_review(self,review_type):
+        self.treeview_approve_review.delete(*self.treeview_approve_review.get_children())
+        if review_type == "Quarterly Review":
+            employee_data_8 = list((db.reference("/employee").get()).keys())
+            for employee in employee_data_8:
+                if db.reference("/employee").child(employee).child("performance_review").child("Quarterly Review").child("status").get() == "Approved by Manager":
+                    self.treeview_approve_review.insert("", "end", values=(employee, "Employee","Quarterly Review"), tags="selectable")
+        elif review_type == "Annual Review":
+            employee_data_9 = list((db.reference("/employee").get()).keys())
+            for employee in employee_data_9:
+                if db.reference("/employee").child(employee).child("performance_review").child("Annual Review").child("status").get() == "Approved by Manager":
+                    self.treeview_approve_review.insert("", "end", values=(employee, "Employee","Annual Review"), tags="selectable")
+                    
+        if review_type == "Quarterly Review":
+            manager_data_8 = list((db.reference("/manager").get()).keys())
+            for manager in manager_data_8:
+                if db.reference("/manager").child(manager).child("performance_review").child("Quarterly Review").child("status").get() == "filled":
+                    self.treeview_approve_review.insert("", "end", values=(manager, "Manager","Quarterly Review"), tags="selectable")
+        elif review_type == "Annual Review":
+            manager_data_9 = list((db.reference("/manager").get()).keys())
+            for manager in manager_data_9:
+                if db.reference("/manager").child(manager).child("performance_review").child("Annual Review").child("status").get() == "filled":
+                    self.treeview_approve_review.insert("", "end", values=(manager, "Manager","Annual Review"), tags="selectable") 
+        
+    def on_treeview_select_approve_review(self,event):
+        try:
+            #Get the selected employee
+            selected_employee = self.treeview_approve_review.item(self.treeview_approve_review.selection())["values"][0]
+            selected_role = self.treeview_approve_review.item(self.treeview_approve_review.selection())["values"][1]
+            selected_review = self.treeview_approve_review.item(self.treeview_approve_review.selection())["values"][2]
+            if db.reference("/manager").child(selected_employee).child("performance_review").child(selected_review).child("status").get() == "Approved by HR":
+                messagebox.showinfo("Approve Review", "This review has already been approved by HR.")
+                return
+            if db.reference("/employee").child(selected_employee).child("performance_review").child(selected_review).child("status").get() == "Approved by Manager":
+                messagebox.showinfo("Approve Review", "This review has already been approved by Manager.")
+                return
+            self.open_review(selected_employee,selected_role,selected_review)
+        except:
+            pass
+        
+    def open_review(self,selected_employee,selected_role,selected_review):
+        #Create a new window for the open_review top level
+        self.open_review_window = tk.Toplevel()
+        self.open_review_window.geometry("800x600")
+        self.open_review_window.title("Open Review")
+        
+        #Create the canvas
+        self.open_review_canvas = tk.Canvas(self.open_review_window, bg="white", highlightthickness=0)
+        self.open_review_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        #Load the image
+        self.load_image_open_review()
+        
+        #Bind window resize event to function
+        self.open_review_window.bind("<Configure>", lambda event: self.on_window_resize_open_review(event))
+        
+        #Center the window
+        self.center_window_all(self.open_review_window)
+        
+        #focus on window
+        self.open_review_window.focus_force()
+        
+        #bind the escape key to the exit function
+        self.open_review_window.bind("<Escape>", lambda event: self.open_review_window.destroy())
+        
+        performance_review_label = tk.Label(
+            self.open_review_canvas,
+            text="Performance Review",
+            font=("Helvetica", 16),
+            bg="white",
+        )
+        performance_review_label.pack(pady=20)
+        performance_review_label.place(relx=0.5, rely=0.2, anchor="center")
+        
+        self.performance_review_entry = tk.Entry(
+            self.open_review_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.performance_review_entry.pack(pady=20)
+        self.performance_review_entry.place(width=500, relx=0.5, rely=0.25, anchor="center")
+        self.performance_review_entry.configure(state="readonly", justify="center")
+        
+        if selected_role == "Employee":
+            performance_review = db.reference("/employee").child(selected_employee).child("performance_review").child(selected_review).child(
+                "performance_review").get()
+            self.performance_review_entry.insert(0, performance_review)
+        elif selected_role == "Manager":
+            performance_review = db.reference("/manager").child(selected_employee).child("performance_review").child(selected_review).child(
+                "performance_review").get()
+            self.performance_review_entry.insert(0, performance_review)
+        self.performance_review_entry.configure(state="readonly", justify="center")
+        
+        feedback_label = tk.Label(
+            self.open_review_canvas,
+            text="Constructed Feedback",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        feedback_label.pack(pady=20)
+        feedback_label.place(relx=0.5, rely=0.35, anchor="center")
+        
+        self.feedback_entry = tk.Entry(
+            self.open_review_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.feedback_entry.pack(pady=20)
+        self.feedback_entry.place(width=500, relx=0.5, rely=0.4, anchor="center")
+        
+        if selected_role == "Employee":
+            feedback = db.reference("/employee").child(selected_employee).child("performance_review").child(selected_review).child(
+                "constructed_feedback").get()
+            self.feedback_entry.insert(0, feedback)
+        elif selected_role == "Manager":
+            feedback = db.reference("/manager").child(selected_employee).child("performance_review").child(selected_review).child(
+                "constructed_feedback").get()
+            self.feedback_entry.insert(0, feedback)
+        self.feedback_entry.configure(state="readonly", justify="center")
+        
+        future_goals_label = tk.Label(
+            self.open_review_canvas,
+            text="Goals for Future",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        future_goals_label.pack(pady=20)
+        future_goals_label.place(relx=0.5, rely=0.5, anchor="center")
+        
+        self.future_goals_entry = tk.Entry(
+            self.open_review_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.future_goals_entry.pack(pady=20)
+        self.future_goals_entry.place(width=500, relx=0.5, rely=0.55, anchor="center")
+        
+        if selected_role == "Employee":
+            future_goals = db.reference("/employee").child(selected_employee).child("performance_review").child(selected_review).child(
+                "future_goals").get()
+            self.future_goals_entry.insert(0, future_goals)
+        elif selected_role == "Manager":
+            future_goals = db.reference("/manager").child(selected_employee).child("performance_review").child(selected_review).child(
+                "future_goals").get()
+            self.future_goals_entry.insert(0, future_goals)
+        self.future_goals_entry.configure(state="readonly", justify="center")
+        
+        # Create 2 buttons to approve or deny the performance review
+        self.approve_button = tk.Button(
+            self.open_review_window,
+            text="Approve",
+            command=lambda employee=selected_employee, type=type: self.approve_performance_review(employee, type),
+            font=("Helvetica", 14),
+        )
+        self.approve_button.pack(
+            pady=20
+        )
+        self.approve_button.place(relx=0.5, rely=0.8, anchor="center", width=100, height=30)
+        
+        self.deny_button = tk.Button(
+            self.open_review_window,
+            text="Deny",
+            command=lambda employee=selected_employee, type=type: self.deny_performance_review(employee, type),
+            font=("Helvetica", 14),
+        )
+        self.deny_button.pack(
+            pady=20
+        )
+        self.deny_button.place(relx=0.5, rely=0.9, anchor="center", width=100, height=30)
+        
+        #Run the main loop for the open_review_window
+        self.open_review_window.mainloop()
+        
+    def approve_performance_review(self,employee,type):
+        #Ask for confirmation
+        if messagebox.askyesno("Approve Review", "Are you sure you want to approve this review?"):
+            if type == "Employee":
+                db.reference("/employee").child(employee).child("performance_review").child("Quarterly Review").child("status").set("Approved by HR")
+            elif type == "Manager":
+                db.reference("/manager").child(employee).child("performance_review").child("Quarterly Review").child("status").set("Approved by HR")
+            messagebox.showinfo("Approve Review", "Review approved successfully.")
+            self.open_review_window.destroy()
+        #Focus on window
+        self.approve_review.focus_force()
+        
+    def deny_performance_review(self,employee,type):
+        #Ask for confirmation
+        if messagebox.askyesno("Deny Review", "Are you sure you want to deny this review?"):
+            #Ask for the reason for denial
+            reason = simpledialog.askstring("Deny Review", "Please enter the reason for denial.")
+            if reason == None:
+                return
+            if type == "Employee":
+                db.reference("/employee").child(employee).child("performance_review").child("Quarterly Review").child("status").set("Denied by HR")
+                db.reference("/employee").child(employee).child("performance_review").child("Quarterly Review").child("denial_reason").set(reason)
+            elif type == "Manager":
+                db.reference("/manager").child(employee).child("performance_review").child("Quarterly Review").child("status").set("Denied by HR")
+                db.reference("/manager").child(employee).child("performance_review").child("Quarterly Review").child("denial_reason").set(reason)
+            messagebox.showinfo("Deny Review", "Review denied successfully.")
+            self.open_review_window.destroy()
+        #Focus on window
+        self.approve_review.focus_force()
+               
+    def load_image_open_review(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_open_review_image = Image.open(img_path)
+        self.resize_canvas_and_image_open_review()
+        
+    def resize_canvas_and_image_open_review(self):
+        # Get the open_review window size
+        window_width = self.open_review_canvas.winfo_width()
+        window_height = self.open_review_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.open_review_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_open_review_image.resize((window_width, window_height))
+        self.open_review_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.open_review_canvas.delete("all")
+        self.open_review_canvas.create_image(0, 0, image=self.open_review_image, anchor="nw")
+    
+    def on_window_resize_open_review(self, event):
+        self.resize_canvas_and_image_open_review()
+        
+    def load_image_approve_review(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_approve_review_image = Image.open(img_path)
+        self.resize_canvas_and_image_approve_review()
+        
+    def resize_canvas_and_image_approve_review(self):
+        # Get the approve_review window size
+        window_width = self.approve_review_canvas.winfo_width()
+        window_height = self.approve_review_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.approve_review_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_approve_review_image.resize((window_width, window_height))
+        self.approve_review_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.approve_review_canvas.delete("all")
+        self.approve_review_canvas.create_image(0, 0, image=self.approve_review_image, anchor="nw")
+        
+    def on_window_resize_approve_review(self, event):
+        self.resize_canvas_and_image_approve_review()
+          
     def entry_del(self,entry_widget, default_text):
         #Delete the default text in the entry widget
         if entry_widget.get() == default_text:
             entry_widget.delete(0, tk.END)
-        
+    
     def profile(self,username,role):
         # Create a new Toplevel window for the profile
         profile_dialog = tk.Toplevel()

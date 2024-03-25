@@ -135,6 +135,16 @@ class Manager_class:
             relx=0.5, rely=0.8, anchor="center", width=200, height=30
         )
 
+        self.submit_performance_review_button = tk.Button(
+            self.manager_logo_canvas, text="Submit Performance Review", command=lambda:self.submit_performance_review(username), font=("Helvetica", 14)
+        )
+        self.submit_performance_review_button.pack(
+            pady=20
+        )
+        self.submit_performance_review_button.place(
+            relx=0.5, rely=0.9, anchor="center", width=200, height=30
+        )
+
         #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
         self.manager_logo_canvas,
@@ -255,51 +265,300 @@ class Manager_class:
 
     def perform_review_approval(self):
         # create a new window to show the performance review approval
-        review_approval_window = tk.Toplevel()
-        review_approval_window.geometry("800x600")  # Set the window size
-        review_approval_window.title("Performance Review Approval")
+        self.review_approval_window = tk.Toplevel()
+        self.review_approval_window.geometry("800x600")  # Set the window size
+        self.review_approval_window.title("Performance Review Approval")
 
         #create a canvas that resizes with the window
-        self.review_approval_logo_canvas = tk.Canvas(review_approval_window, bg="white", highlightthickness=0)
+        self.review_approval_logo_canvas = tk.Canvas(self.review_approval_window, bg="white", highlightthickness=0)
         self.review_approval_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
         # bind window resize event to function
-        review_approval_window.bind("<Configure>", lambda event: self.on_window_resize_review_approval(event))
+        self.review_approval_window.bind("<Configure>", lambda event: self.on_window_resize_review_approval(event))
 
         # import the image as the background on the canvas
         self.load_image_review_approval()
 
-        # Assuming you have values for the employee data
-        employee_data_8 = self.get_employee_data_with_quarter_review()
-        employee_data_9 = self.get_employee_data_with_half_yearly_review()
+        # # Assuming you have values for the employee data
+        # employee_data_8 = self.get_employee_data_with_quarter_review()
+        # employee_data_9 = self.get_employee_data_with_half_yearly_review()
 
 
-        # Call the method with different rely values and click handlers for each list
-        self.display_employee_list_on_canvas(
-            self.review_approval_logo_canvas,
-            employee_data_8,
-            rely=0.5,
-            click_handler=self.open_employee_details_window_review
-        )
+        # # Call the method with different rely values and click handlers for each list
+        # self.display_employee_list_on_canvas(
+        #     self.review_approval_logo_canvas,
+        #     employee_data_8,
+        #     rely=0.5,
+        #     click_handler=self.open_employee_details_window_review
+        # )
 
-        self.display_employee_list_on_canvas(
-            self.review_approval_logo_canvas,
-            employee_data_9,
-            rely=0.8,
-            click_handler=self.open_employee_details_window_review
-        )
+        # self.display_employee_list_on_canvas(
+        #     self.review_approval_logo_canvas,
+        #     employee_data_9,
+        #     rely=0.8,
+        #     click_handler=self.open_employee_details_window_review
+        # )
 
 
         # Bind the Escape key to the exit function
-        review_approval_window.bind(
-            "<Escape>", lambda event: review_approval_window.destroy()
+        self.review_approval_window.bind(
+            "<Escape>", lambda event: self.review_approval_window.destroy()
         )
         # focus on window
-        review_approval_window.focus_force()
+        self.review_approval_window.focus_force()
         # Center the window with function center_window_test
-        self.center_window_all(review_approval_window)
+        self.center_window_all(self.review_approval_window)
+        
+        #Create a scrollable frame to hold the list of employees
+        self.scrollable_frame = scrolledtext.ScrolledText(self.review_approval_window, wrap=tk.WORD, width=40, height=10)
+        self.scrollable_frame.pack(pady=20)
+        self.scrollable_frame.place(relx=0.5, rely=0.5, anchor="center")
+        
+        #Create a treeview to hold the list of employees
+        self.tree = ttk.Treeview(self.scrollable_frame, columns=("Employee", "Role","Type"), show="headings")
+        self.tree.heading("Employee", text="Employee")
+        self.tree.heading("Role", text="Role")
+        self.tree.heading("Type", text="Type")
+        self.tree.column("Employee", width=200)
+        self.tree.column("Role", width=200)
+        self.tree.column("Type", width=200)
+        self.tree.tag_configure("selectable", background="white", foreground="blue")
+        self.tree.bind("<Double-1>", lambda event: self.on_treeview_click(event))
+        
+        #Add a vertical scrollbar to the treeview
+        ysb = ttk.Scrollbar(self.scrollable_frame, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscroll=ysb.set)
+        ysb.pack(side="right", fill="y")
+        
+        #Add a horizontal scrollbar to the treeview
+        xsb = ttk.Scrollbar(self.scrollable_frame, orient="horizontal", command=self.tree.xview)
+        self.tree.configure(xscroll=xsb.set)
+        xsb.pack(side="bottom", fill="x")
+        
+        #Pack the treeview onto the scrollable frame
+        self.tree.pack(fill="both", expand=True)
+        
+        #Bind the treeview to the function to show employee details
+        # self.tree.bind("<ButtonRelease-1>", self.on_treeview_click)
+        
+        #Create a combo box to select the type of performance review
+        self.review_type = tk.StringVar()
+        self.review_type.set("None")
+        self.review_type_combo = ttk.Combobox(self.review_approval_window, textvariable=self.review_type, values=["None","Quarterly Review", "Annual Review"])
+        self.review_type_combo.pack(pady=20)
+        self.review_type_combo.place(relx=0.5, rely=0.2, anchor="center") 
+        self.review_type_combo.bind("<<ComboboxSelected>>", self.on_review_type_selected)
+         
         # Run the main loop for the create_remove_hr_window
-        review_approval_window.mainloop()
+        self.review_approval_window.mainloop()
+    
+    def on_treeview_click(self,event):
+        #Get the selected employee from the treeview
+        employee=self.tree.item(self.tree.selection())["values"][0]
+        type=self.tree.item(self.tree.selection())["values"][2]
+        if db.reference("/employee").child(employee).child("performance_review").child(type).child("status").get() == "Approved by Manager ":
+            messagebox.showinfo("Performance Review Approval", "Performance Review has already been approved for "+employee)
+            return
+        self.open_employee_review(employee,type)
+        
+    def on_review_type_selected(self, event):
+        if self.review_type.get() == "None":
+            self.tree.delete(*self.tree.get_children())
+            return
+        elif self.review_type.get() == "Quarterly Review":
+            self.populate_treeview("Quarterly Review")
+        elif self.review_type.get() == "Annual Review":
+            self.populate_treeview("Annual Review")
+            
+    def populate_treeview(self,type):
+        self.tree.delete(*self.tree.get_children())
+        if type == "Quarterly Review":
+            employee_data_8 = list((db.reference("/employee").get()).keys())
+            for employee in employee_data_8:
+                if db.reference("/employee").child(employee).child("performance_review").child("Quarterly Review").child("status").get() == "filled":
+                    self.tree.insert("", "end", values=(employee, "Employee","Quarterly Review"), tags="selectable")
+                # self.tree.insert("", "end", values=(employee, "Employee","Quaterly Review"), tags="selectable")
+                
+        elif type == "Annual Review":
+            employee_data_9 = list((db.reference("/employee").get()).keys())
+            for employee in employee_data_9:
+                if db.reference("/employee").child(employee).child("performance_review").child("Annual Review").child("status").get() == "filled":
+                    self.tree.insert("", "end", values=(employee, "Employee","Annual Review"), tags="selectable")
+                # self.tree.insert("", "end", values=(employee, "Employee","Annual Review"), tags="selectable")
+        
+    def open_employee_review(self, employee, type):
+        # create a new window to show employee details along with 2 radio buttons to approve or deny the request
+        self.employee_review_window = tk.Toplevel()
+        self.employee_review_window.geometry("800x600")
+        self.employee_review_window.title("Employee Review")
+        
+        # create a canvas that resizes with the window
+        self.employee_review_logo_canvas = tk.Canvas(self.employee_review_window, bg="white", highlightthickness=0)
+        self.employee_review_logo_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # load the image as the background on the canvas
+        self.load_image_employee_review()
+        
+        # bind window resize event to function
+        self.employee_review_window.bind("<Configure>", lambda event: self.on_window_resize_employee_review(event))
+        
+        # center the window with function center_window_test
+        self.center_window_all(self.employee_review_window)
+        
+        # focus on window
+        self.employee_review_window.focus_force()
+        
+        # bind the Escape key to the exit function
+        self.employee_review_window.bind("<Escape>", lambda event: self.employee_review_window.destroy())
+        
+        performance_review_label = tk.Label(
+            self.employee_review_logo_canvas,
+            text="Performance Review",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        performance_review_label.pack(pady=20)
+        performance_review_label.place(relx=0.5, rely=0.2, anchor="center")
+        
+        self.performance_review_entry = tk.Entry(
+            self.employee_review_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.performance_review_entry.pack(pady=20)
+        self.performance_review_entry.place(width=500, relx=0.5, rely=0.25, anchor="center")
+        
+        # Get the performance review from the employee data
+        performance_review = db.reference("/employee").child(employee).child("performance_review").child(type).child(
+            "performance_review").get()
+        self.performance_review_entry.insert(0, performance_review)
+        self.performance_review_entry.configure(state="readonly", justify="center")
+        
+        feedback_label = tk.Label(
+            self.employee_review_logo_canvas,
+            text="Constructed Feedback",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        feedback_label.pack(pady=20)
+        feedback_label.place(relx=0.5, rely=0.35, anchor="center")
+        
+        self.feedback_entry = tk.Entry(
+            self.employee_review_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.feedback_entry.pack(pady=20)
+        self.feedback_entry.place(width=500, relx=0.5, rely=0.4, anchor="center")
+        
+        # Get the feedback from the employee data
+        feedback = db.reference("/employee").child(employee).child("performance_review").child(type).child(
+            "constructed_feedback").get()
+        self.feedback_entry.insert(0, feedback)
+        self.feedback_entry.configure(state="readonly", justify="center")
+        
+        future_goals_label = tk.Label(
+            self.employee_review_logo_canvas,
+            text="Goals for Future",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        future_goals_label.pack(pady=20)
+        future_goals_label.place(relx=0.5, rely=0.5, anchor="center")
+        
+        self.future_goals_entry = tk.Entry(
+            self.employee_review_logo_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.future_goals_entry.pack(pady=20)
+        self.future_goals_entry.place(width=500, relx=0.5, rely=0.55, anchor="center")
+        
+        # Get the future goals from the employee data
+        future_goals = db.reference("/employee").child(employee).child("performance_review").child(type).child(
+            "goals_for_future").get()
+        self.future_goals_entry.insert(0, future_goals)
+        self.future_goals_entry.configure(state="readonly", justify="center")
+        
+        # Create 2 buttons to approve or deny the performance review
+        self.approve_button = tk.Button(
+            self.employee_review_window,
+            text="Approve",
+            command=lambda employee=employee, type=type: self.approve_performance_review(employee, type),
+            font=("Helvetica", 14),
+        )
+        self.approve_button.pack(
+            pady=20
+        )
+        self.approve_button.place(relx=0.5, rely=0.8, anchor="center", width=100, height=30)
+        
+        self.deny_button = tk.Button(
+            self.employee_review_window,
+            text="Deny",
+            command=lambda employee=employee, type=type: self.deny_performance_review(employee, type),
+            font=("Helvetica", 14),
+        )
+        self.deny_button.pack(
+            pady=20
+        )
+        self.deny_button.place(relx=0.5, rely=0.9, anchor="center", width=100, height=30)
+        
+        # Run the main loop for the create_remove_hr_window
+        self.employee_review_window.mainloop()
+
+    
+    def approve_performance_review(self,employee,type):
+        #Ask for confirmation before approving the performance review
+        if messagebox.askyesno("Performance Review Approval", "Are you sure you want to approve the performance review for "+employee+"?"):
+            #Update the status of the performance review to Approved
+            db.reference("/employee").child(employee).child("performance_review").child(type).update({"status":"Approved by Manager"})
+            messagebox.showinfo("Performance Review Approval", "Performance Review has been approved for "+employee)
+            
+        self.employee_review_window.destroy()
+        self.review_approval_window.focus_force()
+    
+    def deny_performance_review(self,employee,type):
+        #ask for confirmation before denying the performance review using pyqt5 messagebox
+        if messagebox.askyesno("Performance Review Approval", "Are you sure you want to deny the performance review for "+employee+"?"):
+            #Ask for the reason for denying the performance review
+            reason = simpledialog.askstring("Performance Review Approval", "Enter the reason for denying the performance review for "+employee)
+            if reason == None or reason == "" or reason.isspace() or reason == " ":
+                messagebox.showinfo("Performance Review Approval", "Please enter a reason for denying the performance review for "+employee)
+                self.employee_review_window.destroy()
+                self.review_approval_window.focus_force()
+                return
+            #Update the status of the performance review to Denied
+            db.reference("/employee").child(employee).child("performance_review").child(type).update({"status":"Denied by Manager","reason":reason})
+            messagebox.showinfo("Performance Review Approval", "Performance Review has been denied for "+employee)
+            
+        self.employee_review_window.destroy()
+        self.review_approval_window.focus_force()
+            
+    def load_image_employee_review(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_employee_review_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_employee_review()
+        
+    def resize_canvas_and_image_employee_review(self):
+        # Get the manager window size
+        window_width = self.employee_review_logo_canvas.winfo_width()
+        window_height = self.employee_review_logo_canvas.winfo_height()
+        
+        # Resize the canvas to the current window size
+        self.employee_review_logo_canvas.config(width=window_width, height=window_height)
+        
+        # Resize the image if needed
+        resized_image = self.original_employee_review_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.employee_review_logo_image = ImageTk.PhotoImage(resized_image)
+        
+        # Update the image on the canvas
+        self.employee_review_logo_canvas.delete("all")
+        self.employee_review_logo_canvas.create_image(
+            0, 0, image=self.employee_review_logo_image, anchor="nw"
+        )
+        
+    def on_window_resize_employee_review(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_employee_review()
 
     def load_image_review_approval(self):
         # Construct the full path to the image file based on role and username
@@ -1728,6 +1987,118 @@ class Manager_class:
         # Handle window resize event
         self.resize_canvas_and_image_employee_details_new2(employee_name)
 
+    def submit_performance_review(self,username):
+        # create a new window to show the performance review
+        self.performance_review_window = tk.Toplevel()
+        self.performance_review_window.geometry("800x600")
+        self.performance_review_window.title("Submit Performance Review")
+        
+        # create a canvas that resizes with the window
+        self.performance_review_logo_canvas = tk.Canvas(self.performance_review_window, bg="white", highlightthickness=0)
+        self.performance_review_logo_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # import the image as the background on the canvas
+        self.load_image_performance_review()
+        
+        # bind window resize event to function
+        self.performance_review_window.bind("<Configure>", lambda event: self.on_window_resize_performance_review(event))
+        
+        # bind the escape key to the exit function
+        self.performance_review_window.bind("<Escape>", lambda event: self.performance_review_window.destroy())
+        
+        # focus on window
+        self.performance_review_window.focus_force()
+        
+        # Center the window with function center_window_test
+        self.center_window_all(self.performance_review_window)
+        
+        # Create dropdown options for the performance review
+        options=["Select Type", "Quarterly Review", "Annual Review"]
+        selected_option = tk.StringVar()
+        selected_option.set(options[0])
+        dropdown = tk.OptionMenu(self.performance_review_window, selected_option, *options)
+        dropdown.pack(pady=20)
+        dropdown.place(relx=0.5, rely=0.4, anchor="center")
+        
+        # Create entry widgets for the performance review, constructed feedback, and goals
+        entry_labels = ["Self Review", "Other Feedback", "Goals for the Future"]
+        entry_variables = [tk.StringVar() for _ in range(3)]
+        entry_widgets = []
+
+        for i in range(3):
+            entry_widget = tk.Entry(self.performance_review_logo_canvas, width=50, font=("Helvetica", 14), textvariable=entry_variables[i])
+            entry_widget.pack(pady=40, side=tk.TOP, anchor=tk.CENTER)
+            entry_widget.insert(0, entry_labels[i])
+            entry_widget.bind("<FocusIn>", lambda event, entry_widget=entry_widget, default_text=entry_labels[i]: self.entry_del(entry_widget, default_text))
+            entry_widgets.append(entry_widget)
+
+        # Create a button to submit the performance review
+        submit_button = tk.Button(self.performance_review_logo_canvas, text="Submit", command=lambda: self.submit_performance_review_request(selected_option.get(), entry_variables,username), font=("Helvetica", 14))
+        submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        
+        # Run the main loop for the performance_review_window
+        self.performance_review_window.mainloop()
+    
+    def submit_performance_review_request(self, selected_option, entry_variables,username):
+        # Retrieve the entered values
+        self_review = entry_variables[0].get()
+        other_feedback = entry_variables[1].get()
+        goals = entry_variables[2].get()
+        
+        #Check if the values are valid
+        if not self_review or self_review == "Performance Review":
+            messagebox.showinfo("Manager Window", "Please enter a performance review.")
+        elif not other_feedback or other_feedback == "Constructed Feedback":
+            messagebox.showinfo("Manager Window", "Please enter constructed feedback.")
+        elif not goals or goals == "Goals for the Future":
+            messagebox.showinfo("Manager Window", "Please enter goals for the future.")
+        elif selected_option == "Select Type":
+            messagebox.showinfo("Manager Window", "Please select a type.")
+        else:
+            # Add the performance review details to the database
+            db.reference("/manager").child(username).child("performance_review").child(selected_option).set({
+                "performance_review": self_review,
+                "constructed_feedback": other_feedback,
+                "goals_for_future": goals
+            })
+            db.reference("/manager").child(username).child("performance_review").child(selected_option).child("status").set("filled")
+            messagebox.showinfo("Manager Window", "Performance review submitted successfully.")
+
+            # Close the submit_performance_review_window
+            self.performance_review_window.destroy()
+            
+    def load_image_performance_review(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_performance_review_logo_image = Image.open(img_path)
+        self.resize_canvas_and_image_performance_review()
+        
+    def resize_canvas_and_image_performance_review(self):
+        # Get the performance_review window size
+        window_width = self.performance_review_logo_canvas.winfo_width()
+        window_height = self.performance_review_logo_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.performance_review_logo_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_performance_review_logo_image.resize(
+            (window_width, window_height)
+        )
+        self.performance_review_logo_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.performance_review_logo_canvas.delete("all")
+        self.performance_review_logo_canvas.create_image(
+            0, 0, image=self.performance_review_logo_image, anchor="nw"
+        )
+        
+    def on_window_resize_performance_review(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_performance_review()
+        
     def center_window_all(self, window):
         # Get the width and height of the screen
         screen_width = window.winfo_screenwidth()
