@@ -1553,8 +1553,180 @@ class HR_class:
         self.resize_canvas_and_image_approve_resignation()
 
     def check_hours_attended(self):
-        messagebox.showinfo("HR Window", "Check Employee Hours Attended Button Pressed")
-    
+        #Create a window to check the hours attended by the employee
+        self.check_hours_attended_window = tk.Toplevel()
+        self.check_hours_attended_window.geometry("400x300")
+        self.check_hours_attended_window.title("Check Hours Attended")
+        
+        #Create a canvas that resizes with the window
+        self.check_hours_attended_canvas = tk.Canvas(self.check_hours_attended_window, bg="white", highlightthickness=0)
+        self.check_hours_attended_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        #Load the image as the background on the canvas
+        self.load_image_check_hours_attended()
+        
+        #Bind window resize event to function
+        self.check_hours_attended_window.bind("<Configure>", lambda event: self.on_window_resize_check_hours_attended(event))
+        
+        #Center the window with function center_window_test
+        self.center_window_all(self.check_hours_attended_window)
+        
+        #focus on window
+        self.check_hours_attended_window.focus_force()
+        
+        #Create the treeview to display the employees
+        self.treeview_check_hours_attended = ttk.Treeview(
+            self.check_hours_attended_canvas, columns=("Employee", "Hours Attended","Warned"), show="headings", selectmode="browse"
+        )
+        self.treeview_check_hours_attended.heading("Employee", text="Employee")
+        self.treeview_check_hours_attended.heading("Hours Attended", text="Hours Attended")
+        self.treeview_check_hours_attended.heading("Warned", text="Warned")
+        self.treeview_check_hours_attended.tag_configure("selectable", foreground="blue", font=("Helvetica", 12, "underline"))
+        # self.treeview_check_hours_attended.bind("<Double-1>", lambda event: self.open_employee_details_window(self.treeview_check_hours_attended.item(self.treeview_check_hours_attended.selection())["values"][0]))
+
+        #Configure the x and y scrollbars
+        scrollbar_check_hours_attended_y = ttk.Scrollbar(self.treeview_check_hours_attended, orient="vertical", command=self.treeview_check_hours_attended.yview)
+        scrollbar_check_hours_attended_y.pack(side="right", fill="y")
+        self.treeview_check_hours_attended.configure(yscrollcommand=scrollbar_check_hours_attended_y.set)
+
+        scrollbar_check_hours_attended_x = ttk.Scrollbar(self.treeview_check_hours_attended, orient="horizontal", command=self.treeview_check_hours_attended.xview)
+        scrollbar_check_hours_attended_x.pack(side="bottom", fill="x")
+        self.treeview_check_hours_attended.configure(xscrollcommand=scrollbar_check_hours_attended_x.set)
+
+        #Pack the Treeview to the canvas and make the size 500x500
+        self.treeview_check_hours_attended.pack(fill="both", expand=True)
+        self.treeview_check_hours_attended.place(width=700, height=400, relx=0.5, rely=0.5, anchor="center")
+
+        #Create a combo box to select the role of the employee
+        role_entry_check_hours_attended_label = tk.Label(
+            self.check_hours_attended_canvas,
+            text="Role",
+            font=("Helvetica", 12, "bold"),
+            bg="white",
+        )
+        role_entry_check_hours_attended_label.pack(
+            pady=20
+        )
+        role_entry_check_hours_attended_label.place(relx=0.5, rely=0.1, anchor="center")
+        self.role_entry_check_hours_attended = ttk.Combobox(
+            self.check_hours_attended_canvas, font=("Helvetica", 12, "bold")
+        )
+        self.role_entry_check_hours_attended["values"] = ("None", "manager", "employee")
+        self.role_entry_check_hours_attended.pack(
+            pady=20
+        )
+        self.role_entry_check_hours_attended.place(relx=0.5, rely=0.15, anchor="center")
+        self.role_entry_check_hours_attended.current(0)
+
+        self.role_entry_check_hours_attended.bind("<<ComboboxSelected>>", self.role_selected_check_hours_attended)
+
+        #Create a button to warn the employee
+        self.warn_employee_button = tk.Button(
+            self.check_hours_attended_canvas,
+            text="Warn Employee",
+            command=lambda:self.warn_employee(),
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+        )
+        self.warn_employee_button.place(relx=0.5, rely=0.9, anchor="s")
+        self.warn_employee_button["state"] = "disabled"
+        
+        #Change the state of the warn_employee_button to normal if a row is selected
+        self.treeview_check_hours_attended.bind("<<TreeviewSelect>>",self.on_treeview_select_check_hours_attended)
+        #Bind the escape key to the exit function
+        self.check_hours_attended_window.bind("<Escape>", lambda event: self.check_hours_attended_window.destroy())
+
+        #Run the main loop for the self.check_hours_attended_window
+        self.check_hours_attended_window.mainloop()
+
+    def on_treeview_select_check_hours_attended(self, event):
+        selected_items = self.treeview_check_hours_attended.selection()
+        if selected_items:
+            # Enable buttons if a row is selected
+            self.warn_employee_button["state"] = "normal"
+        else:
+            # Disable buttons if no row is selected
+            self.warn_employee_button["state"] = "disabled"
+
+    def role_selected_check_hours_attended(self, event):
+        if self.role_entry_check_hours_attended == "None":
+            self.treeview_check_hours_attended.delete(*self.treeview_check_hours_attended.get_children())
+            return
+        selected_role = self.role_entry_check_hours_attended.get()
+        if selected_role == "employee":
+            self.populate_employee_list_check_hours_attended(selected_role)
+        elif selected_role == "manager":
+            self.populate_employee_list_check_hours_attended(selected_role)
+
+    def populate_employee_list_check_hours_attended(self, role):
+        # Clear the existing items in the Treeview
+        if self.treeview_check_hours_attended is not None:
+            self.treeview_check_hours_attended.delete(*self.treeview_check_hours_attended.get_children())
+
+        if role == "manager":
+            employees = list(( db.reference("/manager").get()).keys())
+            # Populate the Treeview with employee names and hours attended
+            for employee in employees:
+                self.treeview_check_hours_attended.insert("", "end", values=(employee, db.reference("/manager").child(employee).child("hours_attended").get(),db.reference("/manager").child(employee).child("warning").get()), tags=("selectable",))
+        elif role == "None":
+            return
+        else:
+            employees = list(( db.reference("/employee").get()).keys())
+            # Populate the Treeview with employee names and hours attended
+            for employee in employees:
+                self.treeview_check_hours_attended.insert("", "end", values=(employee, db.reference("/employee").child(employee).child("hours_attended").get(),db.reference("/employee").child(employee).child("warning").get()), tags=("selectable",))
+
+    def warn_employee(self):
+        #Get the selected employee
+        selected_employee = self.treeview_check_hours_attended.item(self.treeview_check_hours_attended.selection())["values"][0]
+        #Ask for confirmation
+        if messagebox.askyesno("Warn Employee", f"Are you sure you want to warn {selected_employee}?"):
+            #Warn the employee in the database
+            db.reference("/employee").child(selected_employee).child("warning").set("Warning issued by HR")
+            messagebox.showinfo("Warn Employee", "Employee warned successfully.")
+            #Refresh the list
+            self.populate_employee_list_check_hours_attended(self.role_entry_check_hours_attended.get())
+            self.warn_employee_button["state"] = "disabled"
+        #focus on window
+        self.check_hours_attended_window.focus_force()
+
+    def load_image_check_hours_attended(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_check_hours_attended_image = Image.open(img_path)
+        self.resize_canvas_and_image_check_hours_attended()
+
+    def resize_canvas_and_image_check_hours_attended(self):
+        # Get the check_hours_attended window size
+        window_width = self.check_hours_attended_canvas.winfo_width()
+        window_height = self.check_hours_attended_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.check_hours_attended_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_check_hours_attended_image.resize(
+            (window_width, window_height)
+        )
+        self.check_hours_attended_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.check_hours_attended_canvas.delete("all")
+        self.check_hours_attended_canvas.create_image(
+            0, 0, image=self.check_hours_attended_image, anchor="nw"
+        )
+
+    def on_window_resize_check_hours_attended(self, event):
+        # Handle window resize event
+        self.resize_canvas_and_image_check_hours_attended()
+        
     def survey_feedback(self, username):
         if hasattr(self, "survey_feedback_window"):
             try:
@@ -2384,11 +2556,19 @@ class HR_class:
         
         # Create a scrollable frame for treeview
         self.approve_review_frame = tk.Frame(self.approve_review_canvas, bg="white")
-        self.approve_review_frame.pack(fill="both", expand=True)
-        self.approve_review_frame.place(relx=0.5, rely=0.5, anchor="center")
+        self.approve_review_frame.pack(fill=tk.BOTH, expand=True)
+        self.approve_review_frame.place(width=600, height=400,relx=0.5, rely=0.5, anchor="center")
+
+        # Add a vertical scrollbar to the Treeview
+        treeview_scrollbar_y = ttk.Scrollbar(self.approve_review_frame, orient="vertical")
+        treeview_scrollbar_y.pack(side="right", fill="y")
+
+        # Add a horizontal scrollbar to the Treeview
+        treeview_scrollbar_x = ttk.Scrollbar(self.approve_review_frame, orient="horizontal")
+        treeview_scrollbar_x.pack(side="bottom", fill="x")
 
         # Create a Treeview widget
-        self.treeview_approve_review = ttk.Treeview(self.approve_review_frame, columns=("Employee", "Role", "Type"), show="headings",xscrollcommand=self.approve_review_canvas.xview, yscrollcommand=self.approve_review_canvas.yview)
+        self.treeview_approve_review = ttk.Treeview(self.approve_review_frame, columns=("Employee", "Role", "Type"), show="headings", selectmode="browse", yscrollcommand=treeview_scrollbar_y.set, xscrollcommand=treeview_scrollbar_x.set)
         self.treeview_approve_review.heading("Employee", text="Employee")
         self.treeview_approve_review.heading("Role", text="Role")
         self.treeview_approve_review.pack(fill="both", expand=True)
@@ -2397,28 +2577,22 @@ class HR_class:
         self.treeview_approve_review.tag_configure("selectable", background="white", foreground="blue")
         self.treeview_approve_review.bind("<Double-1>", lambda event:self.on_treeview_select_approve_review(event))
 
-        # # Add a vertical scrollbar to the Treeview
-        treeview_scrollbar_y = ttk.Scrollbar(self.approve_review_frame, orient="vertical", command=self.treeview_approve_review.yview)
-        treeview_scrollbar_y.pack(side="right", fill="y")
-        self.treeview_approve_review.configure(yscrollcommand=treeview_scrollbar_y.set)
-
-        # Add a horizontal scrollbar to the Treeview
-        treeview_scrollbar_x = ttk.Scrollbar(self.approve_review_frame, orient="horizontal", command=self.treeview_approve_review.xview)
-        treeview_scrollbar_x.pack(side="bottom", fill="x")
-        self.treeview_approve_review.configure(xscrollcommand=treeview_scrollbar_x.set)
-        
-        # Configure grid row and column weights
-        # self.approve_review_frame.grid_rowconfigure(0, weight=1)
-        # self.approve_review_frame.grid_columnconfigure(0, weight=1)
-        
+        # Configure the scrollbars to move with the Treeview
+        treeview_scrollbar_y.config(command=self.treeview_approve_review.yview)
+        treeview_scrollbar_x.config(command=self.treeview_approve_review.xview)
+                
         # Create a combo box to select the type of performance review
         self.review_type = tk.StringVar()
         self.review_type.set("None")
         self.review_type_combo = ttk.Combobox(self.approve_review_window, textvariable=self.review_type, values=["None","Quarterly Review", "Annual Review"])
         self.review_type_combo.pack(pady=20)
-        self.review_type_combo.place(x=400, y=120, anchor="center")  # Adjust the x and y coordinates as needed 
+        self.review_type_combo.place(relx=0.5,rely=0.2, anchor="center")  # Adjust the x and y coordinates as needed 
         self.review_type_combo.bind("<<ComboboxSelected>>", self.on_review_type_selected)
 
+        # Configure grid row and column weights
+        self.approve_review_frame.grid_rowconfigure(0, weight=1)
+        self.approve_review_frame.grid_columnconfigure(0, weight=1)
+        
         # Run the main loop for the approve_review_window
         self.approve_review_window.mainloop()
 
