@@ -807,7 +807,7 @@ class Admin_class():
             # Create an instance of HR_class
             hr_instance = HR_class()
             # Call the open_hr_window method on the instance
-            hr_instance.open_hr_window(role, username)
+            hr_instance.open_hr_window(role, username,"admin")
         elif role == "manager":
             manager_instance = Manager_class()
             manager_instance.open_manager_window(role, username)

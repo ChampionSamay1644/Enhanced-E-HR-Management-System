@@ -66,7 +66,8 @@ class HR_class:
             
             return list
     
-    def open_hr_window(self,role, username):
+    def open_hr_window(self,role, username,uni_role):
+        self.uni_role = uni_role
         # self.root.destroy()  # Close the main login window
         if hasattr(self, "root"):
             try:
@@ -710,6 +711,9 @@ class HR_class:
         add_login_from_hr_window.mainloop()
 
     def add_login_to_database_hr_window(self, add_login_from_hr_window):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         username = self.username_entry.get()
         password = self.password_entry.get()
         role = self.role_entry.get()
@@ -777,6 +781,9 @@ class HR_class:
         self.salary_management_canvas.focus_force()
             
     def remove_login(self, employee_name, employee_details_window):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Function to remove the login of the employee or manager
         if employee_name == None:
             messagebox.showinfo("Error","Please select a row")
@@ -853,6 +860,9 @@ class HR_class:
         edit_salary_window.mainloop()
         
     def new_submit_salary(self, employee_name, edit_salary_window):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the new salary from the entry
         new_salary = self.new_salary_entry.get()
         #Ask for confirmation 
@@ -1227,6 +1237,9 @@ class HR_class:
         grant_bonus_window.mainloop()
         
     def grant_bonus_to_manager(self, grant_bonus_window):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the bonus amount from the entry
         bonus_amount = self.bonus_amount_entry.get()
         #Ask for confirmation
@@ -1274,6 +1287,9 @@ class HR_class:
         self.resize_canvas_and_image_grant_bonus()
         
     def approve_bonus_btn(self):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the selected employee
         selected_employee = self.treeview_bonus.item(self.treeview_bonus.selection())["values"][0]
         #Get the bonus amount
@@ -1294,6 +1310,9 @@ class HR_class:
         self.approve_bonus_window.focus_force()    
         
     def deny_bonus_btn(self):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the selected employee
         selected_employee = self.treeview_bonus.item(self.treeview_bonus.selection())["values"][0]
         #Ask for reason for denying the bonus
@@ -1485,6 +1504,9 @@ class HR_class:
             self.treeview_resignation.insert("", "end", values=(person, role, reason), tags=("clickable",))
 
     def approve_resignation_btn(self):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the selected employee
         selected_employee = self.treeview_resignation.item(self.treeview_resignation.selection())["values"][0]
         role= self.treeview_resignation.item(self.treeview_resignation.selection())["values"][1]
@@ -1492,7 +1514,6 @@ class HR_class:
         if messagebox.askyesno("Approve Resignation", f"Are you sure you want to approve the resignation of {selected_employee}?"):
             #Approve the resignation in the database
             if role == "Employee" and db.reference("/employee").child(selected_employee).child("resignation_request").child("resignation_status").get() =="Approved by Manager":
-                print("yes")
                 db.reference("/employee").child(selected_employee).child("resignation_request").child("resignation_status").set("Approved by HR")
                 #Set the resigning date to 4 weeks from the current date
                 current_datetime = datetime.datetime.now()
@@ -1518,7 +1539,26 @@ class HR_class:
         self.approve_resignation_window.focus_force()
         
     def deny_resignation_btn(self):
-        messagebox.showinfo("HR Window", "Deny Resignation Button Pressed")
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
+        #Get the selected employee
+        selected_employee = self.treeview_resignation.item(self.treeview_resignation.selection())["values"][0]
+        role= self.treeview_resignation.item(self.treeview_resignation.selection())["values"][1]
+        #Ask for reason for denying the resignation
+        reason = simpledialog.askstring("Deny Resignation", f"Please enter the reason for denying the resignation of {selected_employee}")
+        if reason is not None:
+            #Deny the resignation in the database
+            if role == "Employee":
+                db.reference("/employee").child(selected_employee).child("resignation_request").child("resignation_status").set("Denied by HR")
+                db.reference("/employee").child(selected_employee).child("resignation_request").child("resignation_deny_reason").set(reason)
+            if role == "Manager":
+                db.reference("/manager").child(selected_employee).child("resignation_request").child("resignation_status").set("Denied by HR")
+                db.reference("/manager").child(selected_employee).child("resignation_request").child("resignation_deny_reason").set(reason)
+            messagebox.showinfo("Deny Resignation", "Resignation denied successfully.")
+            #Refresh the list
+            self.populate_employee_list_resignation()
+            self.approve_resignation_button["state"] = "disabled"
 
     def load_image_approve_resignation(self):
         # Construct the full path to the image file based on role and username
@@ -1682,6 +1722,9 @@ class HR_class:
                 self.treeview_check_hours_attended.insert("", "end", values=(employee, db.reference("/employee").child(employee).child("hours_attended").get(),db.reference("/employee").child(employee).child("warning").get()), tags=("selectable",))
 
     def warn_employee(self):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the selected employee
         selected_employee = self.treeview_check_hours_attended.item(self.treeview_check_hours_attended.selection())["values"][0]
         #Ask for confirmation
@@ -1855,6 +1898,9 @@ class HR_class:
         self.survey_question_entry.insert(0, previous_answer)
 
     def survey_feedback_request(self, username):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         # Store the answer for the current question
         answer = self.survey_question_entry.get()
         self.answers[self.current_question_index] = answer
@@ -2051,6 +2097,9 @@ class HR_class:
                 self.treeview_promotion.insert("", "end", values=(employee, "Employee",designation,salary), tags=("selectable",))
             
     def approve_promotion_btn(self):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the selected employee
         selected_employee = self.treeview_promotion.item(self.treeview_promotion.selection())["values"][0]
         selected_role = self.role_selected_promotion.get()
@@ -2096,6 +2145,9 @@ class HR_class:
         self.approve_promotion_window.focus_force()
         
     def deny_promotion_btn(self):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the selected employee
         selected_employee = self.treeview_promotion.item(self.treeview_promotion.selection())["values"][0]
         #Ask for confirmation
@@ -2240,6 +2292,9 @@ class HR_class:
         self.promote_manager_window.mainloop()
         
     def promote_btn(self,selected_employee):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the new salary and comment
         new_designation = self.new_designation_entry.get()
         new_salary = self.new_salary_entry.get()
@@ -2385,6 +2440,9 @@ class HR_class:
         self.promote_to_manager_window.mainloop()
         
     def promote_to_manager_btn(self,selected_employee):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the new salary and comment
         new_designation = self.new_designation_entry.get()
         new_salary = self.new_salary_entry.get()
@@ -2489,6 +2547,9 @@ class HR_class:
         self.apply_for_resignation_window.mainloop()
         
     def apply_for_resignation_btn(self,username):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Get the reason for resignation
         reason = self.reason_entry.get()
         if db.reference("/HR").child(username).child("resignation_request").child("Request").get() == "pending":
@@ -2773,6 +2834,9 @@ class HR_class:
         self.open_review_window.mainloop()
         
     def approve_performance_review(self,employee,type):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Ask for confirmation
         if messagebox.askyesno("Approve Review", "Are you sure you want to approve this review?"):
             if type == "Employee":
@@ -2785,6 +2849,9 @@ class HR_class:
         self.approve_review.focus_force()
         
     def deny_performance_review(self,employee,type):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         #Ask for confirmation
         if messagebox.askyesno("Deny Review", "Are you sure you want to deny this review?"):
             #Ask for the reason for denial
@@ -3036,6 +3103,9 @@ class HR_class:
         self.resize_canvas_and_image_change_password()
         
     def change_password_request(self, username, entry_variables, window):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin. You cannot make changes to database.")
+            return
         # Get the entered values from the Entry widgets
         old_password = entry_variables[0].get()
         new_password = entry_variables[1].get()
@@ -3327,4 +3397,4 @@ class HR_class:
 def main(role,username):
     # Create a new window
     hr=HR_class()
-    hr.open_hr_window(role,username)
+    hr.open_hr_window(role,username,"HR")
