@@ -181,7 +181,7 @@ class Employee_class:
 
         self.submit_complaint_button = tk.Button(
 
-            self.employee_logo_canvas, text="Submit Complaint", command=lambda:self.submit_complaint(), font=("Helvetica", 14)
+            self.employee_logo_canvas, text="Submit Complaint", command=lambda:self.submit_complaint(username), font=("Helvetica", 14)
         )
         self.submit_complaint_button.pack(
             pady=20
@@ -955,7 +955,10 @@ class Employee_class:
         # Retrieve the entered values
         employee_name = self.employee_name_entry.get()
         complaint = self.complaint_entry.get()
-
+        manager= (db.reference("/manager").get()).keys()
+        employee= (db.reference("/employee").get()).keys()
+        if employee_name not in manager and employee_name not in employee:
+            messagebox.showinfo("Employee Window", "Employee does not exist.")
         # Check if the complaint is valid
         if not employee_name:
             messagebox.showinfo("Employee Window", "Please enter an employee name.")
@@ -963,7 +966,9 @@ class Employee_class:
             messagebox.showinfo("Employee Window", "Please enter a complaint.")
         else:
             # Add the complaint to the database
-            db.reference("/employee").child(employee_name).child("complaint").set(complaint)
+            db.reference("/employee").child(employee_name).child("complaint").child("problem").set(complaint)
+            db.reference("/employee").child(employee_name).child("complaint").child("status").set("pending")
+            db.reference("/employee").child(employee_name).child("complaint").child("complaint_by").set(username)
             messagebox.showinfo("Employee Window", "Complaint submitted successfully.")
             submit_complaint_window.destroy()
         
