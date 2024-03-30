@@ -1,13 +1,11 @@
 HR- 
-    Approve performance review
 
 Manager-
-    progress on task and assign task(future aspect)
-    performance review approval
 
 Employee-
     Fix survey 
     Update based on db update(resignation approved,review approved etc)
 
 Bug fixes-
+    Fix complaint window
     

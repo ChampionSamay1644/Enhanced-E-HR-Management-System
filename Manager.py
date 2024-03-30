@@ -58,7 +58,8 @@ class Manager_class:
             
             return list
     
-    def open_manager_window(self, role, username):
+    def open_manager_window(self, role, username,uni_role):
+        self.uni_role=uni_role
         if hasattr(self, "root"):
             try:
                 if self.root.winfo_exists():
@@ -499,9 +500,11 @@ class Manager_class:
         
         # Run the main loop for the create_remove_hr_window
         self.employee_review_window.mainloop()
-
     
     def approve_performance_review(self,employee,type):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         #Ask for confirmation before approving the performance review
         if messagebox.askyesno("Performance Review Approval", "Are you sure you want to approve the performance review for "+employee+"?"):
             #Update the status of the performance review to Approved
@@ -512,6 +515,9 @@ class Manager_class:
         self.review_approval_window.focus_force()
     
     def deny_performance_review(self,employee,type):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         #ask for confirmation before denying the performance review using pyqt5 messagebox
         if messagebox.askyesno("Performance Review Approval", "Are you sure you want to deny the performance review for "+employee+"?"):
             #Ask for the reason for denying the performance review
@@ -1124,6 +1130,9 @@ class Manager_class:
         self.resize_canvas_and_image_employee_details()
 
     def approve_vacation_days(self, employee_data):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # get the username, provisional vacation days and reason for vacation days from the employee details window
         username = self.username_entry.get()
         provisional_vacation_days = self.provisional_vacation_days_entry.get()
@@ -1142,6 +1151,9 @@ class Manager_class:
         messagebox.showinfo("Approve Vacation Days", "Vacation Days Approved")
 
     def deny_vacation_days(self, employee_data):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # get the username, provisional vacation days and reason for vacation days from the employee details window
         username = self.username_entry.get()
         provisional_vacation_days = self.provisional_vacation_days_entry.get()
@@ -1158,6 +1170,9 @@ class Manager_class:
         messagebox.showinfo("Deny Vacation Days", "Vacation Days Denied")
 
     def approve_sick_days(self, employee_data):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # get the username, provisional vacation days and reason for vacation days from the employee details window
         username = self.username_entry.get()
         provisional_vacation_days = self.provisional_vacation_days_entry.get()
@@ -1176,6 +1191,9 @@ class Manager_class:
         messagebox.showinfo("Approve Sick Days", "Sick Days Approved")
 
     def deny_sick_days(self, employee_data):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # get the username, provisional vacation days and reason for vacation days from the employee details window
         username = self.username_entry.get()
         provisional_vacation_days = self.provisional_vacation_days_entry.get()
@@ -1238,6 +1256,9 @@ class Manager_class:
         self.resignation_window.mainloop()
         
     def submit_resignation(self,username):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # Get the reason for resignation from the entry widget
         reason_for_resignation = self.reason_for_resignation_entry.get()
         if db.reference("/manager").child(username).child("resignation_request").child("resignation_reason").get() == "pending":
@@ -1529,6 +1550,9 @@ class Manager_class:
         self.promote_employee_window.mainloop()
         
     def promote_employee_request(self,username_mngr):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         #Get the entered values from the self.promote_employee_window
         new_salary = self.new_salary_entry.get()
         new_designation = self.new_designation_entry.get()
@@ -1675,6 +1699,9 @@ class Manager_class:
                 self.treeview_approve_resignation.insert("", "end", values=(employee,reason), tags=("clickable",))
         
     def approve_resignation_request(self):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # get the selected employee from the treeview
         selected_employee = self.treeview_approve_resignation.item(self.treeview_approve_resignation.selection())["values"][0]
         if db.reference("/employee").child(selected_employee).child("resignation_request").child("resignation_status").get() == "Approved by Manager":
@@ -1892,6 +1919,9 @@ class Manager_class:
         employee_details_window2.mainloop()
 
     def submit_bonus_request(self, employee_name):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # Get the entered values from the Entry widgets
         amount_bonus = self.bonus_amount_entry.get()
         reason_bonus = self.reason_entry.get()
@@ -2040,6 +2070,9 @@ class Manager_class:
         self.performance_review_window.mainloop()
     
     def submit_performance_review_request(self, selected_option, entry_variables,username):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # Retrieve the entered values
         self_review = entry_variables[0].get()
         other_feedback = entry_variables[1].get()
@@ -2285,6 +2318,9 @@ class Manager_class:
         self.resize_canvas_and_image_change_password()
         
     def change_password_request(self, username, entry_variables, window):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # Get the entered values from the Entry widgets
         old_password = entry_variables[0].get()
         new_password = entry_variables[1].get()
@@ -2324,4 +2360,4 @@ class Manager_class:
         
 def main(role,username):
     manager=Manager_class()
-    manager.open_manager_window(role,username)
+    manager.open_manager_window(role,username,"manager")

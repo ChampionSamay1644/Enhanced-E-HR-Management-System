@@ -810,10 +810,10 @@ class Admin_class():
             hr_instance.open_hr_window(role, username,"admin")
         elif role == "manager":
             manager_instance = Manager_class()
-            manager_instance.open_manager_window(role, username)
+            manager_instance.open_manager_window(role, username,"admin")
         elif role == "employee":
             employee_instance = Employee_class()
-            employee_instance.open_employee_window(role, username)
+            employee_instance.open_employee_window(role, username,"admin")
             
     def load_image_admin(self, username):
         try:

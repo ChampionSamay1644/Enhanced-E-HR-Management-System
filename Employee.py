@@ -19,7 +19,8 @@ class Employee_class:
         self.root.geometry("800x600")
         self.root.title("Employee Window")
         
-    def open_employee_window(self, role, username):
+    def open_employee_window(self, role, username,uni_role):
+        self.uni_role = uni_role
         if hasattr(self, "root"):
             try:
                 if self.root.winfo_exists():
@@ -367,6 +368,9 @@ class Employee_class:
         apply_for_vacation_days_window.mainloop()
 
     def submit_vacation_request(self, username, selected_option, apply_for_vacation_days_window):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # Retrieve the entered values
         number_of_days = self.number_of_days_entry.get()
         reason = self.reason_entry.get()
@@ -504,6 +508,9 @@ class Employee_class:
         self.resize_canvas_and_image_apply_for_resignation()
             
     def submit_resignation_request(self, apply_for_resignation_window, username):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # Retrieve the entered values
         reason = self.reason_entry.get()
         #date = self.date_entry.get()
@@ -637,6 +644,9 @@ class Employee_class:
         self.resize_canvas_and_image_check_progress_on_tasks(username)
 
     def set_task_status_to_completed(self,username):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         db.reference("/employee").child(username).child("project").child("task").child("status").set("Completed")
         db.reference("/employee").child(username).child("project").child("progress").set(db.reference("/employee").child(username).child("project").child("progress").get()+10)
         messagebox.showinfo("Employee Window", "Task Status set to Completed")
@@ -829,7 +839,9 @@ class Employee_class:
         self.resize_canvas_and_image_submit_survey()
 
     def submit_survey_request(self, username):
-
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         stored_value = self.store_selected_value(self.radio_var.get())
         # Check if there is a value present for every question in the store_selected_value function
         if stored_value is None:
@@ -860,7 +872,7 @@ class Employee_class:
         #store the selected value in relation to the question index
         self.selected_values[self.current_question_index] = value
 
-    def submit_complaint(self):
+    def submit_complaint(self,username):
         # Create a new window for the submit_complaint top level
         submit_complaint_window = tk.Toplevel()
         submit_complaint_window.geometry("800x600")
@@ -876,7 +888,7 @@ class Employee_class:
         #create an entry to take the employees name whose complaint is being submitted
         self.employee_name_entry = tk.Entry(self.submit_complaint_canvas)
         self.employee_name_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
-        self.employee_name_entry.insert(0, "Employee Name")  # Default value
+        self.employee_name_entry.insert(0, "Complaint against Employee")
         self.employee_name_entry.bind("<FocusIn>", lambda event:self.employee_name_entry_del())
         
         # Create entry widget for complaint
@@ -886,7 +898,7 @@ class Employee_class:
         self.complaint_entry.bind("<FocusIn>", lambda event: self.complaint_entry_del())  # Delete the default value when the user clicks on the entry widget
         
         # Create a button to submit the complaint
-        submit_button = tk.Button(self.submit_complaint_canvas, text="Submit", command=lambda: self.submit_complaint_request(submit_complaint_window))
+        submit_button = tk.Button(self.submit_complaint_canvas, text="Submit", command=lambda: self.submit_complaint_request(username,submit_complaint_window))
         submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
         
         # Bind the Escape key to the exit function
@@ -936,7 +948,10 @@ class Employee_class:
         # Handle window resize event
         self.resize_canvas_and_image_submit_complaint()
         
-    def submit_complaint_request(self, submit_complaint_window):
+    def submit_complaint_request(self,username, submit_complaint_window):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # Retrieve the entered values
         employee_name = self.employee_name_entry.get()
         complaint = self.complaint_entry.get()
@@ -953,7 +968,7 @@ class Employee_class:
             submit_complaint_window.destroy()
         
     def employee_name_entry_del(self):
-        if self.employee_name_entry.get() == "Employee Name":
+        if self.employee_name_entry.get() == "Complaint against Employee":
             self.employee_name_entry.delete(0, tk.END)
             
     def complaint_entry_del(self):
@@ -1093,6 +1108,9 @@ class Employee_class:
             entry_widget.delete(0, tk.END)
 
     def submit_performance_review_request(self, username, selected_option, entry_variables, submit_performance_review_window):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # Retrieve the entered values
         performance_review = entry_variables[0].get()
         constructed_feedback = entry_variables[1].get()
@@ -1322,6 +1340,9 @@ class Employee_class:
         self.resize_canvas_and_image_change_password()
         
     def change_password_request(self, username, entry_variables, change_password_window):
+        if self.uni_role == "admin":
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            return
         # Retrieve the entered values
         old_password = entry_variables[0].get()
         new_password = entry_variables[1].get()
@@ -1397,5 +1418,5 @@ class Employee_class:
         
 def main(role,username):
     employee=Employee_class()
-    employee.open_employee_window(role,username)
+    employee.open_employee_window(role,username,"employee")
         
