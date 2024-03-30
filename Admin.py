@@ -673,7 +673,7 @@ class Admin_class():
         self.treeview.heading("Reason", text="Reason")
         self.treeview.column("Employee", width=200, anchor="center")
         self.treeview.column("Role", width=100, anchor="center")
-        self.treeview.column("Reason", width=600, anchor="center")
+        self.treeview.column("Reason", width=400, anchor="center")
         self.treeview.tag_configure("clickable", foreground="blue", font=("Helvetica", 12, "underline"))
         # Set the treeview rows to be selectable when clicked once
         self.treeview.bind("<Button-1>", lambda event: self.treeview.focus_set())

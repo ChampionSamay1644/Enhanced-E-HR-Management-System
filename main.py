@@ -45,7 +45,7 @@ class CreativeLoginApp:
 
         # Construct the full path to the image file
         img_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "HR_background.png" #change jpg to png for main background
+            os.path.dirname(os.path.realpath(__file__)), "HR_background.png"
         )
 
         # Focus on window
@@ -68,33 +68,30 @@ class CreativeLoginApp:
         username_label = tk.Label(
             root, text="Username", font=("Helvetica", 12, "bold"), bg="white"
         )
-        username_label.place(relx=0.5, rely=0.35, anchor="center")
+        username_label.place(relx=0.35, rely=0.4, anchor="center")  # Adjusted position
 
         # Username entry
         self.username_entry = tk.Entry(root, font=("Helvetica", 12, "bold"))
-        self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.username_entry.place(relx=0.65, rely=0.4, anchor="center")  # Adjusted position
         self.username_entry.insert(0, "")  # Default text
 
         # Label for Password
         password_label = tk.Label(
             root, text="Password", font=("Helvetica", 12, "bold"), bg="white"
         )
-        password_label.place(relx=0.5, rely=0.5, anchor="center")
+        password_label.place(relx=0.35, rely=0.5, anchor="center")  # Adjusted position
 
         # Password entry
         self.password_entry = tk.Entry(root, show="*", font=("Helvetica", 12, "bold"))
-        self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
+        self.password_entry.place(relx=0.65, rely=0.5, anchor="center")  # Adjusted position
         self.password_entry.insert(0, "")  # Default text
 
-        # threading.Thread(target=self.load_image_main, args=(img_path,)).start()
-        #this is to fix our gui time consuming problem
-        
         # Login button
         self.login_button = tk.Button(
             root, text="Login", command=self.login, font=("Helvetica", 14)
         )
         self.login_button.place(
-            relx=0.5, rely=0.65, anchor="center", width=100, height=30
+            relx=0.5, rely=0.6, anchor="center", width=100, height=30
         )
 
         # Exit button
@@ -102,7 +99,7 @@ class CreativeLoginApp:
             root, text="Exit", command=root.destroy, font=("Helvetica", 14)
         )
         self.exit_button.place(
-            relx=0.5, rely=0.75, anchor="center", width=100, height=30
+            relx=0.5, rely=0.7, anchor="center", width=100, height=30
         )
 
         # Credits button
@@ -110,7 +107,7 @@ class CreativeLoginApp:
             root, text="Credits", command=self.show_credits, font=("Helvetica", 14)
         )
         self.credits_button.place(
-            relx=0.5, rely=0.85, anchor="center", width=100, height=30
+            relx=0.5, rely=0.8, anchor="center", width=100, height=30
         )
 
         # Bind the Enter key to the login function
@@ -118,6 +115,7 @@ class CreativeLoginApp:
 
         # Bind the Escape key to the exit function
         root.bind("<Escape>", lambda event: root.destroy())
+
 
     def load_image_main(self, img_path):
         # Load image and adjust canvas size

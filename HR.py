@@ -75,6 +75,7 @@ class HR_class:
                     self.root.destroy()  # Close the main login window
             except:
                 pass
+
         # Create a new window
         hr_window = tk.Tk()  # Use Tk() to create a new window
         hr_window.geometry("800x600")  # Set the window size
@@ -86,136 +87,98 @@ class HR_class:
         self.buttons_created = False
         self.questions = [f"Question {i+1}" for i in range(10)]  # Assuming there are 10 questions
         self.answers = {}
-        
-        #create a canvas that resizes with the window
+
+        # Create a canvas that resizes with the window
         self.hr_logo_canvas = tk.Canvas(hr_window, bg="white", highlightthickness=0)
         self.hr_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
-        #import the image as the background on the canvas
+        # Import the image as the background on the canvas
         self.load_image_hr(username)
-        
-        #bind window resize event to function
-        hr_window.bind("<Configure>", lambda event: self.on_window_resize_hr(event,username))
-        
-        # focus on window
+
+        # Bind window resize event to function
+        hr_window.bind("<Configure>", lambda event: self.on_window_resize_hr(event, username))
+
+        # Focus on window
         hr_window.focus_force()
 
-        # Center the window with function center_window_test
+        # Center the window with function center_window_all
         self.center_window_all(hr_window)
 
         # Bind the Escape key to the exit function
         hr_window.bind("<Escape>", lambda event: hr_window.destroy())
-        
-        #buttons of HR window
+
+        # Buttons of HR window
+        button_width = 300
+        button_height = 50  # Increased height for bigger buttons
+
         self.salary_management_button = tk.Button(
-            self.hr_logo_canvas, text="Employee Management", command=lambda:self.salary_management(), font=("Helvetica", 14)
-        )
-        self.salary_management_button.pack(
-            pady=20
+            self.hr_logo_canvas, text="Employee Management", command=lambda: self.salary_management(), font=("Helvetica", 14)
         )
         self.salary_management_button.place(
-            relx=0.5, rely=0.3, anchor="center", width=300, height=30
+            relx=0.1, rely=0.2, anchor="w", width=button_width, height=button_height
         )
+
         self.approve_bonus_button = tk.Button(
-            self.hr_logo_canvas, text="Approve Bonus", command=lambda:self.approve_bonus(), font=("Helvetica", 14)
-        )
-        self.approve_bonus_button.pack(
-            pady=20
+            self.hr_logo_canvas, text="Approve Bonus", command=lambda: self.approve_bonus(), font=("Helvetica", 14)
         )
         self.approve_bonus_button.place(
+            relx=0.9, rely=0.2, anchor="e", width=button_width, height=button_height
+        )
 
-            relx=0.5, rely=0.375, anchor="center", width=300, height=30
-        )
         self.approve_resignation_button = tk.Button(
-            self.hr_logo_canvas, text="Approve Resignation", command=lambda:self.approve_resignation(), font=("Helvetica", 14)
-        )
-        self.approve_resignation_button.pack(
-            pady=20
+            self.hr_logo_canvas, text="Approve Resignation", command=lambda: self.approve_resignation(), font=("Helvetica", 14)
         )
         self.approve_resignation_button.place(
-            relx=0.5, rely=0.450, anchor="center", width=300, height=30
+            relx=0.1, rely=0.4, anchor="w", width=button_width, height=button_height
         )
+
         self.check_hours_attended_button = tk.Button(
-            self.hr_logo_canvas, text="Check Employee Hours Attended", command=lambda:self.check_hours_attended(), font=("Helvetica", 14)
-        )
-        self.check_hours_attended_button.pack(
-            pady=20
+            self.hr_logo_canvas, text="Check Employee Hours Attended", command=lambda: self.check_hours_attended(), font=("Helvetica", 14)
         )
         self.check_hours_attended_button.place(
-            relx=0.5, rely=0.525, anchor="center", width=300, height=30
+            relx=0.9, rely=0.4, anchor="e", width=button_width, height=button_height
         )
+
         self.survey_feedback_button = tk.Button(
-            self.hr_logo_canvas, text="Survey/Feedback", command=lambda:self.survey_feedback(username), font=("Helvetica", 14)
-        )
-        self.survey_feedback_button.pack(
-            pady=20
+            self.hr_logo_canvas, text="Survey/Feedback", command=lambda: self.survey_feedback(username), font=("Helvetica", 14)
         )
         self.survey_feedback_button.place(
-            relx=0.5, rely=0.6, anchor="center", width=300, height=30
+            relx=0.1, rely=0.6, anchor="w", width=button_width, height=button_height
         )
+
         self.approve_promotion_button = tk.Button(
-            self.hr_logo_canvas, text="Approve Promotion", command=lambda:self.approve_promotion(), font=("Helvetica", 14)
-        )
-        self.approve_promotion_button.pack(
-            pady=20
+            self.hr_logo_canvas, text="Approve Promotion", command=lambda: self.approve_promotion(), font=("Helvetica", 14)
         )
         self.approve_promotion_button.place(
-            relx=0.5, rely=0.675, anchor="center", width=300, height=30
+            relx=0.9, rely=0.6, anchor="e", width=button_width, height=button_height
         )
+
         self.apply_for_resignation_button = tk.Button(
-            self.hr_logo_canvas, text="Apply for Resignation", command=lambda:self.apply_for_resignation(username), font=("Helvetica", 14)
-        )
-        self.apply_for_resignation_button.pack(
-            pady=20
+            self.hr_logo_canvas, text="Apply for Resignation", command=lambda: self.apply_for_resignation(username), font=("Helvetica", 14)
         )
         self.apply_for_resignation_button.place(
-            relx=0.5, rely=0.750, anchor="center", width=300, height=30
+            relx=0.1, rely=0.8, anchor="w", width=button_width, height=button_height
         )
+
         self.approve_review_button = tk.Button(
-            self.hr_logo_canvas, text="Approve Review", command=lambda:self.approve_review(), font=("Helvetica", 14)
-        )
-        self.approve_review_button.pack(
-            pady=20
+            self.hr_logo_canvas, text="Approve Review", command=lambda: self.approve_review(), font=("Helvetica", 14)
         )
         self.approve_review_button.place(
-            relx=0.5, rely=0.825, anchor="center", width=300, height=30
+            relx=0.9, rely=0.8, anchor="e", width=button_width, height=button_height
         )
-        # self.addbe_button = tk.Button(
-        #     self.hr_logo_canvas, text="Add manager/Employee", command=lambda:self.create_all_hr(), font=("Helvetica", 14)
-        # )
-        # self.addbe_button.pack(
-        #     pady=20
-        # )
-        # self.addbe_button.place(
-        #     relx=0.5, rely=0.675, anchor="center", width=300, height=30
-        # )
-        # self.removebe_button = tk.Button(
-        #     self.hr_logo_canvas, text="Remove manager/Employee", command=lambda:self.remove_all_hr(), font=("Helvetica", 14)
-        # )
-        # self.removebe_button.pack(
-        #     pady=20
-        # )
-        # self.removebe_button.place(
-        #     relx=0.5, rely=0.750, anchor="center", width=300, height=30
-        # )
 
-        profile_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "profile.png" #change jpg to png for main background
-        )
+        # Profile button
+        profile_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profile.png")  # Change jpg to png for main background
         profile_img = PhotoImage(file=profile_path)
-        
         resized_profile_img = profile_img.subsample(4, 4)
-        
         profile_btn = tk.Button(
-            self.hr_logo_canvas, image=resized_profile_img, command=lambda:self.profile(username,role),borderwidth=0, font=("Helvetica", 14)
-        )
-        profile_btn.pack(
-            pady=20
+            self.hr_logo_canvas, image=resized_profile_img, command=lambda: self.profile(username, role), borderwidth=0, font=("Helvetica", 14)
         )
         profile_btn.place(
             relx=0.95, rely=0.05, anchor="center", width=50, height=50
         )
-        
+
+        # Logout button
         logout_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "logout.png")
         logout_image = Image.open(logout_path)
         logout_image = logout_image.resize((50, 50))
@@ -229,55 +192,22 @@ class HR_class:
             activebackground="white",
         )
         logout_button.image = logout_image
-        logout_button.pack()
         logout_button.place(relx=0.95, rely=0.95, anchor="se")
-        
-        #create an exit button in canvas and place at bottom middle
-        exit_button = tk.Button(
-        self.hr_logo_canvas,
-        text="Exit",
-        command=hr_window.destroy,
-        font=("Helvetica", 14),
-        width=15,
-        height=2,
-        bd=0,
-        fg="white",
-        bg="#FF4500",
-        activebackground="#FF6347",
-    )
-        exit_button.place(relx=0.5, rely=1.0, anchor="s")
-        
-        profile_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "profile.png" #change jpg to png for main background
-        )
-        profile_img = PhotoImage(file=profile_path)
-        
-        resized_profile_img = profile_img.subsample(4, 4)
-        
-        profile_btn = tk.Button(
-            self.hr_logo_canvas, image=resized_profile_img, command=lambda:self.profile(username,role),borderwidth=0, font=("Helvetica", 14)
-        )
-        profile_btn.pack(
-            pady=20
-        )
-        profile_btn.place(
-            relx=0.95, rely=0.05, anchor="center", width=50, height=50
-        )
 
-        #print(db.reference("/HR").child(username).child("resignation_request").child("resignation_status").get())
-        if db.reference("/HR").child(username).child("resignation_request").child("resignation_status").get() == "Approved by Admin":
-            date=db.reference("/HR").child(username).child("resignation_request").child("resignation_date").get()
-            messagebox.showinfo(f"Resignation Request", "Resignation request has been approved by Admin/\nYou will be logged out on "+date)
-            
-            #Check if the date is today or past
-            #If yes, then logout the user
-            if datetime.datetime.now().date() >= datetime.datetime.strptime(date, "%Y-%m-%d").date():
+        # Check resignation request status and show relevant message
+        resignation_status = db.reference("/HR").child(username).child("resignation_request").child("resignation_status").get()
+        if resignation_status == "Approved by Admin":
+            resignation_date = db.reference("/HR").child(username).child("resignation_request").child("resignation_date").get()
+            message_text = f"Resignation request has been approved by Admin.\nYou will be logged out on {resignation_date}"
+            messagebox.showinfo("Resignation Request", message_text)
+            if datetime.datetime.now().date() >= datetime.datetime.strptime(resignation_date, "%Y-%m-%d").date():
                 messagebox.showinfo("Resignation Request", "You have been logged out as per your resignation request and cannot login again.")
                 hr_window.destroy()
                 return
 
-        #  Run the main loop for the HR window
+        # Run the main loop for the HR window
         hr_window.mainloop()
+
         
     def load_image_hr(self,username):
         # Construct the full path to the image file based on role and username
@@ -317,7 +247,7 @@ class HR_class:
             )
         self.hr_name_text = self.hr_logo_canvas.create_text(
             window_width / 2,
-            100,
+            window_height / 10,
             text=f"Welcome {username_hr}!",
             font=("Helvetica", 28, "bold"),
             fill="white",
@@ -423,7 +353,7 @@ class HR_class:
             self.remove_login_button_new = tk.Button(
                 self.salary_management_canvas,
                 text="Remove Login",
-                command=lambda:self.remove_login(self.treeview.item(self.treeview.selection())["values"][0], salary_management_frame),
+                command=lambda:self.remove_login(salary_management_frame),
                 font=("Helvetica", 14),
                 width=15,
                 height=2,
@@ -780,13 +710,19 @@ class HR_class:
         add_login_from_hr_window.destroy()
         self.salary_management_canvas.focus_force()
             
-    def remove_login(self, employee_name, employee_details_window):
+    def remove_login(self,employee_details_window):
         if self.uni_role == "admin":
             messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
             return
         #Function to remove the login of the employee or manager
+        try:
+            employee_name = self.treeview.item(self.treeview.selection())["values"][0]
+        except:
+            messagebox.showinfo("Error","Please select a row")
+            return
         if employee_name == None:
             messagebox.showinfo("Error","Please select a row")
+            return
         if messagebox.askyesno("Remove Login", f"Are you sure you want to remove the login of {employee_name}?"):
             #Remove the login from the database
             if db.reference("/employee").child(employee_name).get() is not None:
@@ -805,8 +741,16 @@ class HR_class:
     def edit_salary(self, employee_name):
         #Create a window to edit the salary of the employee
         edit_salary_window = tk.Toplevel()
-        edit_salary_window.geometry("400x300")
+        edit_salary_window.geometry("300x150")
         edit_salary_window.title(f"Edit Salary for {employee_name}")
+        #Center the window according to the screen
+        #Do not use the center_window_all function
+        edit_salary_window.update_idletasks()
+        width = edit_salary_window.winfo_width()
+        height = edit_salary_window.winfo_height()
+        x = (edit_salary_window.winfo_screenwidth() // 2) - (width // 2)
+        y = (edit_salary_window.winfo_screenheight() // 2) - (height // 2)
+        edit_salary_window.geometry(f"{width}x{height}+{x}+{y}")
         
         #create an entry for new salary
         new_salary_label = tk.Label(
@@ -818,7 +762,7 @@ class HR_class:
         new_salary_label.pack(
             pady=20
         )
-        new_salary_label.place(relx=0.5, rely=0.3, anchor="center")
+        new_salary_label.place(relx=0.5, rely=0.1, anchor="center")
         
         #Create an entry for the new salary
         self.new_salary_entry = tk.Entry(
@@ -827,7 +771,7 @@ class HR_class:
         self.new_salary_entry.pack(
             pady=20
         )
-        self.new_salary_entry.place(relx=0.5, rely=0.4, anchor="center")
+        self.new_salary_entry.place(relx=0.5, rely=0.3, anchor="center")
         self.new_salary_entry.insert(0, "")
         #create a submit button to change the salary
         submit_button = tk.Button(
@@ -835,8 +779,8 @@ class HR_class:
             text="Submit",
             command=lambda:self.new_submit_salary(employee_name, edit_salary_window),
             font=("Helvetica", 14),
-            width=15,
-            height=2,
+            width=7,
+            height=1,
             bd=0,
             fg="white",
             bg="black",
@@ -850,9 +794,6 @@ class HR_class:
         #bind the escape key to the exit function
         edit_salary_window.bind("<Escape>", lambda event: edit_salary_window.destroy())
         
-        #center the window
-        self.center_window_all(edit_salary_window)
-        
         #focus on window
         edit_salary_window.focus_force()
         
@@ -865,6 +806,15 @@ class HR_class:
             return
         #Get the new salary from the entry
         new_salary = self.new_salary_entry.get()
+        if not new_salary.isdigit():
+            messagebox.showinfo("Error", "Salary should be a number.")
+            return
+        if new_salary == "":
+            messagebox.showinfo("Error", "Please enter a salary.")
+            return
+        if int(new_salary) < 0:
+            messagebox.showinfo("Error", "Salary cannot be negative.")
+            return
         #Ask for confirmation 
         if messagebox.askyesno("Confirm", f"Are you sure you want to change the salary of {employee_name} to {new_salary}?"):
             #Change the salary in the database
@@ -1386,6 +1336,17 @@ class HR_class:
         #focus on window
         self.approve_resignation_window.focus_force()
         
+        #Create a label as heading for the treeview
+        resignation_label = tk.Label(
+            self.approve_resignation_canvas,
+            text="Resignation Requests",
+            font=("Helvetica", 14, "bold"),
+            bg="white",
+        )
+        resignation_label.pack(
+            pady=20
+        )
+        resignation_label.place(relx=0.5, rely=0.1, anchor="center")
         # create a scrollable frame
         self.scrollable_frame_resignation = tk.Frame(self.approve_resignation_canvas, bg="white")
         self.scrollable_frame_resignation.pack(fill=tk.BOTH, expand=True)
@@ -1640,7 +1601,7 @@ class HR_class:
         #Create a combo box to select the role of the employee
         role_entry_check_hours_attended_label = tk.Label(
             self.check_hours_attended_canvas,
-            text="Role",
+            text="Hours Attended",
             font=("Helvetica", 12, "bold"),
             bg="white",
         )
@@ -1651,7 +1612,7 @@ class HR_class:
         self.role_entry_check_hours_attended = ttk.Combobox(
             self.check_hours_attended_canvas, font=("Helvetica", 12, "bold")
         )
-        self.role_entry_check_hours_attended["values"] = ("None", "manager", "employee")
+        self.role_entry_check_hours_attended["values"] = ("Select Role", "Manager", "Employee")
         self.role_entry_check_hours_attended.pack(
             pady=20
         )
@@ -1694,13 +1655,13 @@ class HR_class:
             self.warn_employee_button["state"] = "disabled"
 
     def role_selected_check_hours_attended(self, event):
-        if self.role_entry_check_hours_attended == "None":
+        if self.role_entry_check_hours_attended == "Select Role":
             self.treeview_check_hours_attended.delete(*self.treeview_check_hours_attended.get_children())
             return
         selected_role = self.role_entry_check_hours_attended.get()
-        if selected_role == "employee":
+        if selected_role == "Employee":
             self.populate_employee_list_check_hours_attended(selected_role)
-        elif selected_role == "manager":
+        elif selected_role == "Manager":
             self.populate_employee_list_check_hours_attended(selected_role)
 
     def populate_employee_list_check_hours_attended(self, role):
@@ -1708,12 +1669,12 @@ class HR_class:
         if self.treeview_check_hours_attended is not None:
             self.treeview_check_hours_attended.delete(*self.treeview_check_hours_attended.get_children())
 
-        if role == "manager":
+        if role == "Manager":
             employees = list(( db.reference("/manager").get()).keys())
             # Populate the Treeview with employee names and hours attended
             for employee in employees:
                 self.treeview_check_hours_attended.insert("", "end", values=(employee, db.reference("/manager").child(employee).child("hours_attended").get(),db.reference("/manager").child(employee).child("warning").get()), tags=("selectable",))
-        elif role == "None":
+        elif role == "Select Role":
             return
         else:
             employees = list(( db.reference("/employee").get()).keys())
@@ -2519,12 +2480,16 @@ class HR_class:
         #Center the window
         self.center_window_all(self.apply_for_resignation_window)
         
-        #Create an entry for the reason for resignation
-        self.reason_entry = tk.Entry(self.apply_for_resignation_canvas, font=("Helvetica", 12), width=50)
-        self.reason_entry.place(relx=0.5, rely=0.5, anchor="center")
-        self.reason_entry.insert(0, "Reason for resignation")
-        self.reason_entry.bind("<FocusIn>", lambda event: self.entry_del(self.reason_entry, "Reason for resignation"))
+        # # Create an entry for the reason for resignation
+        # self.reason_entry = tk.Entry(self.apply_for_resignation_canvas, font=("Helvetica", 12), width=50, xscrollcommand=1)
+        # self.reason_entry.place(relx=0.5, rely=0.5,height=100, anchor="center")
+        # self.reason_entry.insert(0, "Reason for resignation")
+        # self.reason_entry.bind("<FocusIn>", lambda event: self.entry_del(self.reason_entry, "Reason for resignation"))
 
+        self.reason_entry = tk.Text(self.apply_for_resignation_canvas, font=("Helvetica", 12), width=50, height=5)
+        self.reason_entry.place(relx=0.5, rely=0.5, anchor="center")
+        self.reason_entry.insert(tk.END, "Reason for resignation")
+        
         #Create a button for apply for resignation
         apply_for_resignation_button = tk.Button(
             self.apply_for_resignation_canvas,
@@ -2550,8 +2515,9 @@ class HR_class:
         if self.uni_role == "admin":
             messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
             return
-        #Get the reason for resignation
-        reason = self.reason_entry.get()
+        #Get the reason for resignation with \n at end of each line and store as string
+        reason = self.reason_entry.get("1.0",tk.END)
+
         if db.reference("/HR").child(username).child("resignation_request").child("Request").get() == "pending":
             messagebox.showinfo("Apply for Resignation", "You have already applied for resignation.")
             return
@@ -2647,7 +2613,7 @@ class HR_class:
         self.review_type.set("None")
         self.review_type_combo = ttk.Combobox(self.approve_review_window, textvariable=self.review_type, values=["None","Quarterly Review", "Annual Review"])
         self.review_type_combo.pack(pady=20)
-        self.review_type_combo.place(relx=0.5,rely=0.2, anchor="center")  # Adjust the x and y coordinates as needed 
+        self.review_type_combo.place(relx=0.5,rely=0.15, anchor="center")  # Adjust the x and y coordinates as needed 
         self.review_type_combo.bind("<<ComboboxSelected>>", self.on_review_type_selected)
 
         # Configure grid row and column weights

@@ -68,6 +68,27 @@ class Employee_class:
         if vacation_approved != None and vacation_approved == "Denied":
             messagebox.showinfo("Vacation Days Denied", "Your Vacation Days have been denied")
             emp_ref.child(username).update({"vacation_approved_denied": "None"})
+        if emp_ref.child(username).child("resignation_request").child("resignation_status").get() == "Approved by HR":
+            date=emp_ref.child(username).child("resignation_request").child("resignation_date").get()
+            messagebox.showinfo(f"Resignation Request", "Resignation request has been approved by Admin.\nYou will be logged out on "+date)
+            
+            #Check if the date is today or past
+            #If yes, then logout the user
+            if datetime.datetime.now().date() >= datetime.datetime.strptime(date, "%Y-%m-%d").date():
+                messagebox.showinfo("Resignation Request", "You have been logged out as per your resignation request and cannot login again.")
+                employee_window.destroy()
+                return
+        if emp_ref.child(username).child("resignation_request").child("resignation_status").get() == "Denied by HR":
+            messagebox.showinfo(f"Resignation Request", "Resignation request has been denied by Admin for the following reason:\n"+emp_ref.child(username).child("resignation_request").child("resignation_reason").get())
+            emp_ref.child(username).child("resignation_request").child("resignation_status").set("None")
+            emp_ref.child(username).child("resignation_request").child("resignation_reason").set("None")
+        if emp_ref.child(username).child("resignation_request").child("resignation_status").get() == "Denied by Manager":
+            messagebox.showinfo(f"Resignation Request", "Resignation request has been denied by Manager for the following reason:\n"+emp_ref.child(username).child("resignation_request").child("resignation_reason").get())
+            emp_ref.child(username).child("resignation_request").child("resignation_status").set("None")
+            emp_ref.child(username).child("resignation_request").child("resignation_reason").set("None")
+        if emp_ref.child(username).child("warning").get() == "Warning issued by HR":
+            messagebox.showinfo(f"Warning", "Your attended hours are less than 80% of the total hours.\nYou have been issued a warning by HR.")
+            emp_ref.child(username).update({"warning": "None"})
         
         #add buttons and use a function to place them in the canvas
         self.add_buttons_to_canvas_employee(username)
