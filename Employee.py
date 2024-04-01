@@ -89,6 +89,9 @@ class Employee_class:
         if emp_ref.child(username).child("warning").get() == "Warning issued by HR":
             messagebox.showinfo(f"Warning", "Your attended hours are less than 80% of the total hours.\nYou have been issued a warning by HR.")
             emp_ref.child(username).update({"warning": "None"})
+        if emp_ref.child(username).child("complaint").child("complaint_status").get() == "warned":
+            messagebox.showinfo(f"Complaint", "You have been warned by HR because of a submitted complaint.")
+            emp_ref.child(username).child("complaint").child("complaint_status").set("None")
         
         #add buttons and use a function to place them in the canvas
         self.add_buttons_to_canvas_employee(username)
@@ -674,21 +677,21 @@ class Employee_class:
         
     def submit_survey(self, username):
         #check if a submit survey window is already open, if it is open destroy it
-        if hasattr(self, "submit_survey_window"):
+        if hasattr(self, "self.submit_survey_window"):
             try:
-                if self.submit_survey_window.winfo_exists():
-                    self.submit_survey_window.destroy()  # Close the main login window
+                if self.self.submit_survey_window.winfo_exists():
+                    self.self.submit_survey_window.destroy()  # Close the main login window
             except:
                 pass
 
         # Create a new window for the submit_survey top level
-        submit_survey_window = tk.Toplevel()
-        submit_survey_window.geometry("800x600")  # Set the window size
-        submit_survey_window.title("Submit Survey")
-        self.submit_survey_window = submit_survey_window
+        self.submit_survey_window = tk.Toplevel()
+        self.submit_survey_window.geometry("800x600")  # Set the window size
+        self.submit_survey_window.title("Submit Survey")
+        self.self.submit_survey_window = self.submit_survey_window
 
         # Create the canvas
-        self.submit_survey_canvas = tk.Canvas(submit_survey_window, bg="white", highlightthickness=0)
+        self.submit_survey_canvas = tk.Canvas(self.submit_survey_window, bg="white", highlightthickness=0)
         self.submit_survey_canvas.pack(fill=tk.BOTH, expand=True)
 
         # Pull child classes from Survey_Qs in the db using the .get function
@@ -704,10 +707,10 @@ class Employee_class:
         survey_questions_keys = list(survey_questions.keys())
 
         # Bind the window resize event to the function
-        submit_survey_window.bind("<Configure>", lambda event: self.display_survey_questions(survey_questions_keys, survey_questions,username))
+        self.submit_survey_window.bind("<Configure>", lambda event: self.display_survey_questions(survey_questions_keys, survey_questions,username))
         
         # Bind the Escape key to the exit function
-        submit_survey_window.bind("<Escape>", lambda event: submit_survey_window.destroy())
+        self.submit_survey_window.bind("<Escape>", lambda event: self.submit_survey_window.destroy())
 
         # Check if buttons have already been created
         if not hasattr(self, 'buttons_created_down') or not self.buttons_created_down:
@@ -732,13 +735,13 @@ class Employee_class:
         self.buttons_created_down = True
         
         # Focus on the window
-        submit_survey_window.focus_force()
+        self.submit_survey_window.focus_force()
 
         # Center the window
-        self.center_window_all(submit_survey_window)
+        self.center_window_all(self.submit_survey_window)
 
-        # Main loop for the submit_survey_window
-        submit_survey_window.mainloop()
+        # Main loop for the self.submit_survey_window
+        self.submit_survey_window.mainloop()
 
     def resize_canvas_and_image_submit_survey(self,):
 
@@ -867,9 +870,10 @@ class Employee_class:
         # Check if there is a value present for every question in the store_selected_value function
         if stored_value is None:
             #keep the window to the front
-            self.submit_survey_window.focus_force()
+            self.self.submit_survey_window.focus_force()
             # Show a message that the survey has been submitted
             messagebox.showinfo("Employee Window", "Please select a value for every question.")
+            self.submit_survey_window.focus_force()
             self.buttons_created = False
       
 
@@ -887,7 +891,7 @@ class Employee_class:
             self.current_question_index = 0
 
             # Destroy the survey window
-            self.submit_survey_window.destroy()
+            self.self.submit_survey_window.destroy()
             
     def store_selected_value(self, value):
         #store the selected value in relation to the question index
@@ -986,12 +990,32 @@ class Employee_class:
         elif not complaint:
             messagebox.showinfo("Employee Window", "Please enter a complaint.")
         else:
-            # Add the complaint to the database
-            db.reference("/employee").child(employee_name).child("complaint").child("problem").set(complaint)
-            db.reference("/employee").child(employee_name).child("complaint").child("status").set("pending")
-            db.reference("/employee").child(employee_name).child("complaint").child("complaint_by").set(username)
-            messagebox.showinfo("Employee Window", "Complaint submitted successfully.")
-            submit_complaint_window.destroy()
+            if employee_name in manager:
+                if db.reference("/manager").child(employee_name).child("complaint").child("status").get() == "pending":
+                    messagebox.showinfo("Employee Window", "A complaint against this employee is already pending.")
+                    return
+                if db.reference("/manager").child(employee_name).child("complaint").child("status").get() == "warned":
+                    messagebox.showinfo("Employee Window", "This employee has already been warned.")
+                    return
+                # Add the complaint to the database
+                db.reference("/manager").child(employee_name).child("complaint").child("problem").set(complaint)
+                db.reference("/manager").child(employee_name).child("complaint").child("status").set("pending")
+                db.reference("/manager").child(employee_name).child("complaint").child("complaint_by").set(username)
+                messagebox.showinfo("Employee Window", "Complaint submitted successfully.")
+                submit_complaint_window.destroy()
+            else:
+                if db.reference("/employee").child(employee_name).child("complaint").child("status").get() == "pending":
+                    messagebox.showinfo("Employee Window", "A complaint against this employee is already pending.")
+                    return
+                if db.reference("/employee").child(employee_name).child("complaint").child("status").get() == "warned":
+                    messagebox.showinfo("Employee Window", "This employee has already been warned.")
+                    return
+                # Add the complaint to the database
+                db.reference("/employee").child(employee_name).child("complaint").child("problem").set(complaint)
+                db.reference("/employee").child(employee_name).child("complaint").child("status").set("pending")
+                db.reference("/employee").child(employee_name).child("complaint").child("complaint_by").set(username)
+                messagebox.showinfo("Employee Window", "Complaint submitted successfully.")
+                submit_complaint_window.destroy()
         
     def employee_name_entry_del(self):
         if self.employee_name_entry.get() == "Complaint against Employee":

@@ -129,42 +129,49 @@ class HR_class:
             self.hr_logo_canvas, text="Approve Resignation", command=lambda: self.approve_resignation(), font=("Helvetica", 14)
         )
         self.approve_resignation_button.place(
-            relx=0.1, rely=0.4, anchor="w", width=button_width, height=button_height
+            relx=0.1, rely=0.35, anchor="w", width=button_width, height=button_height
         )
 
         self.check_hours_attended_button = tk.Button(
             self.hr_logo_canvas, text="Check Employee Hours Attended", command=lambda: self.check_hours_attended(), font=("Helvetica", 14)
         )
         self.check_hours_attended_button.place(
-            relx=0.9, rely=0.4, anchor="e", width=button_width, height=button_height
+            relx=0.9, rely=0.35, anchor="e", width=button_width, height=button_height
         )
 
         self.survey_feedback_button = tk.Button(
             self.hr_logo_canvas, text="Survey/Feedback", command=lambda: self.survey_feedback(username), font=("Helvetica", 14)
         )
         self.survey_feedback_button.place(
-            relx=0.1, rely=0.6, anchor="w", width=button_width, height=button_height
+            relx=0.1, rely=0.5, anchor="w", width=button_width, height=button_height
         )
 
         self.approve_promotion_button = tk.Button(
             self.hr_logo_canvas, text="Approve Promotion", command=lambda: self.approve_promotion(), font=("Helvetica", 14)
         )
         self.approve_promotion_button.place(
-            relx=0.9, rely=0.6, anchor="e", width=button_width, height=button_height
+            relx=0.9, rely=0.5, anchor="e", width=button_width, height=button_height
         )
 
         self.apply_for_resignation_button = tk.Button(
             self.hr_logo_canvas, text="Apply for Resignation", command=lambda: self.apply_for_resignation(username), font=("Helvetica", 14)
         )
         self.apply_for_resignation_button.place(
-            relx=0.1, rely=0.8, anchor="w", width=button_width, height=button_height
+            relx=0.1, rely=0.65, anchor="w", width=button_width, height=button_height
         )
 
         self.approve_review_button = tk.Button(
             self.hr_logo_canvas, text="Approve Review", command=lambda: self.approve_review(), font=("Helvetica", 14)
         )
         self.approve_review_button.place(
-            relx=0.9, rely=0.8, anchor="e", width=button_width, height=button_height
+            relx=0.9, rely=0.65, anchor="e", width=button_width, height=button_height
+        )
+
+        self.review_complaints_button = tk.Button( 
+            self.hr_logo_canvas, text="Review Complaints", command=lambda: self.review_complaints(), font=("Helvetica", 14)
+        )
+        self.review_complaints_button.place(
+            relx=0.5, rely=0.8, anchor="center", width=button_width, height=button_height
         )
 
         # Profile button
@@ -2894,6 +2901,144 @@ class HR_class:
         if entry_widget.get() == default_text:
             entry_widget.delete(0, tk.END)
     
+    def review_complaints(self):
+        # Create a new window for the review_complaints top level
+        self.review_complaints_window = tk.Toplevel()
+        self.review_complaints_window.geometry("800x600")
+        self.review_complaints_window.title("Review Complaints")
+        
+        # Create the canvas
+        self.review_complaints_canvas = tk.Canvas(self.review_complaints_window, bg="white", highlightthickness=0)
+        self.review_complaints_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Load the image
+        self.load_image_review_complaints()
+        
+        # Bind window resize event to function
+        self.review_complaints_window.bind("<Configure>", lambda event: self.on_window_resize_review_complaints(event))
+        
+        # Center the window
+        self.center_window_all(self.review_complaints_window)
+
+        # Create a Treeview widget
+        self.treeview_review_complaints = ttk.Treeview(self.review_complaints_canvas, columns=("Employee","Role","Complaint","Complaint by"), show="headings", selectmode="browse")
+        self.treeview_review_complaints.heading("Employee", text="Employee")
+        self.treeview_review_complaints.heading("Role", text="Role")
+        self.treeview_review_complaints.heading("Complaint", text="Complaint")
+        self.treeview_review_complaints.heading("Complaint by", text="Complaint by")
+        self.treeview_review_complaints.pack(fill="both", expand=True)
+        self.treeview_review_complaints.column("Employee", width=400)
+        self.treeview_review_complaints.column("Role", width=200)
+        self.treeview_review_complaints.column("Complaint", width=400)
+        self.treeview_review_complaints.column("Complaint by", width=200)
+        self.treeview_review_complaints.tag_configure("selectable", background="white", foreground="blue")
+
+        #Create a vertical scrollbar for the Treeview
+        treeview_scrollbar_y = ttk.Scrollbar(self.treeview_review_complaints, orient="vertical")
+        treeview_scrollbar_y.pack(side="right", fill="y")
+        treeview_scrollbar_y.config(command=self.treeview_review_complaints.yview)
+
+        #Create a horizontal scrollbar for the Treeview
+        treeview_scrollbar_x = ttk.Scrollbar(self.treeview_review_complaints, orient="horizontal")
+        treeview_scrollbar_x.pack(side="bottom", fill="x")
+        treeview_scrollbar_x.config(command=self.treeview_review_complaints.xview)
+
+        self.treeview_review_complaints.configure(yscrollcommand=treeview_scrollbar_y.set, xscrollcommand=treeview_scrollbar_x.set)
+
+        #Place the treeview in the canvas
+        self.treeview_review_complaints.place(width = 700, height = 500,relx=0.5, rely=0.5, anchor="center")
+        # Populate the Treeview with the complaints
+        self.populate_complaints_treeview()
+
+        #Create a button to warn the employee
+        self.warn_button = tk.Button(
+            self.review_complaints_canvas,
+            text="Warn",
+            command=lambda:self.warn_employee(),
+            font=("Helvetica", 14),
+            width=20,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="black",
+            activebackground="black",
+            state="disabled",
+        )
+        self.warn_button.place(relx=0.5, rely=0.95, anchor="s")
+
+        # Bind the Treeview selection event to the function
+        self.treeview_review_complaints.bind("<ButtonRelease-1>", lambda event: self.on_treeview_select_review_complaints(event))
+
+        # Bind the escape key to the exit function
+        self.review_complaints_window.bind("<Escape>", lambda event: self.review_complaints_window.destroy())
+
+        # Run the main loop for the review_complaints_window
+        self.review_complaints_window.mainloop()
+
+    def on_treeview_select_review_complaints(self,event):
+        #Check if a row is selected
+        if self.treeview_review_complaints.selection():
+            self.warn_button["state"] = "normal"
+        else:
+            self.warn_button["state"] = "disabled"
+
+    def populate_complaints_treeview(self):
+        # Clear the Treeview
+        self.treeview_review_complaints.delete(*self.treeview_review_complaints.get_children())
+        # Get the data from the database
+        emp_data = list((db.reference("/employee").get()).keys())
+        mng_data = list((db.reference("/manager").get()).keys())
+        for employee in emp_data:
+            if db.reference("/employee").child(employee).child("complaint").child("status").get() == "pending":
+                complaint = db.reference("/employee").child(employee).child("complaint").child("problem").get()
+                complaint_by = db.reference("/employee").child(employee).child("complaint").child("complaint_by").get()
+                self.treeview_review_complaints.insert("", "end", values=(employee, "Employee", complaint, complaint_by), tags="selectable")
+        for manager in mng_data:
+            if db.reference("/manager").child(manager).child("complaint").child("status").get() == "pending":
+                complaint = db.reference("/manager").child(manager).child("complaint").child("problem").get()
+                complaint_by = db.reference("/manager").child(manager).child("complaint").child("complaint_by").get()
+                self.treeview_review_complaints.insert("", "end", values=(manager, "Manager", complaint, complaint_by), tags="selectable")
+
+    def warn_employee(self):
+        # Get the selected employee
+        selected_employee = self.treeview_review_complaints.item(self.treeview_review_complaints.selection())["values"][0]
+        selected_role = self.treeview_review_complaints.item(self.treeview_review_complaints.selection())["values"][1]
+        if db.reference("/employee").child(selected_employee).child("complaint").child("status").get() == "pending":
+            db.reference("/employee").child(selected_employee).child("complaint").child("status").set("warned")
+            messagebox.showinfo("Warn Employee", "Employee warned successfully.")
+        elif db.reference("/manager").child(selected_employee).child("complaint").child("status").get() == "pending":
+            db.reference("/manager").child(selected_employee).child("complaint").child("status").set("warned")
+            messagebox.showinfo("Warn Employee", "Manager warned successfully.")
+        self.populate_complaints_treeview()
+        self.review_complaints_window.focus_force()
+
+    def load_image_review_complaints(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_review_complaints_image = Image.open(img_path)
+        self.resize_canvas_and_image_review_complaints()
+
+    def resize_canvas_and_image_review_complaints(self):
+        # Get the review_complaints window size
+        window_width = self.review_complaints_canvas.winfo_width()
+        window_height = self.review_complaints_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.review_complaints_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_review_complaints_image.resize((window_width, window_height))
+        self.review_complaints_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.review_complaints_canvas.delete("all")
+        self.review_complaints_canvas.create_image(0, 0, image=self.review_complaints_image, anchor="nw")
+
+    def on_window_resize_review_complaints(self, event):
+        self.resize_canvas_and_image_review_complaints()
+
     def profile(self,username,role):
         # Create a new Toplevel window for the profile
         profile_dialog = tk.Toplevel()

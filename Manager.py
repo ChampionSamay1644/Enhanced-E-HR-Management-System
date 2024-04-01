@@ -213,6 +213,9 @@ class Manager_class:
                 messagebox.showinfo("Resignation Request", "You have been logged out as per your resignation request and cannot login again.")
                 manager_window.destroy()
                 return
+        if db.reference("/manager").child(username).child("complaint").child("complaint_status").get() == "warned":
+            messagebox.showinfo(f"Complaint", "You have been warned by HR because of a submitted complaint.")
+            db.reference("/manager").child(username).child("complaint").child("complaint_status").set("None")
             
         # Run the main loop for the manager window
         manager_window.mainloop()
