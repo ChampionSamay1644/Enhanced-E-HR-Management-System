@@ -66,100 +66,73 @@ class Manager_class:
                     self.root.destroy()  # Close the main login window
             except:
                 pass    
-        manager_window = tk.Tk()  # Use Tk() to create a new window
-        manager_window.geometry("900x600")  # Set the window size
-        manager_window.title("Manager Window")
+        self.manager_window = tk.Tk()  # Use Tk() to create a new window
+        self.manager_window.geometry("900x600")  # Set the window size
+        self.manager_window.title("Manager Window")
 
         #create a canvas that resizes with the window
-        self.manager_logo_canvas = tk.Canvas(manager_window, bg="white", highlightthickness=0)
+        self.manager_logo_canvas = tk.Canvas(self.manager_window, bg="white", highlightthickness=0)
         self.manager_logo_canvas.pack(fill=tk.BOTH, expand=True)
 
         # import the image as the background on the canvas
         self.load_image_manager(username)
 
-        # bind window resize event to function
-        manager_window.bind("<Configure>", lambda event: self.on_window_resize_manager(event,username))
+        #center the window with function center_window_test
+        self.center_window_all(self.manager_window)
 
-        #buttons of manager window
+        # bind window resize event to function
+        self.manager_window.bind("<Configure>", lambda event: self.on_window_resize_manager(event,username))
+
+        # Buttons using grid manager
         self.perform_review_approval_button = tk.Button(
             self.manager_logo_canvas, text="Performance Review Approval", command=lambda:self.perform_review_approval(), font=("Helvetica", 14)
         )
-        self.perform_review_approval_button.pack(
-            pady=20
-        )
-        self.perform_review_approval_button.place(
-            relx=0.5, rely=0.3, anchor="center", width=300, height=30
-        )
+        self.perform_review_approval_button.place(relx=0.25, rely=0.2, anchor="center", width=300, height=50)
+
         self.approve_vacations_sick_leaves_button = tk.Button(
-            self.manager_logo_canvas, text="Approve Vacations and Sick Leaves", command=lambda:self.approve_vacations_sick_leaves(username,role), font=("Helvetica", 14)
+            self.manager_logo_canvas, text="Approve Vacation/Sick Leaves", command=lambda:self.approve_vacations_sick_leaves(username,role), font=("Helvetica", 14)
         )
-        self.approve_vacations_sick_leaves_button.pack(
-            pady=20
-        )
-        self.approve_vacations_sick_leaves_button.place(
-            relx=0.5, rely=0.4, anchor="center", width=320, height=30
-        )
+        self.approve_vacations_sick_leaves_button.place(relx=0.75, rely=0.2, anchor="center", width=300, height=50)
+
         self.progress_on_resignation_button = tk.Button(
             self.manager_logo_canvas, text="Apply for Resignation", command=lambda:self.apply_for_resignation(username), font=("Helvetica", 14)
         )
-        self.progress_on_resignation_button.pack(
-            pady=20
-        )
-        self.progress_on_resignation_button.place(
-            relx=0.5, rely=0.5, anchor="center", width=200, height=30
-        )
+        self.progress_on_resignation_button.place(relx=0.25, rely=0.4, anchor="center", width=300, height=50)
+
         self.assign_promotion_button = tk.Button(
             self.manager_logo_canvas, text="Assign Promotion", command=lambda:self.assign_promotion(username), font=("Helvetica", 14)
         )
-        self.assign_promotion_button.pack(
-            pady=20
-        )
-        self.assign_promotion_button.place(
-            relx=0.5, rely=0.6, anchor="center", width=200, height=30
-        )
+        self.assign_promotion_button.place(relx=0.75, rely=0.4, anchor="center", width=300, height=50)
+
         self.approve_resignation_button = tk.Button(
             self.manager_logo_canvas, text="Approve Resignation", command=lambda:self.approve_resignation(), font=("Helvetica", 14)
         )
-        self.approve_resignation_button.pack(
-            pady=20
-        )
-        self.approve_resignation_button.place(
-            relx=0.5, rely=0.7, anchor="center", width=200, height=30
-        )
+        self.approve_resignation_button.place(relx=0.25, rely=0.6, anchor="center", width=300, height=50)
+
         self.request_bonus_button = tk.Button(
             self.manager_logo_canvas, text="Request for Bonus", command=lambda:self.request_bonus(), font=("Helvetica", 14)
         )
-        self.request_bonus_button.pack(
-            pady=20
-        )
-        self.request_bonus_button.place(
-            relx=0.5, rely=0.8, anchor="center", width=200, height=30
-        )
+        self.request_bonus_button.place(relx=0.75, rely=0.6, anchor="center", width=300, height=50)
 
         self.submit_performance_review_button = tk.Button(
             self.manager_logo_canvas, text="Submit Performance Review", command=lambda:self.submit_performance_review(username), font=("Helvetica", 14)
         )
-        self.submit_performance_review_button.pack(
-            pady=20
-        )
-        self.submit_performance_review_button.place(
-            relx=0.5, rely=0.9, anchor="center", width=200, height=30
-        )
+        self.submit_performance_review_button.place(relx=0.5, rely=0.8, anchor="center", width=300, height=50)
 
-        #create an exit button in canvas and place at bottom middle
+        # Exit button using place manager
         exit_button = tk.Button(
-        self.manager_logo_canvas,
-        text="Exit",
-        command=manager_window.destroy,
-        font=("Helvetica", 14),
-        width=15,
-        height=2,
-        bd=0,
-        fg="white",
-        bg="#FF4500",
-        activebackground="#FF6347",
-    )
-        exit_button.place(relx=0.5, rely=1.0, anchor="s")
+            self.manager_logo_canvas,
+            text="Exit",
+            command=self.manager_window.destroy,
+            font=("Helvetica", 14),
+            width=15,
+            height=2,
+            bd=0,
+            fg="white",
+            bg="#FF4500",
+            activebackground="#FF6347",
+        )
+        exit_button.place(relx=0.5, rely=0.95, anchor="s")
 
         profile_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), "profile.png" #change jpg to png for main background
@@ -185,7 +158,7 @@ class Manager_class:
         logout_button = tk.Button(
             self.manager_logo_canvas,
             image=logout_image,
-            command=lambda: self.logout(manager_window),
+            command=lambda: self.logout(self.manager_window),
             bd=0,
             bg="white",
             activebackground="white",
@@ -195,13 +168,13 @@ class Manager_class:
         logout_button.place(relx=0.95, rely=0.95, anchor="se")
         
         # focus on window
-        manager_window.focus_force()
+        self.manager_window.focus_force()
 
         # Center the window with function center_window_test
-        self.center_window_all(manager_window)
+        self.center_window_all(self.manager_window)
 
         # Bind the Escape key to the exit function
-        manager_window.bind("<Escape>", lambda event: manager_window.destroy())
+        self.manager_window.bind("<Escape>", lambda event: self.manager_window.destroy())
 
         if db.reference("/manager").child(username).child("resignation_request").child("resignation_status").get() == "Approved by HR":
             date=db.reference("/manager").child(username).child("resignation_request").child("resignation_date").get()
@@ -211,14 +184,14 @@ class Manager_class:
             #If yes, then logout the user
             if datetime.datetime.now().date() >= datetime.datetime.strptime(date, "%Y-%m-%d").date():
                 messagebox.showinfo("Resignation Request", "You have been logged out as per your resignation request and cannot login again.")
-                manager_window.destroy()
+                self.manager_window.destroy()
                 return
         if db.reference("/manager").child(username).child("complaint").child("complaint_status").get() == "warned":
             messagebox.showinfo(f"Complaint", "You have been warned by HR because of a submitted complaint.")
             db.reference("/manager").child(username).child("complaint").child("complaint_status").set("None")
             
         # Run the main loop for the manager window
-        manager_window.mainloop()
+        self.manager_window.mainloop()
 
     def load_image_manager(self,username):
         # Construct the full path to the image file based on role and username
@@ -257,7 +230,7 @@ class Manager_class:
 
         self.manager_name_text = self.manager_logo_canvas.create_text(
             window_width / 2,
-            100,
+            50,
             text=f"Welcome {username_manager}!",
             font=("Helvetica", 28, "bold"),
             fill="white",
@@ -2357,7 +2330,7 @@ class Manager_class:
             
     def logout(self,manager_window):
         #Close all windows
-        manager_window.destroy()
+        self.manager_window.destroy()
         messagebox.showinfo("Logout", "You have been logged out")
         Main.main(True)
         

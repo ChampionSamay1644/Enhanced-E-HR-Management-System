@@ -170,7 +170,7 @@ class Employee_class:
             pady=20
         )
         self.apply_for_vacation_days_button.place(
-            relx=0.75, rely=0.3, anchor="center", width=300, height=30
+            relx=0.25, rely=0.3, anchor="center", width=300, height=50
         )
 
         self.apply_for_resignation_button = tk.Button(
@@ -180,18 +180,18 @@ class Employee_class:
             pady=20
         )
         self.apply_for_resignation_button.place(
-            relx=0.75, rely=0.4, anchor="center", width=300, height=30
+            relx=0.75, rely=0.3, anchor="center", width=300, height=50
         )
 
-        self.check_progress_on_tasks_button = tk.Button(
-            self.employee_logo_canvas, text="Check and update Progress on Tasks", command=lambda:self.check_progress_on_tasks(username), font=("Helvetica", 14)
-        )
-        self.check_progress_on_tasks_button.pack(
-            pady=20
-        )
-        self.check_progress_on_tasks_button.place(
-            relx=0.75, rely=0.5, anchor="center", width=350, height=30
-        )
+        # self.check_progress_on_tasks_button = tk.Button(
+        #     self.employee_logo_canvas, text="Check and update Progress on Tasks", command=lambda:self.check_progress_on_tasks(username), font=("Helvetica", 14)
+        # )
+        # self.check_progress_on_tasks_button.pack(
+        #     pady=20
+        # )
+        # self.check_progress_on_tasks_button.place(
+        #     relx=0.25, rely=0.5, anchor="center", width=350, height=50
+        # )
 
         self.submit_survey_button = tk.Button(
             self.employee_logo_canvas, text="View and Submit Survey", command=lambda:self.submit_survey(username), font=("Helvetica", 14)
@@ -200,7 +200,7 @@ class Employee_class:
             pady=20
         )
         self.submit_survey_button.place(
-            relx=0.75, rely=0.6, anchor="center", width=300, height=30
+            relx=0.25, rely=0.5, anchor="center", width=300, height=50
         )
 
         self.submit_complaint_button = tk.Button(
@@ -211,7 +211,7 @@ class Employee_class:
             pady=20
         )
         self.submit_complaint_button.place(
-            relx=0.75, rely=0.7, anchor="center", width=300, height=30
+            relx=0.75, rely=0.5, anchor="center", width=300, height=50
         )
 
         self.submit_performance_review_button = tk.Button(
@@ -221,7 +221,7 @@ class Employee_class:
             pady=20
         )
         self.submit_performance_review_button.place(
-            relx=0.75, rely=0.8, anchor="center", width=300, height=30
+            relx=0.5, rely=0.7, anchor="center", width=300, height=50
         )
 
     def load_image_employee(self,username):

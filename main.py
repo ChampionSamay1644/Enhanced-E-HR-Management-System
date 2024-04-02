@@ -1,4 +1,5 @@
 import datetime
+import sys
 import Admin,HR,Manager,Employee
 from Admin import *
 from HR import *
@@ -19,11 +20,19 @@ from tkinter import Tk, Canvas, PhotoImage
 # Global variable to track Firebase initialization
 firebase_initialized = False
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 def initialize_firebase():
     global firebase_initialized
     if not firebase_initialized:
         # Initialize Firebase Admin SDK
-        cred = credentials.Certificate("credentials.json")  # Path: credentials.json
+        cred = credentials.Certificate(resource_path("credentials.json"))  # Path: credentials.json
         firebase_admin.initialize_app(
             cred,
             {
