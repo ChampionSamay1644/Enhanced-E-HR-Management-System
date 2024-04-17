@@ -2954,7 +2954,7 @@ class HR_class:
         self.warn_button = tk.Button(
             self.review_complaints_canvas,
             text="Warn",
-            command=lambda:self.warn_employee(),
+            command=lambda:self.warn_employee_complaints(),
             font=("Helvetica", 14),
             width=20,
             height=2,
@@ -2999,10 +2999,11 @@ class HR_class:
                 complaint_by = db.reference("/manager").child(manager).child("complaint").child("complaint_by").get()
                 self.treeview_review_complaints.insert("", "end", values=(manager, "Manager", complaint, complaint_by), tags="selectable")
 
-    def warn_employee(self):
+    def warn_employee_complaints(self):
         # Get the selected employee
         selected_employee = self.treeview_review_complaints.item(self.treeview_review_complaints.selection())["values"][0]
-        selected_role = self.treeview_review_complaints.item(self.treeview_review_complaints.selection())["values"][1]
+        print(selected_employee)
+        #selected_role = self.treeview_review_complaints.item(self.treeview_review_complaints.selection())["values"][1]
         if db.reference("/employee").child(selected_employee).child("complaint").child("status").get() == "pending":
             db.reference("/employee").child(selected_employee).child("complaint").child("status").set("warned")
             messagebox.showinfo("Warn Employee", "Employee warned successfully.")
