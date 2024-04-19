@@ -1874,18 +1874,24 @@ class HR_class:
         self.answers[self.current_question_index] = answer
 
         # Check if all questions have been answered
-        if len(self.answers) < len(self.questions) or "" in self.answers.values():
+        # Check if all questions have been answered
+        if len(self.answers) < len(self.questions) or None in self.answers.values():
             messagebox.showinfo("Survey Feedback", "Please answer all questions before submitting.")
             self.survey_feedback_window.focus_force()
             return
         else:
             #Update the survey Questions in the database
             for i in range(len(self.questions)):
-                db.reference("Survey_Qs").child(f"q{i}").set(self.answers[i])
+                db.reference("Survey_Qs").child(f"{i}").set(self.answers[i])
                 db.reference("survey_uni").child("available").set("Yes")
+                self.update_total_questions()
             messagebox.showinfo("Survey Feedback", "Survey feedback submitted successfully.")
             self.survey_feedback_window.destroy()
             return
+        
+    def update_total_questions(self): 
+        total_questions = len(self.questions)
+        db.reference("Survey_Qs").child("total_questions").set(total_questions)
         
     def approve_promotion(self):
         #Create a new window for the approve_promotion top level
