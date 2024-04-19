@@ -1881,24 +1881,30 @@ class HR_class:
             return
         # Store the answer for the current question
         answer = self.survey_question_entry.get()
+        #skip answers that are blank
+        if answer == " " or answer == "":
+            return
         self.answers[self.current_question_index] = answer
 
         db.reference("Survey_Qs").delete()
 
         for question_index, answer in self.answers.items():
+            if answer == " " or answer == "":
+                continue
             db.reference("Survey_Qs").child(f"{question_index}").set(answer)
-            db.reference("survey_uni").child("available").set("Yes")
-            self.update_total_questions()
-        
+        self.update_total_questions()
+        db.reference("survey_uni").child("available").set("Yes")
         self.buttons_created = False
         self.buttons_created_down = False
         self.survey_feedback_window.destroy()
         messagebox.showinfo("Survey Feedback", "Survey feedback submitted successfully.")
         return
         
+
     def update_total_questions(self): 
-        total_questions = len(self.answers)
+        total_questions = sum(1 for answer in self.answers.values() if answer)
         db.reference("Survey_Qs").child("total_questions").set(total_questions)
+
         
     def approve_promotion(self):
         #Create a new window for the approve_promotion top level
