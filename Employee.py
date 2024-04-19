@@ -679,8 +679,8 @@ class Employee_class:
         #check if a submit survey window is already open, if it is open destroy it
         if hasattr(self, "self.submit_survey_window"):
             try:
-                if self.self.submit_survey_window.winfo_exists():
-                    self.self.submit_survey_window.destroy()  # Close the main login window
+                if self.submit_survey_window.winfo_exists():
+                    self.submit_survey_window.destroy()  # Close the main login window
             except:
                 pass
 
@@ -688,7 +688,7 @@ class Employee_class:
         self.submit_survey_window = tk.Toplevel()
         self.submit_survey_window.geometry("800x600")  # Set the window size
         self.submit_survey_window.title("Submit Survey")
-        self.self.submit_survey_window = self.submit_survey_window
+        self.submit_survey_window = self.submit_survey_window
 
         # Create the canvas
         self.submit_survey_canvas = tk.Canvas(self.submit_survey_window, bg="white", highlightthickness=0)
@@ -870,7 +870,7 @@ class Employee_class:
         # Check if there is a value present for every question in the store_selected_value function
         if stored_value is None:
             #keep the window to the front
-            self.self.submit_survey_window.focus_force()
+            self.submit_survey_window.focus_force()
             # Show a message that the survey has been submitted
             messagebox.showinfo("Employee Window", "Please select a value for every question.")
             self.submit_survey_window.focus_force()
@@ -891,7 +891,7 @@ class Employee_class:
             self.current_question_index = 0
 
             # Destroy the survey window
-            self.self.submit_survey_window.destroy()
+            self.submit_survey_window.destroy()
             
     def store_selected_value(self, value):
         #store the selected value in relation to the question index
