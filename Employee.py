@@ -982,7 +982,7 @@ class Employee_class:
         complaint = self.complaint_entry.get()
         manager= (db.reference("/manager").get()).keys()
         employee= (db.reference("/employee").get()).keys()
-        if employee_name not in manager or employee_name not in employee:
+        if employee_name not in manager and employee_name not in employee:
             messagebox.showinfo("Employee Window", "Employee does not exist.")
         # Check if the complaint is valid
         if not employee_name or employee_name == "Complaint against Employee":

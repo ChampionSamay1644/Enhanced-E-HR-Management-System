@@ -2024,7 +2024,7 @@ class Manager_class:
         selected_option.set(options[0])
         dropdown = tk.OptionMenu(self.performance_review_window, selected_option, *options)
         dropdown.pack(pady=20)
-        dropdown.place(relx=0.5, rely=0.4, anchor="center")
+        dropdown.place(relx=0.5, rely=0.1, anchor="center")
         
         # Create entry widgets for the performance review, constructed feedback, and goals
         entry_labels = ["Self Review", "Other Feedback", "Goals for the Future"]
@@ -2032,15 +2032,19 @@ class Manager_class:
         entry_widgets = []
 
         for i in range(3):
-            entry_widget = tk.Entry(self.performance_review_logo_canvas, width=50, font=("Helvetica", 14), textvariable=entry_variables[i])
-            entry_widget.pack(pady=40, side=tk.TOP, anchor=tk.CENTER)
-            entry_widget.insert(0, entry_labels[i])
-            entry_widget.bind("<FocusIn>", lambda event, entry_widget=entry_widget, default_text=entry_labels[i]: self.entry_del(entry_widget, default_text))
-            entry_widgets.append(entry_widget)
+            #Place the entry widgets on the canvas below the dropdown
+            #Also make the entry widgets bigger
+            entry = tk.Entry(self.performance_review_logo_canvas, textvariable=entry_variables[i], font=("Helvetica", 12))
+            entry.pack(pady=20)
+            entry.place(relx=0.5, rely=0.2 + i * 0.1, anchor="center", relwidth=0.8, relheight=0.05)
+            entry.insert(0, entry_labels[i])
+            entry.bind("<Button-1>", lambda event, i=i: entry.delete(0, tk.END))
+            entry_widgets.append(entry)
 
         # Create a button to submit the performance review
         submit_button = tk.Button(self.performance_review_logo_canvas, text="Submit", command=lambda: self.submit_performance_review_request(selected_option.get(), entry_variables,username), font=("Helvetica", 14))
-        submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        submit_button.pack(pady=20)
+        submit_button.place(relx=0.5, rely=0.8, anchor="center", width=100, height=30)
         
         # Run the main loop for the performance_review_window
         self.performance_review_window.mainloop()
