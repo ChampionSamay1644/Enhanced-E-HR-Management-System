@@ -1883,6 +1883,8 @@ class HR_class:
         answer = self.survey_question_entry.get()
         self.answers[self.current_question_index] = answer
 
+        db.reference("Survey_Qs").delete()
+
         for question_index, answer in self.answers.items():
             db.reference("Survey_Qs").child(f"{question_index}").set(answer)
             db.reference("survey_uni").child("available").set("Yes")
@@ -1890,8 +1892,8 @@ class HR_class:
         
         self.buttons_created = False
         self.buttons_created_down = False
-        messagebox.showinfo("Survey Feedback", "Survey feedback submitted successfully.")
         self.survey_feedback_window.destroy()
+        messagebox.showinfo("Survey Feedback", "Survey feedback submitted successfully.")
         return
         
     def update_total_questions(self): 
