@@ -675,73 +675,6 @@ class Employee_class:
         db.reference("/employee").child(username).child("project").child("progress").set(db.reference("/employee").child(username).child("project").child("progress").get()+10)
         messagebox.showinfo("Employee Window", "Task Status set to Completed")
         
-    # def submit_survey(self, username):
-    #     #check if a submit survey window is already open, if it is open destroy it
-    #     if hasattr(self, "self.submit_survey_window"):
-    #         try:
-    #             if self.submit_survey_window.winfo_exists():
-    #                 self.submit_survey_window.destroy()  # Close the main login window
-    #         except:
-    #             pass
-
-    #     # Create a new window for the submit_survey top level
-    #     self.submit_survey_window = tk.Toplevel()
-    #     self.submit_survey_window.geometry("800x600")  # Set the window size
-    #     self.submit_survey_window.title("Submit Survey")
-    #     self.submit_survey_window = self.submit_survey_window
-
-    #     # Create the canvas
-    #     self.submit_survey_canvas = tk.Canvas(self.submit_survey_window, bg="white", highlightthickness=0)
-    #     self.submit_survey_canvas.pack(fill=tk.BOTH, expand=True)
-
-    #     # Pull child classes from Survey_Qs in the db using the .get function
-    #     survey_questions = db.reference("/Survey_Qs").get()
-    #     #count the number of keys pulled
-    #     count = 0
-    #     for key in survey_questions:
-    #         count += 1
-    #     print(count)
-
-
-    #     # Store the keys of the survey questions in a list
-    #     survey_questions_keys = list(survey_questions.keys())
-
-    #     # Bind the window resize event to the function
-    #     self.submit_survey_window.bind("<Configure>", lambda event: self.display_survey_questions(survey_questions_keys, survey_questions,username))
-        
-    #     # Bind the Escape key to the exit function
-    #     self.submit_survey_window.bind("<Escape>", lambda event: self.submit_survey_window.destroy())
-
-    #     # Check if buttons have already been created
-    #     if not hasattr(self, 'buttons_created_down') or not self.buttons_created_down:
-    #         # Create a frame within the canvas to contain the buttons
-    #         button_frame = tk.Frame(self.submit_survey_canvas, bg="white")
-    #         button_frame.pack(pady=20, side=tk.BOTTOM)
-
-           
-    #         # In the part where you create the next_button, make it an attribute of the class
-    #         self.next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question_button(survey_questions_keys, survey_questions, username))
-    #         self.next_button.grid(row=0, column=1)
-
-    #         # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
-    #         previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question_button(survey_questions_keys, survey_questions, username))
-    #         previous_button.grid(row=0, column=0)
-
-    #         # Create a button to submit the survey at the bottom center of the window
-    #         submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.submit_survey_request(username))
-    #         submit_button.grid(row=0, column=2)
-
-    #     # Set the flag to indicate that buttons have been created
-    #     self.buttons_created_down = True
-        
-    #     # Focus on the window
-    #     self.submit_survey_window.focus_force()
-
-    #     # Center the window
-    #     self.center_window_all(self.submit_survey_window)
-
-    #     # Main loop for the self.submit_survey_window
-    #     self.submit_survey_window.mainloop()
 
     def submit_survey(self, username):
         # Check if a submit survey window is already open, if it is open destroy it
@@ -890,43 +823,6 @@ class Employee_class:
         # Set the flag to indicate that buttons have been created
         self.buttons_created = True
 
-    # def next_question_button(self, survey_questions_keys, survey_questions, username):
-    #     # If the user is on the final question, disable the next button
-    #     if self.current_question_index == len(survey_questions_keys) - 1:
-    #         self.next_button.config(state="disabled")
-    #     else:
-    #         self.next_button.config(state="normal", command=lambda: self.next_question(survey_questions_keys, survey_questions, username))
-
-    # def previous_question_button(self, survey_questions_keys, survey_questions, username):
-    #     self.previous_question(survey_questions_keys, survey_questions, username)
-
-    # Update the next_question_button and previous_question_button methods
-    # Update the next_question_button and previous_question_button methods
-    # Update the next_question_button and previous_question_button methods
-    # def next_question_button(self, survey_questions_keys, survey_questions, username):
-    #     # Disable the previous button if the user is on the first question
-    #     if self.current_question_index == 0:
-    #         self.previous_button.config(state="disabled")
-    #     else:
-    #         self.previous_button.config(state="normal")
-
-    #     # Disable the next button if the user is on the last question
-    #     if self.current_question_index == self.total_questions_count - 1:
-    #         self.next_button.config(state="disabled")
-    #     else:
-    #         self.next_button.config(state="normal")
-
-    #give me previous button code, that takes the value of the total_questions_count then checks if the value is 0, if it is then disable the button, and repeat that check if next or previous buttons are used
-    # def previous_question_button(self, survey_questions_keys, survey_questions, username):
-    #     #Disable the previous button if the user is on the first question
-    #     if self.current_question_index == 0:
-    #         return
-        
-    #     self.previous_button.config(state="normal", command=lambda: self.previous_question(survey_questions_keys, survey_questions, username))
-
-    # def next_question_button(self, survey_questions_keys, survey_questions, username):
-    #     self.next_button.config(command=lambda: self.next_question(survey_questions_keys, survey_questions, username))
-
 
     def next_question(self,survey_questions_keys, survey_questions,username):
 
@@ -976,36 +872,6 @@ class Employee_class:
         # Handle window resize event
         self.resize_canvas_and_image_submit_survey()
 
-    # def submit_survey_request(self, username):
-    #     if self.uni_role == "admin":
-    #         messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
-    #         return
-    #     stored_value = self.store_selected_value(self.radio_var.get())
-    #     # Check if there is a value present for every question in the store_selected_value function
-    #     if stored_value is None:
-    #         #keep the window to the front
-    #         self.submit_survey_window.focus_force()
-    #         # Show a message that the survey has been submitted
-    #         messagebox.showinfo("Employee Window", "Please select a value for every question.")
-    #         self.submit_survey_window.focus_force()
-    #         self.buttons_created = False
-      
-
-    #     else:# Show a message that the survey has been submitted
-    #         messagebox.showinfo("Employee Window", "Survey submitted successfully.")
-            
-    #         # Store the selected values in the database
-    #         db.reference("/employee").child(username).child("survey").set(self.selected_values)
-
-    #         # Set the value of the "available" key in the survey to False
-    #         db.reference("/employee").child(username).child("survey").child("available").set("No")
-
-    #         # Clear the selected values and reset the current question index
-    #         self.buttons_created = False
-    #         self.current_question_index = 0
-
-    #         # Destroy the survey window
-    #         self.submit_survey_window.destroy()
 
     def submit_survey_request(self, username):
         if self.uni_role == "admin":
