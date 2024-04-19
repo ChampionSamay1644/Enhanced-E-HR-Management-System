@@ -85,7 +85,7 @@ class HR_class:
         self.current_question_index = 0
         self.buttons_created_down = False
         self.buttons_created = False
-        self.questions = [f"Question {i+1}" for i in range(10)]  # Assuming there are 10 questions
+        self.questions = [f"Question {i+1}" for i in range(30)]  # Assuming there are 10 questions
         self.answers = {}
 
         # Create a canvas that resizes with the window
