@@ -775,6 +775,9 @@ class Employee_class:
         # Store the keys of the survey questions in a list
         survey_questions_keys = [str(i) for i in range(total_questions)]
 
+        # Set the current question index to -1
+        self.current_question_index = -1
+
         # Bind the window resize event to the function
         self.submit_survey_window.bind("<Configure>", lambda event: self.display_survey_questions(survey_questions_keys, survey_questions, username))
         
@@ -789,11 +792,11 @@ class Employee_class:
 
         
             # In the part where you create the next_button, make it an attribute of the class
-            self.next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question_button(survey_questions_keys, survey_questions, username))
+            self.next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(survey_questions_keys, survey_questions, username))
             self.next_button.grid(row=0, column=1)
 
             # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
-            self.previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question_button(survey_questions_keys, survey_questions, username))
+            self.previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions, username))
             self.previous_button.grid(row=0, column=0)
 
             # Create a button to submit the survey at the bottom center of the window
@@ -914,19 +917,20 @@ class Employee_class:
     #         self.next_button.config(state="normal")
 
     #give me previous button code, that takes the value of the total_questions_count then checks if the value is 0, if it is then disable the button, and repeat that check if next or previous buttons are used
-    def previous_question_button(self, survey_questions_keys, survey_questions, username):
-        #Disable the previous button if the user is on the first question
-        if self.current_question_index == 0:
-            return
+    # def previous_question_button(self, survey_questions_keys, survey_questions, username):
+    #     #Disable the previous button if the user is on the first question
+    #     if self.current_question_index == 0:
+    #         return
         
-        self.previous_button.config(state="normal", command=lambda: self.previous_question(survey_questions_keys, survey_questions, username))
+    #     self.previous_button.config(state="normal", command=lambda: self.previous_question(survey_questions_keys, survey_questions, username))
 
-    def next_question_button(self, survey_questions_keys, survey_questions, username):
-        self.next_button.config(command=lambda: self.next_question(survey_questions_keys, survey_questions, username))
+    # def next_question_button(self, survey_questions_keys, survey_questions, username):
+    #     self.next_button.config(command=lambda: self.next_question(survey_questions_keys, survey_questions, username))
 
 
     def next_question(self,survey_questions_keys, survey_questions,username):
-        # Increment the current question index
+
+         # Increment the current question index
         self.current_question_index += 1     
 
             # Clear the selected radio button
