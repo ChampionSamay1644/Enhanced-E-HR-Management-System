@@ -1873,31 +1873,14 @@ class HR_class:
         answer = self.survey_question_entry.get()
         self.answers[self.current_question_index] = answer
 
-        # # Check if all questions have been answered
-        # # Check if all questions have been answered
-        # if len(self.answers) < len(self.questions) or None in self.answers.values():
-        #     messagebox.showinfo("Survey Feedback", "Please answer all questions before submitting.")
-        #     self.survey_feedback_window.focus_force()
-        #     return
-        # else:
-            #Update the survey Questions in the database
-        # for i in range(len(self.questions)):
-        #     db.reference("Survey_Qs").child(f"{i}").set(self.answers[i])
-        #     db.reference("survey_uni").child("available").set("Yes")
-        #     self.update_total_questions()
-        # messagebox.showinfo("Survey Feedback", "Survey feedback submitted successfully.")
-        # self.survey_feedback_window.destroy()
-        # return
         for question_index, answer in self.answers.items():
             db.reference("Survey_Qs").child(f"{question_index}").set(answer)
             db.reference("survey_uni").child("available").set("Yes")
             self.update_total_questions()
-            
+
         messagebox.showinfo("Survey Feedback", "Survey feedback submitted successfully.")
         self.survey_feedback_window.destroy()
         return
-
-
         
     def update_total_questions(self): 
         total_questions = len(self.answers)
