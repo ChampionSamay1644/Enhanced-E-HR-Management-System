@@ -140,7 +140,7 @@ class HR_class:
         )
 
         self.survey_feedback_button = tk.Button(
-            self.hr_logo_canvas, text="Survey/Feedback", command=lambda: self.survey_feedback(username), font=("Helvetica", 14)
+            self.hr_logo_canvas, text="Survey", command=lambda: self.survey_feedback(username), font=("Helvetica", 14)
         )
         self.survey_feedback_button.place(
             relx=0.1, rely=0.5, anchor="w", width=button_width, height=button_height
@@ -1756,6 +1756,8 @@ class HR_class:
 
         self.current_question_index = 0
 
+        self.total_questions_fill= self.questions
+
         survey_feedback_window.bind("<Configure>", lambda event: self.display_survey_questions())
         survey_feedback_window.bind("<Escape>", lambda event: survey_feedback_window.destroy())
 
@@ -1766,7 +1768,7 @@ class HR_class:
             self.next_button = tk.Button(button_frame, text="Next", command=lambda: self.next_question(username))
             self.next_button.grid(row=0, column=1)
 
-            self.previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(username))
+            self.previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(username),state="disabled")
             self.previous_button.grid(row=0, column=0)
 
             self.submit_button = tk.Button(button_frame, text="Submit", command=lambda: self.survey_feedback_request(username))
@@ -1775,8 +1777,6 @@ class HR_class:
         self.buttons_created_down = True
         
         self.survey_feedback_window.bind("<Escape>", lambda event: self.survey_feedback_window.destroy())
-        if self.current_question_index == 0:
-            self.previous_button["state"] = "disabled"
             
         if self.current_question_index < len(self.questions) - 1:
             self.survey_feedback_window.bind("<Return>", lambda event: self.next_question(username))
@@ -1831,11 +1831,9 @@ class HR_class:
         self.survey_question_entry.delete(0, tk.END)
 
         self.current_question_index += 1 
-        #Disable the next button if the last question is reached
-        if self.current_question_index == len(self.questions) - 1:
-            self.next_button["state"] = "disabled"
-        else:
-            self.next_button["state"] = "normal"    
+
+        self.disable_buttons()
+     
         self.display_survey_questions()
         # Retrieve the answer for the next question, if any
         next_answer = self.answers.get(self.current_question_index, "")
@@ -1845,15 +1843,14 @@ class HR_class:
         self.survey_question_entry.insert(0, next_answer)
 
     def previous_question(self, username):
-        # Disable the previous button if it is the first question
-        if self.current_question_index == 0:
-            return
         
         # Store the answer for the current question
         answer = self.survey_question_entry.get()
         self.answers[self.current_question_index] = answer
 
         self.current_question_index -= 1
+
+        self.disable_buttons()
 
         # Display the previous question
         self.display_survey_questions()
@@ -1864,6 +1861,19 @@ class HR_class:
         # Update the entry with the previous answer
         self.survey_question_entry.delete(0, tk.END)
         self.survey_question_entry.insert(0, previous_answer)
+
+    def disable_buttons(self):
+        if self.current_question_index == len(self.total_questions_fill)-1:
+            self.next_button.config(state="disabled")
+            return
+        else:
+            self.next_button.config(state="normal")
+
+        if self.current_question_index == 0:
+            self.previous_button.config(state="disabled")
+            return
+        else:
+            self.previous_button.config(state="normal")
 
     def survey_feedback_request(self, username):
         if self.uni_role == "admin":
