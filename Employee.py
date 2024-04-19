@@ -688,7 +688,7 @@ class Employee_class:
         self.submit_survey_window = tk.Toplevel()
         self.submit_survey_window.geometry("800x600")  # Set the window size
         self.submit_survey_window.title("Submit Survey")
-        self.self.submit_survey_window = self.submit_survey_window
+        self.submit_survey_window = self.submit_survey_window
 
         # Create the canvas
         self.submit_survey_canvas = tk.Canvas(self.submit_survey_window, bg="white", highlightthickness=0)
