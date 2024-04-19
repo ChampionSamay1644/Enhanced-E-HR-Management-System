@@ -1,3 +1,5 @@
 bug fixes
-
-
+double confirmation from complain submitted
+gui fixes performance review boss
+bigger entry box everywhere employee
+HR bonus reason gui
