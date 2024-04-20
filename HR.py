@@ -3381,6 +3381,9 @@ class HR_class:
                 # If survey is not available, insert the employee's name into the Treeview
                 self.treeview_survey_results.insert("", "end", values=(employee,), tags="selectable")
 
+                # Bind a function to the TreeviewSelect event to handle the click event
+                self.treeview_survey_results.bind("<<TreeviewSelect>>", self.on_employee_select)
+
 
     def load_image_view_survey_results(self):
         # Construct the full path to the image file based on role and username
@@ -3409,8 +3412,64 @@ class HR_class:
     def on_window_resize_view_survey_results(self, event):
         self.resize_canvas_and_image_view_survey_results()
 
+    def on_employee_select(self, event):
+        #create a new window which takes the employee name as reference and pulls it child survey answers
+        selected_employee = self.treeview_survey_results.item(self.treeview_survey_results.selection())["values"][0]
+        survey_answers = db.reference("/employee").child(selected_employee).child("survey").child("answers").get()
+        # Create a new window for the survey_results top level
+        self.survey_results_window = tk.Toplevel()
+        self.survey_results_window.geometry("800x600")
+        self.survey_results_window.title("Survey Results")
 
+        # Create the canvas
+        self.survey_results_canvas = tk.Canvas(self.survey_results_window, bg="white", highlightthickness=0)
+        self.survey_results_canvas.pack(fill=tk.BOTH, expand=True)
 
+        # Load the image
+        self.load_image_survey_results()
+
+        print(survey_answers)
+
+        # Bind window resize event to function
+        self.survey_results_window.bind("<Configure>", lambda event: self.on_window_resize_survey_results(event))
+
+        # Center the window
+        self.center_window_all(self.survey_results_window)
+
+        #force focus on window
+        self.survey_results_window.focus_force()
+        
+        #main loop for the survey_results_window
+        self.survey_results_window.mainloop()
+
+    def load_image_survey_results(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_survey_results_image = Image.open(img_path)
+        self.resize_canvas_and_image_survey_results()
+
+    def resize_canvas_and_image_survey_results(self):
+        # Get the survey_results window size
+        window_width = self.survey_results_canvas.winfo_width()
+        window_height = self.survey_results_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.survey_results_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_survey_results_image.resize((window_width, window_height))
+        self.survey_results_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.survey_results_canvas.delete("all")
+        self.survey_results_canvas.create_image(0, 0, image=self.survey_results_image, anchor="nw")
+
+    def on_window_resize_survey_results(self, event):
+        self.resize_canvas_and_image_survey_results()
+
+        
     # def create_all_hr(self):
     #     # create a new window
     #     create_remove_hr_window = tk.Toplevel()
