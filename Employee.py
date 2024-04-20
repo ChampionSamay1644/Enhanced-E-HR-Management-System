@@ -546,7 +546,6 @@ class Employee_class:
             return
         # Retrieve the entered values
         reason = self.reason_entry.get("1.0", END).strip()
-        print (reason)
         #date = self.date_entry.get()
 
         # Check if the date is at least 2 weeks from now
