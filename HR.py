@@ -140,7 +140,7 @@ class HR_class:
         )
 
         self.survey_feedback_button = tk.Button(
-            self.hr_logo_canvas, text="Survey", command=lambda: self.survey_feedback(username), font=("Helvetica", 14)
+            self.hr_logo_canvas, text="Create Survey", command=lambda: self.survey_feedback(username), font=("Helvetica", 14)
         )
         self.survey_feedback_button.place(
             relx=0.1, rely=0.5, anchor="w", width=button_width, height=button_height
