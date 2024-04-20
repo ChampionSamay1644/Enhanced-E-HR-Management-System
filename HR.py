@@ -85,7 +85,7 @@ class HR_class:
         self.current_question_index = 0
         self.buttons_created_down = False
         self.buttons_created = False
-        self.questions = [f"Question {i+1}" for i in range(30)]  # Assuming there are 10 questions
+        self.questions = [f"Question {i+1}" for i in range(22)]  # Assuming there are 10 questions
         self.answers = {}
 
         # Create a canvas that resizes with the window
@@ -3481,8 +3481,14 @@ class HR_class:
             print("Error: Mismatch in the number of questions and answers")
             return
 
+        # Divide the available width into two columns
+        column_width = window_width // 2
+
         # Vertical position for displaying questions and answers
         y_position = 10
+
+        # Track the current column
+        current_column = 0
 
         # Create a label on the canvas for each question and answer pair
         for i in range(len(self.survey_questions)):
@@ -3490,9 +3496,12 @@ class HR_class:
             question = self.survey_questions[i][1]
             answer = self.survey_answers[i][1]
 
-            # Display question number
+            # Calculate the x-coordinate based on the current column
+            x_position = current_column * column_width
+
+            # Display question number and question in the current column
             self.survey_results_canvas.create_text(
-                10,  # X-coordinate (left)
+                x_position + 10,  # X-coordinate (left)
                 y_position,  # Y-coordinate
                 font=("Helvetica", 15, "bold"),
                 text=f"Q{question_number}. {question}",
@@ -3501,16 +3510,26 @@ class HR_class:
             )
             y_position += 25  # Increment y_position for answer
 
-            # Display answer
+            # Display answer in the current column
             self.survey_results_canvas.create_text(
-                20,  # X-coordinate (left)
+                x_position + 20,  # X-coordinate (left)
                 y_position,  # Y-coordinate
                 font=("Helvetica", 12),
                 text=f"Answer: {answer}",
                 fill="white",
                 anchor="nw"
             )
-            y_position += 40  # Increment y_position for next question
+
+            # Increment y_position for next question
+            y_position += 40
+
+            # Switch to the next column if the current column is full
+            if y_position >= window_height:
+                current_column = 1
+                y_position = 10  # Reset y_position for the next column
+
+
+
 
 
 
