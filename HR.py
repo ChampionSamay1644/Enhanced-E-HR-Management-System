@@ -3342,23 +3342,16 @@ class HR_class:
         # Create a Treeview widget
         self.treeview_survey_results = ttk.Treeview(self.view_survey_results_canvas, columns=("Employee","Survey Results"), show="headings", selectmode="browse")
         self.treeview_survey_results.heading("Employee", text="Employee")
-        self.treeview_survey_results.heading("Survey Results", text="Survey Results")
         self.treeview_survey_results.pack(fill="both", expand=True)
         self.treeview_survey_results.column("Employee", width=400)
-        self.treeview_survey_results.column("Survey Results", width=400)
         self.treeview_survey_results.tag_configure("selectable", background="white", foreground="blue")
         
         # Create a vertical scrollbar for the Treeview
         treeview_scrollbar_y = ttk.Scrollbar(self.treeview_survey_results, orient="vertical")
         treeview_scrollbar_y.pack(side="right", fill="y")
         treeview_scrollbar_y.config(command=self.treeview_survey_results.yview)
-        
-        # Create a horizontal scrollbar for the Treeview
-        treeview_scrollbar_x = ttk.Scrollbar(self.treeview_survey_results, orient="horizontal")
-        treeview_scrollbar_x.pack(side="bottom", fill="x")
-        treeview_scrollbar_x.config(command=self.treeview_survey_results.xview)
-        
-        self.treeview_survey_results.configure(yscrollcommand=treeview_scrollbar_y.set, xscrollcommand=treeview_scrollbar_x.set)
+                
+        self.treeview_survey_results.configure(yscrollcommand=treeview_scrollbar_y.set)
         
         # Place the treeview in the canvas
         self.treeview_survey_results.place(width = 700, height = 500,relx=0.5, rely=0.5, anchor="center")
@@ -3372,28 +3365,18 @@ class HR_class:
         # Run the main loop for the view_survey_results_window
         self.view_survey_results_window.mainloop()
 
-
-    # def populate_survey_results_treeview(self):
-    #     # Clear the Treeview
-    #     self.treeview_survey_results.delete(*self.treeview_survey_results.get_children())
-    #     # Get the data from the database
-    #     emp_data = list((db.reference("/employee").get()).keys())
-    #     for employee in emp_data:
-    #         survey = db.reference("/employee").child(employee).child("survey").get()
-    #         if survey is not None:
-    #             self.treeview_survey_results.insert("", "end", values=(employee, survey), tags="selectable")
-
     def populate_survey_results_treeview(self):
         # Clear the Treeview
         self.treeview_survey_results.delete(*self.treeview_survey_results.get_children())
-        # Get the data from the database and ignore the key available
-        emp_data = list((db.reference("/employee").get()).keys())
-        for employee in emp_data:
-            survey = db.reference("/employee").child(employee).child("survey").get()
-            if survey is not None:
-                self.treeview_survey_results.insert("", "end", values=(employee, survey), tags="selectable")
-
-
+        
+        # Get the data from the database
+        emp_data = db.reference("/employee").get()
+        for employee, data in emp_data.items():
+            # Check if the survey is not available
+            survey_available = data.get("survey", {}).get("available")
+            if survey_available == "No":
+                # If survey is not available, insert the employee's name into the Treeview
+                self.treeview_survey_results.insert("", "end", values=(employee,), tags="selectable")
 
 
     def load_image_view_survey_results(self):
