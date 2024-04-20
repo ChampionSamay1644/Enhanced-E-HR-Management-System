@@ -3420,10 +3420,10 @@ class HR_class:
         self.survey_results_window.title("Survey Results")
         selected_employee = self.treeview_survey_results.item(self.treeview_survey_results.selection())["values"][0]
         
-        # Pull the Survey_Qs from the database along with its index values
-        survey_qs_ref = db.reference("/Survey_Qs")
-        survey_qs = survey_qs_ref.get()
-        survey_questions = [(index, question) for index, question in survey_qs.items()]
+       # Pull the Survey_Qs from the database along with its index values
+        survey_questions= db.reference("/Survey_Qs").child("questions").get()  
+        #survey_questions = [(index, question) for index, question in survey_qs.items()]
+
 
         # Pull the survey answers from the database along with its index values
         survey_answers_ref = db.reference("/employee").child(selected_employee).child("survey").child("answers")
@@ -3432,8 +3432,6 @@ class HR_class:
 
         self.survey_questions = survey_questions
         self.survey_answers = survey_answers
-
-
 
         # Create the canvas
         self.survey_results_canvas = tk.Canvas(self.survey_results_window, bg="white", highlightthickness=0)
@@ -3483,18 +3481,38 @@ class HR_class:
             print("Error: Mismatch in the number of questions and answers")
             return
 
+        # Vertical position for displaying questions and answers
+        y_position = 10
+
         # Create a label on the canvas for each question and answer pair
         for i in range(len(self.survey_questions)):
+            question_number = i + 1
             question = self.survey_questions[i][1]
             answer = self.survey_answers[i][1]
+
+            # Display question number
             self.survey_results_canvas.create_text(
                 10,  # X-coordinate (left)
-                self.survey_results_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
+                y_position,  # Y-coordinate
                 font=("Helvetica", 15, "bold"),
-                text=f"Question {i+1}: {question}\nAnswer: {answer}",
+                text=f"Q{question_number}. {question}",
                 fill="white",
-                anchor="sw"  # Anchor to bottom left
+                anchor="nw"
             )
+            y_position += 25  # Increment y_position for answer
+
+            # Display answer
+            self.survey_results_canvas.create_text(
+                20,  # X-coordinate (left)
+                y_position,  # Y-coordinate
+                font=("Helvetica", 12),
+                text=f"Answer: {answer}",
+                fill="white",
+                anchor="nw"
+            )
+            y_position += 40  # Increment y_position for next question
+
+
 
 
     def on_window_resize_survey_results(self, event):
