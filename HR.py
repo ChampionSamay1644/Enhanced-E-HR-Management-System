@@ -1934,8 +1934,10 @@ class HR_class:
         # Update the total number of questions in the database
         self.update_total_questions()
 
-        # Set the survey as available
-        db.reference("survey_uni").child("available").set("Yes")
+         # Set the survey as available to all employees
+        emp_data = db.reference("employee").get()
+        for employee_id, employee_data in emp_data.items():
+            db.reference("employee").child(employee_id).child("survey").child("available").set("Yes")
 
         # Clean up and close the survey window
         self.buttons_created = False
@@ -3371,15 +3373,28 @@ class HR_class:
         self.view_survey_results_window.mainloop()
 
 
+    # def populate_survey_results_treeview(self):
+    #     # Clear the Treeview
+    #     self.treeview_survey_results.delete(*self.treeview_survey_results.get_children())
+    #     # Get the data from the database
+    #     emp_data = list((db.reference("/employee").get()).keys())
+    #     for employee in emp_data:
+    #         survey = db.reference("/employee").child(employee).child("survey").get()
+    #         if survey is not None:
+    #             self.treeview_survey_results.insert("", "end", values=(employee, survey), tags="selectable")
+
     def populate_survey_results_treeview(self):
         # Clear the Treeview
         self.treeview_survey_results.delete(*self.treeview_survey_results.get_children())
-        # Get the data from the database
+        # Get the data from the database and ignore the key available
         emp_data = list((db.reference("/employee").get()).keys())
         for employee in emp_data:
             survey = db.reference("/employee").child(employee).child("survey").get()
             if survey is not None:
                 self.treeview_survey_results.insert("", "end", values=(employee, survey), tags="selectable")
+
+
+
 
     def load_image_view_survey_results(self):
         # Construct the full path to the image file based on role and username

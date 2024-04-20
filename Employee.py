@@ -887,7 +887,7 @@ class Employee_class:
         messagebox.showinfo("Employee Window", "Survey submitted successfully.")
         
         # Store the selected values in the database
-        db.reference("/employee").child(username).child("survey").set(self.selected_values)
+        db.reference("/employee").child(username).child("survey").child("answers").set(self.selected_values)
 
         # Set the value of the "available" key in the survey to False
         db.reference("/employee").child(username).child("survey").child("available").set("No")
