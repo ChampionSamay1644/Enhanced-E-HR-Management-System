@@ -92,6 +92,10 @@ class Employee_class:
         if emp_ref.child(username).child("complaint").child("complaint_status").get() == "warned":
             messagebox.showinfo(f"Complaint", "You have been warned by HR because of a submitted complaint.")
             emp_ref.child(username).child("complaint").child("complaint_status").set("None")
+        #Check if survey is available
+        if emp_ref.child(username).child("survey").child("available").get() == "Yes":
+            messagebox.showinfo(f"Survey", "A survey is available for you to fill.")
+            emp_ref.child(username).child("survey").child("available").set("No")
         
         #add buttons and use a function to place them in the canvas
         self.add_buttons_to_canvas_employee(username)
@@ -361,20 +365,23 @@ class Employee_class:
         dropdown_menu = tk.OptionMenu(self.apply_for_vacation_days_canvas, selected_option, *options)
         dropdown_menu.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
 
-        # Create entry widgets for number of days and reason
-        self.number_of_days_entry = tk.Entry(self.apply_for_vacation_days_canvas)
+        # Create entry widgets for number of days and reason and align them to the center
+        self.number_of_days_entry = tk.Entry(self.apply_for_vacation_days_canvas, width=60, font=("Helvetica", 14))
         self.number_of_days_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
-        self.number_of_days_entry.insert(0, "0")  # Default value
-        self.number_of_days_entry.bind("<FocusIn>", lambda event: self.days_entry_del())  # Delete the default value when the user clicks on the entry widget
+        self.number_of_days_entry.insert(0, "Enter Number of Days")
+        self.number_of_days_entry.bind("<FocusIn>", lambda event: self.reason_entry_del())
+        self.number_of_days_entry.place(relx=0.5, rely=0.35, anchor="center")
 
-        self.reason_entry = tk.Entry(self.apply_for_vacation_days_canvas)
+        self.reason_entry = tk.Entry(self.apply_for_vacation_days_canvas, width=60, font=("Helvetica", 14))
         self.reason_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
-        self.reason_entry.insert(0, "Vacation reason")  # Default value
+        self.reason_entry.insert(0, "Reason")  # Default value
         self.reason_entry.bind("<FocusIn>", lambda event: self.reason_entry_del())  # Delete the default value when the user clicks on the entry widget
+        self.reason_entry.place(relx=0.5, rely=0.65, anchor="center")
 
         # Create a button to submit the vacation request
         submit_button = tk.Button(self.apply_for_vacation_days_canvas, text="Submit", command=lambda: self.submit_vacation_request(username, selected_option.get(), apply_for_vacation_days_window))
         submit_button.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+        submit_button.place(relx=0.5, rely=0.85, anchor="center", width=300, height=30)
 
         # Bind the Escape key to the exit function
         apply_for_vacation_days_window.bind("<Escape>", lambda event: apply_for_vacation_days_window.destroy())
@@ -406,9 +413,9 @@ class Employee_class:
             messagebox.showinfo("Employee Window", "Please enter a valid number of days.")
         elif not reason:
             messagebox.showinfo("Employee Window", "Please enter a reason.")
-        elif number_of_days == "0" :
+        elif number_of_days == "0" or number_of_days == "Enter Number of Days":
             messagebox.showinfo("Employee Window", "Please enter a number of days.")
-        elif reason == "Vacation reason":
+        elif reason == "Reason":
             messagebox.showinfo("Employee Window", "Please enter a reason.")
         elif selected_option == "Select Type":
             messagebox.showinfo("Employee Window", "Please select sick or vacation days.")
@@ -460,11 +467,12 @@ class Employee_class:
         #load the image
         self.apply_for_resignation_load_image()
                 
-        # Create entry widget for reason of resignation (bigger size)
-        self.reason_entry = tk.Entry(self.apply_for_resignation_canvas, width=50, font=("Helvetica", 14))
+        # Create an entry widget for the reason and align it to the center and make it multiple line entry with height 5 and scrollbar
+        self.reason_entry = scrolledtext.ScrolledText(self.apply_for_resignation_canvas, width=60, height=5, font=("Helvetica", 14))
         self.reason_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
-        self.reason_entry.insert(0, "Reason for resignation")  # Default value
-        self.reason_entry.bind("<FocusIn>", lambda event: self.reason_entry_del())  # Delete the default value when the user clicks on the entry widget
+        self.reason_entry.insert(tk.INSERT, "Reason for Resignation")  # Default value
+        self.reason_entry.bind("<FocusIn>", lambda event: self.reason_entry_del_resignation())  # Delete the default value when the user clicks on the entry widget
+        self.reason_entry.place(relx=0.5, rely=0.5, anchor="center")
 
         # # Create a DateEntry widget for the resignation date (bigger size)
         # self.date_entry = DateEntry(
@@ -483,6 +491,7 @@ class Employee_class:
         # Create a button to submit the resignation request
         submit_button = tk.Button(self.apply_for_resignation_canvas, text="Submit", command=lambda: self.submit_resignation_request(apply_for_resignation_window, username))
         submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        submit_button.place(relx=0.5, rely=0.7, anchor="center", width=300, height=30)
 
         # bind window resize event to function
         apply_for_resignation_window.bind("<Configure>", lambda event: self.on_window_resize_apply_for_resignation(event))
@@ -536,7 +545,8 @@ class Employee_class:
             messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
             return
         # Retrieve the entered values
-        reason = self.reason_entry.get()
+        reason = self.reason_entry.get("1.0", END).strip()
+        print (reason)
         #date = self.date_entry.get()
 
         # Check if the date is at least 2 weeks from now
@@ -918,21 +928,43 @@ class Employee_class:
         #load the image
         self.submit_complaint_load_image()
         
-        #create an entry to take the employees name whose complaint is being submitted
-        self.employee_name_entry = tk.Entry(self.submit_complaint_canvas)
-        self.employee_name_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
-        self.employee_name_entry.insert(0, "Complaint against Employee")
-        self.employee_name_entry.bind("<FocusIn>", lambda event:self.employee_name_entry_del())
+        #Create a combobox that asks the role of the employee to submit the complaint against
+        role_options = ["Select Role", "Manager", "Employee"]
+        selected_role = tk.StringVar()
+        selected_role.set(role_options[0])  # Set the default option
+
+        #Get the list of employees of the selected role
+        self.employees_list = []
+        if selected_role.get() == "Manager":
+            self.employees_list = list((db.reference("/manager").get()).keys())
+        elif selected_role.get() == "Employee":
+            self.employees_list = list((db.reference("/employee").get()).keys())
+
+        #Create a combobox that contains the list of employees of the selected role
+        self.employee_name = tk.StringVar()
+        self.employee_name.set("Select Employee")  # Set the default option
+
+        dropdown_menu_role = ttk.Combobox(self.submit_complaint_canvas, textvariable=selected_role, values=role_options)
+        dropdown_menu_role.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+        dropdown_menu_role.place(relx=0.5, rely=0.2, anchor="center")
+        dropdown_menu_role.bind("<<ComboboxSelected>>", lambda event: self.update_employee_list(selected_role.get(), self.employee_name))
+
+        self.dropdown_menu_employee = ttk.Combobox(self.submit_complaint_canvas, textvariable=self.employee_name, values=self.employees_list)
+        self.dropdown_menu_employee.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
+        self.dropdown_menu_employee.place(relx=0.5, rely=0.3, anchor="center")
         
-        # Create entry widget for complaint
-        self.complaint_entry = tk.Entry(self.submit_complaint_canvas, width=50, font=("Helvetica", 14))
+        # Create a scrollable entry widget for the complaint and align it to the center
+        self.complaint_entry = scrolledtext.ScrolledText(self.submit_complaint_canvas, width=60, height=5, font=("Helvetica", 14))
         self.complaint_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
-        self.complaint_entry.insert(0, "Complaint")
+        self.complaint_entry.insert(tk.INSERT, "Complaint")  # Default value
         self.complaint_entry.bind("<FocusIn>", lambda event: self.complaint_entry_del())  # Delete the default value when the user clicks on the entry widget
+        self.complaint_entry.place(relx=0.5, rely=0.65, anchor="center")
+        
         
         # Create a button to submit the complaint
         submit_button = tk.Button(self.submit_complaint_canvas, text="Submit", command=lambda: self.submit_complaint_request(username,submit_complaint_window))
         submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
+        submit_button.place(relx=0.5, rely=0.8, anchor="center", width=300, height=30)
         
         # Bind the Escape key to the exit function
         submit_complaint_window.bind("<Escape>", lambda event: submit_complaint_window.destroy())
@@ -949,6 +981,20 @@ class Employee_class:
         # Run the main loop for the submit_complaint_window
         submit_complaint_window.mainloop()
         
+    def update_employee_list(self, selected_role, employee_name):
+        # Get the list of employees based on the selected role
+        if selected_role == "Manager":
+            self.employees_list = list((db.reference("/manager").get()).keys())
+        elif selected_role == "Select Role":
+            self.employees_list = ["Please select a role"]
+        elif selected_role == "Employee":
+            self.employees_list = list((db.reference("/employee").get()).keys())
+
+        # Update the values in the employee_name combobox
+        self.dropdown_menu_employee.set(value="Select Employee")
+        self.dropdown_menu_employee.config(values=self.employees_list)
+
+
     def submit_complaint_load_image(self):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
@@ -986,13 +1032,17 @@ class Employee_class:
             messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
             return
         # Retrieve the entered values
-        employee_name = self.employee_name_entry.get()
-        complaint = self.complaint_entry.get()
+        employee_name = self.dropdown_menu_employee.get()
+        #Get all the lines of the complaint entry
+        complaint = self.complaint_entry.get("1.0", "end-1c")
+        print(complaint)
         manager= (db.reference("/manager").get()).keys()
         employee= (db.reference("/employee").get()).keys()
         if employee_name not in manager and employee_name not in employee:
             messagebox.showinfo("Employee Window", "Employee does not exist.")
         # Check if the complaint is valid
+        if not employee_name or employee_name == "Select Employee":
+            messagebox.showinfo("Employee Window", "Please select an employee.")
         if not employee_name or employee_name == "Complaint against Employee":
             messagebox.showinfo("Employee Window", "Please enter an employee name.")
         elif not complaint or complaint == "Complaint":
@@ -1030,8 +1080,9 @@ class Employee_class:
             self.employee_name_entry.delete(0, tk.END)
             
     def complaint_entry_del(self):
-        if self.complaint_entry.get() == "Complaint":
-            self.complaint_entry.delete(0, tk.END)
+        complaint_entry = self.complaint_entry.get("1.0", "end-1c")
+        if complaint_entry == "Complaint":
+            self.complaint_entry.delete("1.0", tk.END)
 
     def submit_performance_review(self, username):
         # Create a new window for the submit_performance_review top level
@@ -1212,10 +1263,13 @@ class Employee_class:
         if self.number_of_days_entry.get() == "0":
             self.number_of_days_entry.delete(0, tk.END)
 
+    def reason_entry_del_resignation(self):
+        entry = self.reason_entry.get("1.0", "end-1c")
+        if entry == "Reason for Resignation":
+            self.reason_entry.delete("1.0", tk.END) # Delete the default value when the user clicks on the entry widget
+    
     def reason_entry_del(self):
-        if self.reason_entry.get() == "Vacation reason":
-            self.reason_entry.delete(0, tk.END)
-        if self.reason_entry.get() == "Reason for resignation":
+        if self.reason_entry.get() == "Reason":
             self.reason_entry.delete(0, tk.END)
 
     def date_entry_del(self):

@@ -1,5 +1,6 @@
 import datetime
 import sys
+import requests
 import Admin,HR,Manager,Employee
 from Admin import *
 from HR import *
@@ -40,6 +41,15 @@ def initialize_firebase():
             },
         )
         firebase_initialized = True
+        # Check if there is a connection to the Firebase Realtime Database and time out after 10 seconds
+        try:
+            response = requests.get("https://hr-management-system-f7c9f-default-rtdb.asia-southeast1.firebasedatabase.app/.json", timeout=10)
+            if response.status_code == 200:
+                print("Connected to Firebase Realtime Database")
+        except requests.exceptions.RequestException:
+            # Show an error message if there is no connection to the Firebase Realtime Database
+            messagebox.showerror("Connection Error", "Failed to connect to Firebase Realtime Database. Please check your internet connection.")
+            sys.exit(1)
 
 class CreativeLoginApp:  
     def __init__(self, root):
