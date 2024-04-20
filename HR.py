@@ -171,7 +171,15 @@ class HR_class:
             self.hr_logo_canvas, text="Review Complaints", command=lambda: self.review_complaints(), font=("Helvetica", 14)
         )
         self.review_complaints_button.place(
-            relx=0.5, rely=0.8, anchor="center", width=button_width, height=button_height
+            relx=0.1, rely=0.8, anchor="w", width=button_width, height=button_height
+        )
+
+        self.view_survey_results_button = tk.Button(
+            self.hr_logo_canvas, text="View Survey Results", command=lambda: self.view_survey_results(), font=("Helvetica", 14)
+        )
+
+        self.view_survey_results_button.place(
+            relx=0.9, rely=0.8, anchor="e", width=button_width, height=button_height
         )
 
         # Profile button
@@ -3310,6 +3318,98 @@ class HR_class:
         messagebox.showinfo("Logout", "You have been logged out successfully.")
         Main(True)
     
+    def view_survey_results(self):
+        # Create a new window for the view_survey_results top level
+        self.view_survey_results_window = tk.Toplevel()
+        self.view_survey_results_window.geometry("800x600")
+        self.view_survey_results_window.title("View Survey Results")
+        
+        # Create the canvas
+        self.view_survey_results_canvas = tk.Canvas(self.view_survey_results_window, bg="white", highlightthickness=0)
+        self.view_survey_results_canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Load the image
+        self.load_image_view_survey_results()
+        
+        # Bind window resize event to function
+        self.view_survey_results_window.bind("<Configure>", lambda event: self.on_window_resize_view_survey_results(event))
+        
+        # Center the window
+        self.center_window_all(self.view_survey_results_window)
+        
+        # Create a Treeview widget
+        self.treeview_survey_results = ttk.Treeview(self.view_survey_results_canvas, columns=("Employee","Survey Results"), show="headings", selectmode="browse")
+        self.treeview_survey_results.heading("Employee", text="Employee")
+        self.treeview_survey_results.heading("Survey Results", text="Survey Results")
+        self.treeview_survey_results.pack(fill="both", expand=True)
+        self.treeview_survey_results.column("Employee", width=400)
+        self.treeview_survey_results.column("Survey Results", width=400)
+        self.treeview_survey_results.tag_configure("selectable", background="white", foreground="blue")
+        
+        # Create a vertical scrollbar for the Treeview
+        treeview_scrollbar_y = ttk.Scrollbar(self.treeview_survey_results, orient="vertical")
+        treeview_scrollbar_y.pack(side="right", fill="y")
+        treeview_scrollbar_y.config(command=self.treeview_survey_results.yview)
+        
+        # Create a horizontal scrollbar for the Treeview
+        treeview_scrollbar_x = ttk.Scrollbar(self.treeview_survey_results, orient="horizontal")
+        treeview_scrollbar_x.pack(side="bottom", fill="x")
+        treeview_scrollbar_x.config(command=self.treeview_survey_results.xview)
+        
+        self.treeview_survey_results.configure(yscrollcommand=treeview_scrollbar_y.set, xscrollcommand=treeview_scrollbar_x.set)
+        
+        # Place the treeview in the canvas
+        self.treeview_survey_results.place(width = 700, height = 500,relx=0.5, rely=0.5, anchor="center")
+        
+        # Populate the Treeview with the survey results
+        self.populate_survey_results_treeview()
+
+        # Bind the Escape key to the exit function
+        self.view_survey_results_window.bind("<Escape>", lambda event: self.view_survey_results_window.destroy())
+
+        # Run the main loop for the view_survey_results_window
+        self.view_survey_results_window.mainloop()
+
+
+    def populate_survey_results_treeview(self):
+        # Clear the Treeview
+        self.treeview_survey_results.delete(*self.treeview_survey_results.get_children())
+        # Get the data from the database
+        emp_data = list((db.reference("/employee").get()).keys())
+        for employee in emp_data:
+            survey = db.reference("/employee").child(employee).child("survey").get()
+            if survey is not None:
+                self.treeview_survey_results.insert("", "end", values=(employee, survey), tags="selectable")
+
+    def load_image_view_survey_results(self):
+        # Construct the full path to the image file based on role and username
+        img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
+
+        # Load image and adjust canvas size
+        self.original_view_survey_results_image = Image.open(img_path)
+        self.resize_canvas_and_image_view_survey_results()
+
+    def resize_canvas_and_image_view_survey_results(self):
+        # Get the view_survey_results window size
+        window_width = self.view_survey_results_canvas.winfo_width()
+        window_height = self.view_survey_results_canvas.winfo_height()
+
+        # Resize the canvas to the current window size
+        self.view_survey_results_canvas.config(width=window_width, height=window_height)
+
+        # Resize the image if needed
+        resized_image = self.original_view_survey_results_image.resize((window_width, window_height))
+        self.view_survey_results_image = ImageTk.PhotoImage(resized_image)
+
+        # Update the image on the canvas
+        self.view_survey_results_canvas.delete("all")
+        self.view_survey_results_canvas.create_image(0, 0, image=self.view_survey_results_image, anchor="nw")
+
+    def on_window_resize_view_survey_results(self, event):
+        self.resize_canvas_and_image_view_survey_results()
+
+
+
     # def create_all_hr(self):
     #     # create a new window
     #     create_remove_hr_window = tk.Toplevel()
