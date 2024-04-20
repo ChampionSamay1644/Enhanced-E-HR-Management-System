@@ -3350,21 +3350,23 @@ class HR_class:
         self.center_window_all(self.view_survey_results_window)
         
         # Create a Treeview widget
-        self.treeview_survey_results = ttk.Treeview(self.view_survey_results_canvas, columns=("Employee","Survey Results"), show="headings", selectmode="browse")
+        self.treeview_survey_results = ttk.Treeview(self.view_survey_results_canvas, columns=("Employee",), show="headings", selectmode="browse")
         self.treeview_survey_results.heading("Employee", text="Employee")
         self.treeview_survey_results.pack(fill="both", expand=True)
-        self.treeview_survey_results.column("Employee", width=400)
+        self.treeview_survey_results.column("Employee", width=400,anchor="center")
         self.treeview_survey_results.tag_configure("selectable", background="white", foreground="blue")
         
+        self.treeview_text()
+
         # Create a vertical scrollbar for the Treeview
         treeview_scrollbar_y = ttk.Scrollbar(self.treeview_survey_results, orient="vertical")
         treeview_scrollbar_y.pack(side="right", fill="y")
         treeview_scrollbar_y.config(command=self.treeview_survey_results.yview)
-                
         self.treeview_survey_results.configure(yscrollcommand=treeview_scrollbar_y.set)
         
         # Place the treeview in the canvas
-        self.treeview_survey_results.place(width = 700, height = 500,relx=0.5, rely=0.5, anchor="center")
+        self.treeview_survey_results.place(width=400, height=600, relx=0.5, rely=0.5, anchor="center")
+        
         
         # Populate the Treeview with the survey results
         self.populate_survey_results_treeview()
@@ -3391,7 +3393,12 @@ class HR_class:
                 # Bind a function to the TreeviewSelect event to handle the click event
                 self.treeview_survey_results.bind("<<TreeviewSelect>>", self.on_employee_select)
 
-
+    def treeview_text(self):
+        # Center all the text in the Treeview
+        style = ttk.Style()
+        style.configure("Treeview", rowheight=25, font=("Helvetica", 10))
+        style.configure("Treeview.Heading", font=("Helvetica", 12, "bold"))
+       
     def load_image_view_survey_results(self):
         # Construct the full path to the image file based on role and username
         img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
