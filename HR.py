@@ -3493,7 +3493,7 @@ class HR_class:
         # Create a label on the canvas for each question and answer pair
         for i in range(len(self.survey_questions)):
             question_number = i + 1
-            question = self.survey_questions[i][1]
+            question = self.survey_questions[i]
             answer = self.survey_answers[i][1]
 
             # Calculate the x-coordinate based on the current column
