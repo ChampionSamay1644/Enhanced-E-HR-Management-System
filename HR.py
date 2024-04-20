@@ -1928,7 +1928,7 @@ class HR_class:
         for question_index in range(len(self.total_questions_fill)):
             answer = self.answers.get(question_index, "").strip()  # Remove leading/trailing whitespace
             if answer:  # Only push non-blank answers
-                db.reference("Survey_Qs").child(str(index)).set(answer)
+                db.reference("Survey_Qs").child("questions").child(str(index)).set(answer)
                 index += 1
 
         # Update the total number of questions in the database
@@ -3478,8 +3478,24 @@ class HR_class:
         self.survey_results_canvas.delete("all")
         self.survey_results_canvas.create_image(0, 0, image=self.survey_results_image, anchor="nw")
 
-        print(self.survey_questions)
-        print(self.survey_answers)
+        # Check if both survey_questions and survey_answers have the same length
+        if len(self.survey_questions) != len(self.survey_answers):
+            print("Error: Mismatch in the number of questions and answers")
+            return
+
+        # Create a label on the canvas for each question and answer pair
+        for i in range(len(self.survey_questions)):
+            question = self.survey_questions[i][1]
+            answer = self.survey_answers[i][1]
+            self.survey_results_canvas.create_text(
+                10,  # X-coordinate (left)
+                self.survey_results_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
+                font=("Helvetica", 15, "bold"),
+                text=f"Question {i+1}: {question}\nAnswer: {answer}",
+                fill="white",
+                anchor="sw"  # Anchor to bottom left
+            )
+
 
     def on_window_resize_survey_results(self, event):
         self.resize_canvas_and_image_survey_results()

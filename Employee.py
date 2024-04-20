@@ -696,7 +696,7 @@ class Employee_class:
         self.submit_survey_canvas.pack(fill=tk.BOTH, expand=True)
 
         # Pull child classes from Survey_Qs in the db using the .get function
-        survey_questions = db.reference("/Survey_Qs").get()
+        survey_questions = db.reference("/Survey_Qs").child("questions").get()
         
         # Get the total number of questions from the database
         total_questions = db.reference("/Survey_Qs").child("total_questions").get()
@@ -788,7 +788,8 @@ class Employee_class:
         current_question_key = survey_questions_keys[self.current_question_index]
 
         # Display the question on the canvas
-        question_text = f"Question {self.current_question_index + 1}: {survey_questions[current_question_key]}"
+        # question_text = f"Question {self.current_question_index + 1}: {survey_questions[current_question_key]}"
+        question_text = f"Question {self.current_question_index + 1}: {survey_questions[self.current_question_index]}"
         self.submit_survey_canvas.create_text(
             10,
             10,
