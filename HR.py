@@ -3414,12 +3414,26 @@ class HR_class:
 
     def on_employee_select(self, event):
         #create a new window which takes the employee name as reference and pulls it child survey answers
-        selected_employee = self.treeview_survey_results.item(self.treeview_survey_results.selection())["values"][0]
-        survey_answers = db.reference("/employee").child(selected_employee).child("survey").child("answers").get()
         # Create a new window for the survey_results top level
         self.survey_results_window = tk.Toplevel()
         self.survey_results_window.geometry("800x600")
         self.survey_results_window.title("Survey Results")
+        selected_employee = self.treeview_survey_results.item(self.treeview_survey_results.selection())["values"][0]
+        
+        # Pull the Survey_Qs from the database along with its index values
+        survey_qs_ref = db.reference("/Survey_Qs")
+        survey_qs = survey_qs_ref.get()
+        survey_questions = [(index, question) for index, question in survey_qs.items()]
+
+        # Pull the survey answers from the database along with its index values
+        survey_answers_ref = db.reference("/employee").child(selected_employee).child("survey").child("answers")
+        survey_answers = survey_answers_ref.get()
+        survey_answers = [(index, answer) for index, answer in enumerate(survey_answers)]
+
+        self.survey_questions = survey_questions
+        self.survey_answers = survey_answers
+
+
 
         # Create the canvas
         self.survey_results_canvas = tk.Canvas(self.survey_results_window, bg="white", highlightthickness=0)
@@ -3427,8 +3441,6 @@ class HR_class:
 
         # Load the image
         self.load_image_survey_results()
-
-        print(survey_answers)
 
         # Bind window resize event to function
         self.survey_results_window.bind("<Configure>", lambda event: self.on_window_resize_survey_results(event))
@@ -3465,6 +3477,9 @@ class HR_class:
         # Update the image on the canvas
         self.survey_results_canvas.delete("all")
         self.survey_results_canvas.create_image(0, 0, image=self.survey_results_image, anchor="nw")
+
+        print(self.survey_questions)
+        print(self.survey_answers)
 
     def on_window_resize_survey_results(self, event):
         self.resize_canvas_and_image_survey_results()
