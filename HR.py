@@ -1875,31 +1875,67 @@ class HR_class:
         else:
             self.previous_button.config(state="normal")
 
+    # def survey_feedback_request(self, username):
+    #     if self.uni_role == "admin":
+    #         messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+    #         return
+    #     # Store the answer for the current question
+    #     answer = self.survey_question_entry.get()
+    #     #skip answers that are blank
+    #     if answer == " " or answer == "":
+    #         return
+    #     self.answers[self.current_question_index] = answer
+
+    #     db.reference("Survey_Qs").delete()
+
+    #     for question_index, answer in self.answers.items():
+    #         if answer == " " or answer == "":
+    #             continue
+    #         db.reference("Survey_Qs").child(f"{question_index}").set(answer)
+    #     self.update_total_questions()
+    #     db.reference("survey_uni").child("available").set("Yes")
+    #     self.buttons_created = False
+    #     self.buttons_created_down = False
+    #     self.survey_feedback_window.destroy()
+    #     messagebox.showinfo("Survey Feedback", "Survey feedback submitted successfully.")
+    #     return
+
     def survey_feedback_request(self, username):
         if self.uni_role == "admin":
-            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to the database.")
             return
+
         # Store the answer for the current question
-        answer = self.survey_question_entry.get()
-        #skip answers that are blank
-        if answer == " " or answer == "":
+        answer = self.survey_question_entry.get().strip()  # Remove leading/trailing whitespace
+        if not answer:  # Skip blank answers
             return
+
         self.answers[self.current_question_index] = answer
 
+        # Delete existing survey data
         db.reference("Survey_Qs").delete()
 
-        for question_index, answer in self.answers.items():
-            if answer == " " or answer == "":
-                continue
-            db.reference("Survey_Qs").child(f"{question_index}").set(answer)
+        # Push non-blank answers to the database with sequential index values
+        index = 0
+        for question_index in range(len(self.total_questions_fill)):
+            answer = self.answers.get(question_index, "").strip()  # Remove leading/trailing whitespace
+            if answer:  # Only push non-blank answers
+                db.reference("Survey_Qs").child(str(index)).set(answer)
+                index += 1
+
+        # Update the total number of questions in the database
         self.update_total_questions()
+
+        # Set the survey as available
         db.reference("survey_uni").child("available").set("Yes")
+
+        # Clean up and close the survey window
         self.buttons_created = False
         self.buttons_created_down = False
         self.survey_feedback_window.destroy()
         messagebox.showinfo("Survey Feedback", "Survey feedback submitted successfully.")
-        return
-        
+
+            
 
     def update_total_questions(self): 
         total_questions = sum(1 for answer in self.answers.values() if answer)
