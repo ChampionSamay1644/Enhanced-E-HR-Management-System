@@ -1939,6 +1939,9 @@ class HR_class:
         for employee_id, employee_data in emp_data.items():
             db.reference("employee").child(employee_id).child("survey").child("available").set("Yes")
 
+        for employee_id, employee_data in emp_data.items():
+            db.reference("employee").child(employee_id).child("survey").child("answers").delete()
+
         # Clean up and close the survey window
         self.buttons_created = False
         self.buttons_created_down = False
