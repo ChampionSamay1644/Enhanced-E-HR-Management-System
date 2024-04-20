@@ -849,6 +849,13 @@ class Employee_class:
         # Check if a value is selected for the current question
         stored_value = self.selected_values.get(self.current_question_index)
 
+        # If a value is present, set the radio variable to that value
+        if stored_value is not None and stored_value in ["Very Poor", "Poor", "Average", "Good", "Very Good"]:
+            self.radio_var.set(stored_value)
+        else:
+            # Otherwise, clear the selected radio button by setting the variable to None
+            self.radio_var.set(None)
+
         if self.current_question_index == self.total_questions_count-1:
             self.next_button.config(state="disabled")
             return
@@ -860,13 +867,6 @@ class Employee_class:
             return
         else:
             self.previous_button.config(state="normal")
-
-        # If a value is present, set the radio variable to that value
-        if stored_value is not None and stored_value in ["Very Poor", "Poor", "Average", "Good", "Very Good"]:
-            self.radio_var.set(stored_value)
-        else:
-            # Otherwise, clear the selected radio button by setting the variable to None
-            self.radio_var.set(None)
 
     def on_window_resize_submit_survey(self, event):
         # Handle window resize event
