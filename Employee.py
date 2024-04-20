@@ -739,7 +739,7 @@ class Employee_class:
             self.next_button.grid(row=0, column=1)
 
             # Create a button to go to the previous question also pass the survey_questions_keys, survey_questions as arguments
-            self.previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions, username))
+            self.previous_button = tk.Button(button_frame, text="Previous", command=lambda: self.previous_question(survey_questions_keys, survey_questions, username),state="disabled")
             self.previous_button.grid(row=0, column=0)
 
             # Create a button to submit the survey at the bottom center of the window
