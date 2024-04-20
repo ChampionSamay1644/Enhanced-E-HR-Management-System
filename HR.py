@@ -26,6 +26,13 @@ class HR_class:
         x = (screen_width / 2) - (900 / 2)
         y = (screen_height / 2) - (700 / 2)
         window.geometry("%dx%d+%d+%d" % (900, 700, x, y))
+
+    def center_window_survey(self, window):
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+        x = (screen_width / 2) - (1400 / 2)
+        y = (screen_height / 2) - (700 / 2)
+        window.geometry("%dx%d+%d+%d" % (1400,700, x, y))
        
     def getdata(self,username,role):
         if role=="employee":
@@ -3444,7 +3451,7 @@ class HR_class:
         self.survey_results_window.bind("<Configure>", lambda event: self.on_window_resize_survey_results(event))
 
         # Center the window
-        self.center_window_all(self.survey_results_window)
+        self.center_window_survey(self.survey_results_window)
 
         #force focus on window
         self.survey_results_window.focus_force()
@@ -3503,7 +3510,7 @@ class HR_class:
             self.survey_results_canvas.create_text(
                 x_position + 10,  # X-coordinate (left)
                 y_position,  # Y-coordinate
-                font=("Helvetica", 15, "bold"),
+                font=("Helvetica", 12, "bold"),
                 text=f"Q{question_number}. {question}",
                 fill="white",
                 anchor="nw"
@@ -3512,7 +3519,7 @@ class HR_class:
 
             # Display answer in the current column
             self.survey_results_canvas.create_text(
-                x_position + 20,  # X-coordinate (left)
+                x_position + 10,  # X-coordinate (left)
                 y_position,  # Y-coordinate
                 font=("Helvetica", 12),
                 text=f"Answer: {answer}",
@@ -3527,10 +3534,6 @@ class HR_class:
             if y_position >= window_height:
                 current_column = 1
                 y_position = 10  # Reset y_position for the next column
-
-
-
-
 
 
 
