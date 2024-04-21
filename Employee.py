@@ -752,7 +752,7 @@ class Employee_class:
         self.submit_survey_window.focus_force()
 
         # Center the window
-        self.center_window_all(self.submit_survey_window)
+        self.center_window_survey(self.submit_survey_window)
 
         # Main loop for the self.submit_survey_window
         self.submit_survey_window.mainloop()
@@ -1257,6 +1257,18 @@ class Employee_class:
 
         # Set the dimensions of the screen and where it is placed
         window.geometry("%dx%d+%d+%d" % (900, 700, x, y))
+
+    def center_window_survey(self, window):
+        # Get the width and height of the screen
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+
+        # Calculate the x and y coordinates to center the main window
+        x = (screen_width / 2) - (1400 / 2)
+        y = (screen_height / 2) - (700 / 2)
+
+        # Set the dimensions of the screen and where it is placed
+        window.geometry("%dx%d+%d+%d" % (1400, 700, x, y))
 
     def days_entry_del(self):
         if self.number_of_days_entry.get() == "0":
