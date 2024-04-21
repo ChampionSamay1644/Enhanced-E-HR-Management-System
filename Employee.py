@@ -95,7 +95,7 @@ class Employee_class:
         #Check if survey is available
         if emp_ref.child(username).child("survey").child("available").get() == "Yes":
             messagebox.showinfo(f"Survey", "A survey is available for you to fill.")
-            emp_ref.child(username).child("survey").child("available").set("No")
+            #emp_ref.child(username).child("survey").child("available").set("No")
         
         #add buttons and use a function to place them in the canvas
         self.add_buttons_to_canvas_employee(username)
