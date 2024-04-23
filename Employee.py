@@ -369,7 +369,7 @@ class Employee_class:
         self.number_of_days_entry = tk.Entry(self.apply_for_vacation_days_canvas, width=60, font=("Helvetica", 14))
         self.number_of_days_entry.pack(pady=10, side=tk.TOP, anchor=tk.CENTER)
         self.number_of_days_entry.insert(0, "Enter Number of Days")
-        self.number_of_days_entry.bind("<FocusIn>", lambda event: self.reason_entry_del())
+        self.number_of_days_entry.bind("<FocusIn>", lambda event: self.number_of_days_entry_del())
         self.number_of_days_entry.place(relx=0.5, rely=0.35, anchor="center")
 
         self.reason_entry = tk.Entry(self.apply_for_vacation_days_canvas, width=60, font=("Helvetica", 14))
@@ -1272,6 +1272,10 @@ class Employee_class:
 
     def days_entry_del(self):
         if self.number_of_days_entry.get() == "0":
+            self.number_of_days_entry.delete(0, tk.END)
+
+    def number_of_days_entry_del(self):
+        if self.number_of_days_entry.get() == "Enter Number of Days":
             self.number_of_days_entry.delete(0, tk.END)
 
     def reason_entry_del_resignation(self):

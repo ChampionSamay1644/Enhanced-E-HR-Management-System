@@ -241,6 +241,7 @@ class Manager_class:
         self.resize_canvas_and_image_manager(username)
 
     def perform_review_approval(self):
+        self.tree=None
         # create a new window to show the performance review approval
         self.review_approval_window = tk.Toplevel()
         self.review_approval_window.geometry("800x600")  # Set the window size
@@ -256,27 +257,6 @@ class Manager_class:
         # import the image as the background on the canvas
         self.load_image_review_approval()
 
-        # # Assuming you have values for the employee data
-        # employee_data_8 = self.get_employee_data_with_quarter_review()
-        # employee_data_9 = self.get_employee_data_with_half_yearly_review()
-
-
-        # # Call the method with different rely values and click handlers for each list
-        # self.display_employee_list_on_canvas(
-        #     self.review_approval_logo_canvas,
-        #     employee_data_8,
-        #     rely=0.5,
-        #     click_handler=self.open_employee_details_window_review
-        # )
-
-        # self.display_employee_list_on_canvas(
-        #     self.review_approval_logo_canvas,
-        #     employee_data_9,
-        #     rely=0.8,
-        #     click_handler=self.open_employee_details_window_review
-        # )
-
-
         # Bind the Escape key to the exit function
         self.review_approval_window.bind(
             "<Escape>", lambda event: self.review_approval_window.destroy()
@@ -285,14 +265,9 @@ class Manager_class:
         self.review_approval_window.focus_force()
         # Center the window with function center_window_test
         self.center_window_all(self.review_approval_window)
-        
-        #Create a scrollable frame to hold the list of employees
-        self.scrollable_frame = scrolledtext.ScrolledText(self.review_approval_window, wrap=tk.WORD, width=40, height=10)
-        self.scrollable_frame.pack(pady=20)
-        self.scrollable_frame.place(relx=0.5, rely=0.5, anchor="center")
-        
+
         #Create a treeview to hold the list of employees
-        self.tree = ttk.Treeview(self.scrollable_frame, columns=("Employee", "Role","Type"), show="headings")
+        self.tree = ttk.Treeview(self.review_approval_logo_canvas, columns=("Employee", "Role", "Type"))
         self.tree.heading("Employee", text="Employee")
         self.tree.heading("Role", text="Role")
         self.tree.heading("Type", text="Type")
@@ -301,20 +276,23 @@ class Manager_class:
         self.tree.column("Type", width=200)
         self.tree.tag_configure("selectable", background="white", foreground="blue")
         self.tree.bind("<Double-1>", lambda event: self.on_treeview_click(event))
-        
-        #Add a vertical scrollbar to the treeview
-        ysb = ttk.Scrollbar(self.scrollable_frame, orient="vertical", command=self.tree.yview)
-        self.tree.configure(yscroll=ysb.set)
+        self.tree['show'] = 'headings'
+
+        #Create 2 scrollbars for the treeview
+        ysb = ttk.Scrollbar(self.tree, orient="vertical", command=self.tree.yview)
         ysb.pack(side="right", fill="y")
-        
-        #Add a horizontal scrollbar to the treeview
-        xsb = ttk.Scrollbar(self.scrollable_frame, orient="horizontal", command=self.tree.xview)
-        self.tree.configure(xscroll=xsb.set)
+
+        xsb = ttk.Scrollbar(self.tree, orient="horizontal", command=self.tree.xview)
         xsb.pack(side="bottom", fill="x")
+
+        self.tree.configure(yscrollcommand=ysb.set, xscrollcommand=xsb.set)
         
         #Pack the treeview onto the scrollable frame
         self.tree.pack(fill="both", expand=True)
         
+        #Place the treeview on the window
+        self.tree.place(width=600, height=400, relx=0.5, rely=0.5, anchor="center")
+
         #Bind the treeview to the function to show employee details
         # self.tree.bind("<ButtonRelease-1>", self.on_treeview_click)
         
@@ -323,7 +301,7 @@ class Manager_class:
         self.review_type.set("None")
         self.review_type_combo = ttk.Combobox(self.review_approval_window, textvariable=self.review_type, values=["None","Quarterly Review", "Annual Review"])
         self.review_type_combo.pack(pady=20)
-        self.review_type_combo.place(relx=0.5, rely=0.2, anchor="center") 
+        self.review_type_combo.place(relx=0.5, rely=0.1, anchor="center") 
         self.review_type_combo.bind("<<ComboboxSelected>>", self.on_review_type_selected)
          
         # Run the main loop for the create_remove_hr_window
@@ -331,12 +309,15 @@ class Manager_class:
     
     def on_treeview_click(self,event):
         #Get the selected employee from the treeview
-        employee=self.tree.item(self.tree.selection())["values"][0]
-        type=self.tree.item(self.tree.selection())["values"][2]
-        if db.reference("/employee").child(employee).child("performance_review").child(type).child("status").get() == "Approved by Manager ":
-            messagebox.showinfo("Performance Review Approval", "Performance Review has already been approved for "+employee)
-            return
-        self.open_employee_review(employee,type)
+        try:
+            employee=self.tree.item(self.tree.selection())["values"][0]
+            type=self.tree.item(self.tree.selection())["values"][2]
+            if db.reference("/employee").child(employee).child("performance_review").child(type).child("status").get() == "Approved by Manager ":
+                messagebox.showinfo("Performance Review Approval", "Performance Review has already been approved for "+employee)
+                return
+            self.open_employee_review(employee,type)
+        except:
+            pass
         
     def on_review_type_selected(self, event):
         if self.review_type.get() == "None":
@@ -693,8 +674,6 @@ class Manager_class:
             click_handler=self.show_employee_details_sick
         )
 
-
-
         # Bind the Escape key to the exit function
         approve_window.bind(
             "<Escape>", lambda event: approve_window.destroy()
@@ -839,7 +818,7 @@ class Manager_class:
         username_label.place(relx=0.5, rely=0.35, anchor="center")
 
         self.username_entry = tk.Entry(
-            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold"),justify="center",width=60
         )
         self.username_entry.pack(pady=20)
         self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
@@ -862,7 +841,7 @@ class Manager_class:
         provisional_vacation_days_label.place(relx=0.5, rely=0.5, anchor="center")
 
         self.provisional_vacation_days_entry = tk.Entry(
-            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold"),justify="center",width=60
         )
         self.provisional_vacation_days_entry.pack(pady=20)
         self.provisional_vacation_days_entry.place(relx=0.5, rely=0.55, anchor="center")
@@ -885,7 +864,7 @@ class Manager_class:
         reason_for_vacation_days_label.place(relx=0.5, rely=0.65, anchor="center")
 
         self.reason_for_vacation_days_entry = tk.Entry(
-            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold"),justify="center",width=60
         )
         self.reason_for_vacation_days_entry.pack(pady=20)
         self.reason_for_vacation_days_entry.place(relx=0.5, rely=0.7, anchor="center")
@@ -969,7 +948,7 @@ class Manager_class:
         username_label.place(relx=0.5, rely=0.35, anchor="center")
 
         self.username_entry = tk.Entry(
-            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold"),justify="center",width=60
         )
         self.username_entry.pack(pady=20)
         self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
@@ -992,7 +971,7 @@ class Manager_class:
         provisional_vacation_days_label.place(relx=0.5, rely=0.5, anchor="center")
 
         self.provisional_vacation_days_entry = tk.Entry(
-            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold"),justify="center",width=60
         )
         self.provisional_vacation_days_entry.pack(pady=20)
         self.provisional_vacation_days_entry.place(relx=0.5, rely=0.55, anchor="center")
@@ -1015,7 +994,7 @@ class Manager_class:
         reason_for_sick_days_label.place(relx=0.5, rely=0.65, anchor="center")
 
         self.reason_for_sick_days_entry = tk.Entry(
-            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold")
+            self.employee_details_logo_canvas, font=("Helvetica", 12, "bold"),justify="center",width=60
         )
         self.reason_for_sick_days_entry.pack(pady=20)
         self.reason_for_sick_days_entry.place(relx=0.5, rely=0.7, anchor="center")
@@ -1209,12 +1188,21 @@ class Manager_class:
         # Center the window with function center_window_test
         self.center_window_all(self.resignation_window)
         
-        #Create a new entry widget for the reason for resignation
-        self.reason_for_resignation_entry = tk.Entry(
-            self.resignation_window, font=("Helvetica", 12, "bold")
-        )
+        # #Create a new entry widget for the reason for resignation
+        # self.reason_for_resignation_entry = tk.Entry(
+        #     self.resignation_window, font=("Helvetica", 12, "bold")
+        # )
+        # self.reason_for_resignation_entry.pack(pady=20)
+        # self.reason_for_resignation_entry.place(relx=0.5, rely=0.5, anchor="center", width=400, height=30)
+        # self.reason_for_resignation_entry.insert(0, "Enter reason for resignation")
+        # self.reason_for_resignation_entry.bind("<FocusIn>", lambda event: self.reason_for_resignation_entry.delete(0, tk.END))
+
+        # Create an entry widget for the reason and align it to the center and make it multiple line entry with height 5 and scrollbar
+        self.reason_for_resignation_entry = scrolledtext.ScrolledText(self.resignation_window, wrap=tk.WORD, width=40, height=5, font=("Helvetica", 12, "bold"))
         self.reason_for_resignation_entry.pack(pady=20)
-        self.reason_for_resignation_entry.place(relx=0.5, rely=0.5, anchor="center", width=400, height=30)
+        self.reason_for_resignation_entry.place(relx=0.5, rely=0.5, anchor="center")
+        self.reason_for_resignation_entry.insert(tk.INSERT, "Enter reason for resignation")
+        self.reason_for_resignation_entry.bind("<FocusIn>", lambda event: self.reason_for_resignation_entry.delete(1.0, tk.END))
         
         #Create a new button for submitting the resignation
         self.submit_resignation_button = tk.Button(
@@ -1236,7 +1224,7 @@ class Manager_class:
             messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
             return
         # Get the reason for resignation from the entry widget
-        reason_for_resignation = self.reason_for_resignation_entry.get()
+        reason_for_resignation = self.reason_for_resignation_entry.get("1.0", tk.END)
         if db.reference("/manager").child(username).child("resignation_request").child("resignation_reason").get() == "pending":
             # Show an error message if the resignation is already pending
             messagebox.showerror("Error", "Your resignation is already pending.")
@@ -1672,6 +1660,8 @@ class Manager_class:
         for employee in employees:
             if db.reference("/employee").child(employee).child("resignation_request").child("resignation_status").get() == "pending":
                 reason = db.reference("/employee").child(employee).child("resignation_request").child("resignation_reason").get()
+                #Conver the reason to a single line string
+                reason = reason.replace("\n", " ")
                 self.treeview_approve_resignation.insert("", "end", values=(employee,reason), tags=("clickable",))
         
     def approve_resignation_request(self):
