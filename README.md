@@ -115,8 +115,6 @@ Sushant Navle :https://github.com/Sushant305
 Samay Pandey :https://github.com/ChampionSamay1644
 
 
-Following this link would redirect you to our project:
-https://github.com/ChampionSamay1644/Sem_4_Mini_Project
 ## Appendix
 The motivation behind the development of the Enhanced E-HR system stems from the growing need for organizations to optimize and modernize their human resource management processes. As businesses evolve in today's dynamic environment, efficient HR management becomes crucial for organizational success. Traditional manual methods are often time-consuming, prone to errors, and lack scalability. The Enhanced E-HR system aims to address these challenges by providing a comprehensive, user-friendly, and technologically advanced solution.
 
