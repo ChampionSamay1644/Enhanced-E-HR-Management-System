@@ -2,7 +2,7 @@
   "HR": {
     "Aarya": {
       "designation": "User tester",
-      "emp_id": 51,
+      "emp_id": 15,
       "hours_attended": 47,
       "password": "Walve",
       "role": "HR",
@@ -12,7 +12,7 @@
       "apply_for_vacation": 1,
       "bonus": 2000,
       "designation": "Manager",
-      "emp_id": 1,
+      "emp_id": 2,
       "feedback": 2,
       "hours_attended": 55,
       "password": "Nakhuda",
@@ -25,7 +25,7 @@
     },
     "Mith": {
       "designation": "User Tester",
-      "emp_id": 49,
+      "emp_id": 16,
       "hours_attended": 21,
       "password": "Utekar",
       "role": "HR",
@@ -33,7 +33,7 @@
     },
     "Nishal": {
       "designation": "User tester",
-      "emp_id": 50,
+      "emp_id": 17,
       "hours_attended": 27,
       "password": "Poojary",
       "role": "HR",
@@ -52,22 +52,22 @@
   },
   "admins": {
     "Ninad": {
-      "emp_id": 46,
+      "emp_id": 13,
       "password": "Walke",
       "role": "admin"
     },
     "Samay": {
-      "emp_id": 0,
+      "emp_id": 1,
       "password": "Pandey",
       "role": "admin"
     },
     "Yash": {
-      "emp_id": 47,
+      "emp_id": 14,
       "password": "Patil",
       "role": "admin"
     }
   },
-  "emp_id": 61,
+  "emp_id": 26,
   "employee": {
     "Jaspreet": {
       "apply_for_vacation": 0,
@@ -80,7 +80,7 @@
         "status": "pending"
       },
       "designation": "User testing",
-      "emp_id": 59,
+      "emp_id": 21,
       "feedback": "",
       "hours_attended": 18,
       "password": "Narula",
@@ -114,7 +114,7 @@
       "bonus_reason": "task completed",
       "bonus_req": 1230,
       "designation": "Team Junior",
-      "emp_id": 3,
+      "emp_id": 4,
       "feedback": 2,
       "hours_attended": 31,
       "password": "Karnik",
@@ -174,7 +174,7 @@
       "apply_for_vacation": 0,
       "bonus": 0,
       "designation": "User tester",
-      "emp_id": 56,
+      "emp_id": 22,
       "feedback": "",
       "hours_attended": 11,
       "password": "Rane",
@@ -203,7 +203,7 @@
         "status": "pending"
       },
       "designation": "User tester",
-      "emp_id": 58,
+      "emp_id": 23,
       "feedback": "",
       "hours_attended": 25,
       "password": "Pai",
@@ -231,7 +231,7 @@
         "status": "pending"
       },
       "designation": "User tester",
-      "emp_id": 55,
+      "emp_id": 24,
       "feedback": "",
       "hours_attended": 27,
       "password": "Bakshi",
@@ -266,7 +266,7 @@
       "apply_for_vacation": 0,
       "bonus": 0,
       "designation": "Web Developer",
-      "emp_id": 60,
+      "emp_id": 25,
       "feedback": "",
       "hours_attended": 37,
       "password": "Morajkar",
@@ -289,7 +289,7 @@
   "manager": {
     "Aishwarya": {
       "designnation: ": "User tester",
-      "emp_id": 52,
+      "emp_id": 18,
       "hours_attended": 19,
       "password": "Mishra",
       "role": "manager",
@@ -297,7 +297,7 @@
     },
     "Hritvik": {
       "designnation: ": "User tester",
-      "emp_id": 53,
+      "emp_id": 19,
       "hours_attended": 41,
       "password": "Sargaonkar",
       "role": "manager",
@@ -305,7 +305,7 @@
     },
     "Om": {
       "designnation: ": "User tester",
-      "emp_id": 54,
+      "emp_id": 20,
       "hours_attended": 34,
       "password": "Mujumdar",
       "role": "manager",
@@ -315,7 +315,7 @@
       "bonus": "1250",
       "comment_for_promotion": " akwbaawbrw",
       "designation": "Junior Manager",
-      "emp_id": 2,
+      "emp_id": 3,
       "hours_attended": 12,
       "password": "Navle",
       "performance_review": {
