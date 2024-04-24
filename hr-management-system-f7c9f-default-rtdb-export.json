@@ -134,21 +134,6 @@
         }
       },
       "progress_on_task": -12,
-      "project": {
-        "deadline": "28/2/2024",
-        "description": "Project progress",
-        "id": 12,
-        "members": {
-          "armaan": "Leader",
-          "samay": "Bug_fixer"
-        },
-        "name": "abc",
-        "progress": 30,
-        "task": {
-          "description": "complete buttons and Db",
-          "status": "In Progress"
-        }
-      },
       "reason_for_sick_days": "I do not workk",
       "reason_for_vacation_days": "Outstation",
       "resignation_reason": "I want to quit",
