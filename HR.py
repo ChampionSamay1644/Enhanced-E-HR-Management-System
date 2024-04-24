@@ -990,7 +990,7 @@ class HR_class:
             self.treeview_bonus["columns"] = ("Employee", "Bonus", "Reason", "Hours Attended")
             self.treeview_bonus.column("Employee", width=100, anchor="center")
             self.treeview_bonus.column("Bonus", width=100, anchor="center")
-            self.treeview_bonus.column("Reason", width=100, anchor="center")
+            self.treeview_bonus.column("Reason", width=300, anchor="center")
             self.treeview_bonus.column("Hours Attended", width=100, anchor="center")
             self.treeview_bonus.heading("Employee", text="Employee")
             self.treeview_bonus.heading("Bonus", text="Bonus")
@@ -1081,7 +1081,7 @@ class HR_class:
         self.role_entry_bonus = ttk.Combobox(
             self.approve_bonus_canvas, font=("Helvetica", 12, "bold")
         )
-        self.role_entry_bonus["values"] = ("None", "manager", "employee")
+        self.role_entry_bonus["values"] = ("Select Role", "manager", "employee")
         self.role_entry_bonus.pack(
             pady=20
         )
@@ -1117,7 +1117,7 @@ class HR_class:
             self.deny_bonus_button["state"] = "disabled"
         
     def role_selected_bonus(self, event):
-        if self.role_entry_bonus is not None:
+        if self.role_entry_bonus != None:
             selected_role = self.role_entry_bonus.get()
             if selected_role:
                 self.populate_employee_list_bonus(selected_role)
@@ -1132,7 +1132,8 @@ class HR_class:
         if role == "manager":
             employees = list(( db.reference("/manager").get()).keys())
 
-        elif role == "None":
+        elif role == "Select Role":
+            self.treeview_bonus.delete(*self.treeview_bonus.get_children())
             return
         else:
             employees= self.get_employee_data_with_non_zero_bonus()
@@ -1508,9 +1509,13 @@ class HR_class:
             role = ""
             if person in employees_with_resignation:
                 reason = db.reference("/employee").child(person).child("resignation_request").child("resignation_reason").get()
+                #Replace \n with space
+                reason = reason.replace("\n", " ")
                 role = "Employee"
             elif person in managers_with_resignation:
                 reason = db.reference("/manager").child(person).child("resignation_request").child("resignation_reason").get()
+                #Replace \n with space
+                reason = reason.replace("\n", " ")
                 role = "Manager"
 
             # Add the employee name, reason, and role with tag selectable
@@ -1740,6 +1745,10 @@ class HR_class:
             return
         #Get the selected employee
         selected_employee = self.treeview_check_hours_attended.item(self.treeview_check_hours_attended.selection())["values"][0]
+        #Check if the employee has already been warned
+        if self.treeview_check_hours_attended.item(self.treeview_check_hours_attended.selection())["values"][2] == "Warning issued by HR":
+            messagebox.showinfo("Warn Employee", "Employee has already been warned.")
+            return
         #Ask for confirmation
         if messagebox.askyesno("Warn Employee", f"Are you sure you want to warn {selected_employee}?"):
             #Warn the employee in the database
@@ -2024,6 +2033,7 @@ class HR_class:
             self.treeview_promotion.heading("New Designation", text="Designation")
             self.treeview_promotion.heading("New salary", text="Salary")
             self.treeview_promotion.heading("Comment", text="Comment")
+            self.treevoew_promotion.column("Comment", width=600)
             self.treeview_promotion.heading("Request by", text="Request by")
             self.treeview_promotion.tag_configure("selectable", foreground="blue", font=("Helvetica", 12, "underline"))
             #self.treeview_promotion.bind("<Double-1>", lambda event: self.open_employee_details_window(self.treeview_promotion.item(self.treeview_promotion.selection())["values"][0]))
@@ -2601,6 +2611,7 @@ class HR_class:
         self.reason_entry = tk.Text(self.apply_for_resignation_canvas, font=("Helvetica", 12), width=50, height=5)
         self.reason_entry.place(relx=0.5, rely=0.5, anchor="center")
         self.reason_entry.insert(tk.END, "Reason for resignation")
+        self.reason_entry.bind("<FocusIn>", lambda event: self.reason_entry.delete("1.0", tk.END))
         
         #Create a button for apply for resignation
         apply_for_resignation_button = tk.Button(
@@ -3032,10 +3043,10 @@ class HR_class:
         self.treeview_review_complaints.heading("Complaint", text="Complaint")
         self.treeview_review_complaints.heading("Complaint by", text="Complaint by")
         self.treeview_review_complaints.pack(fill="both", expand=True)
-        self.treeview_review_complaints.column("Employee", width=400)
-        self.treeview_review_complaints.column("Role", width=200)
-        self.treeview_review_complaints.column("Complaint", width=400)
-        self.treeview_review_complaints.column("Complaint by", width=200)
+        self.treeview_review_complaints.column("Employee", width=150, anchor="center")
+        self.treeview_review_complaints.column("Role", width=150, anchor="center")
+        self.treeview_review_complaints.column("Complaint", width=400, anchor="center")
+        self.treeview_review_complaints.column("Complaint by", width=150, anchor="center")
         self.treeview_review_complaints.tag_configure("selectable", background="white", foreground="blue")
 
         #Create a vertical scrollbar for the Treeview
@@ -3096,11 +3107,15 @@ class HR_class:
         for employee in emp_data:
             if db.reference("/employee").child(employee).child("complaint").child("status").get() == "pending":
                 complaint = db.reference("/employee").child(employee).child("complaint").child("problem").get()
+                #Replace \n with space
+                complaint = complaint.replace("\n"," ")
                 complaint_by = db.reference("/employee").child(employee).child("complaint").child("complaint_by").get()
                 self.treeview_review_complaints.insert("", "end", values=(employee, "Employee", complaint, complaint_by), tags="selectable")
         for manager in mng_data:
             if db.reference("/manager").child(manager).child("complaint").child("status").get() == "pending":
                 complaint = db.reference("/manager").child(manager).child("complaint").child("problem").get()
+                #Replace \n with space
+                complaint = complaint.replace("\n"," ")
                 complaint_by = db.reference("/manager").child(manager).child("complaint").child("complaint_by").get()
                 self.treeview_review_complaints.insert("", "end", values=(manager, "Manager", complaint, complaint_by), tags="selectable")
 
