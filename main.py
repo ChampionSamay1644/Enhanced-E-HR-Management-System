@@ -17,7 +17,6 @@ from firebase_admin import db, credentials
 import threading
 from tkinter import Label
 from tkinter import Tk, Canvas, PhotoImage
-from better_profanity import profanity as bp
 
 # Global variable to track Firebase initialization
 firebase_initialized = False

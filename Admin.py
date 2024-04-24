@@ -14,7 +14,6 @@ from HR import *
 from Manager import *
 from Employee import *
 from main import main as Main
-from better_profanity import profanity as bp
 
 class Admin_class():
     def __init__(self):
@@ -482,13 +481,6 @@ class Admin_class():
         salary = self.new_salary_label.get()
         designation = self.new_designation_label.get()
 
-        if bp.contains_profanity(username) or bp.contains_profanity(password) or bp.contains_profanity(salary) or bp.contains_profanity(designation):
-            messagebox.showinfo(
-                "Add Login", "Please fill in all the fields without any profanity."
-            )
-            return
-            add_login_from_admin_window.focus_force()
-
         if role == "None" or username == "" or password == "" or salary == "" or designation == "":
             messagebox.showinfo(
                 "Add Login", "Please fill in all the fields."
@@ -841,13 +833,6 @@ class Admin_class():
         employee_ref = db.reference("/employee")
         emp_id_ref = db.reference("/")
         emp_uni = emp_id_ref.child("emp_id").get()
-
-        if bp.contains_profanity(username) or bp.contains_profanity(password) or bp.contains_profanity(salary) or bp.contains_profanity(designation):
-            messagebox.showinfo(
-                "Add Login", "Please fill in all the fields without any profanity."
-            )
-            return
-            add_login_from_admin_window.focus_force()
 
         if username in list(admins_ref.get().keys()) or username in list(hr_ref.get().keys()) or username in list(manager_ref.get().keys()) or username in list(employee_ref.get().keys()):
             messagebox.showinfo(
