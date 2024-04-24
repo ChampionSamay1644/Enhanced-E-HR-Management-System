@@ -2,7 +2,8 @@
   "HR": {
     "Aarya": {
       "designation": "User tester",
-      "emp_ids": 51,
+      "emp_id": 51,
+      "hours_attended": 47,
       "password": "Walve",
       "role": "HR",
       "salary": "15000"
@@ -24,14 +25,16 @@
     },
     "Mith": {
       "designation": "User Tester",
-      "emp_ids": 49,
+      "emp_id": 49,
+      "hours_attended": 21,
       "password": "Utekar",
       "role": "HR",
       "salary": "10000"
     },
     "Nishal": {
       "designation": "User tester",
-      "emp_ids": 50,
+      "emp_id": 50,
+      "hours_attended": 27,
       "password": "Poojary",
       "role": "HR",
       "salary": "15000"
@@ -79,9 +82,16 @@
       "designation": "User testing",
       "emp_id": 59,
       "feedback": "",
-      "hours_attended": 0,
+      "hours_attended": 18,
       "password": "Narula",
       "progress_on_task": 0,
+      "promotion_request": {
+        "Request": "Pending",
+        "comment": "Has very good background in marketing and can handle leadership roles",
+        "new_designation": "Marketing Head",
+        "new_salary": "15000",
+        "request_by": "Sushant"
+      },
       "role": "employee",
       "salary": "7000",
       "sick_approved": 0,
@@ -106,7 +116,7 @@
       "designation": "Team Junior",
       "emp_id": 3,
       "feedback": 2,
-      "hours_attended": 0,
+      "hours_attended": 31,
       "password": "Karnik",
       "performance_review": {
         "Annual Review": {
@@ -158,8 +168,7 @@
       "vacation_approved": "4",
       "vacation_approved_denied": "pending",
       "vacation_days": 8,
-      "vacation_reason": "Outstation",
-      "warning": "None"
+      "vacation_reason": "Outstation"
     },
     "Prathamesh": {
       "apply_for_vacation": 0,
@@ -167,7 +176,7 @@
       "designation": "User tester",
       "emp_id": 56,
       "feedback": "",
-      "hours_attended": 0,
+      "hours_attended": 11,
       "password": "Rane",
       "progress_on_task": 0,
       "role": "employee",
@@ -182,20 +191,21 @@
       "vacation_approved": 0,
       "vacation_approved_denied": "",
       "vacation_days": 0,
-      "vacation_reason": ""
+      "vacation_reason": "",
+      "warning": "Warning issued by HR"
     },
     "Sairaj": {
       "apply_for_vacation": 0,
       "bonus": 0,
       "complaint": {
         "complaint_by": "Peeyush",
-        "problem": "I want to complain\nto test\nthis feature\n",
+        "problem": "Uses Racial Slurs",
         "status": "pending"
       },
       "designation": "User tester",
       "emp_id": 58,
       "feedback": "",
-      "hours_attended": 0,
+      "hours_attended": 25,
       "password": "Pai",
       "progress_on_task": 0,
       "role": "employee",
@@ -223,7 +233,7 @@
       "designation": "User tester",
       "emp_id": 55,
       "feedback": "",
-      "hours_attended": 0,
+      "hours_attended": 27,
       "password": "Bakshi",
       "performance_review": {
         "Quarterly Review": {
@@ -235,7 +245,7 @@
       },
       "progress_on_task": 0,
       "resignation_request": {
-        "resignation_reason": "I want to resign\nto\ntest\nthis \nfeature",
+        "resignation_reason": "This work environment isnt suiting me",
         "resignation_status": "pending"
       },
       "role": "employee",
@@ -258,7 +268,7 @@
       "designation": "Web Developer",
       "emp_id": 60,
       "feedback": "",
-      "hours_attended": 0,
+      "hours_attended": 37,
       "password": "Morajkar",
       "progress_on_task": 0,
       "role": "employee",
@@ -279,30 +289,34 @@
   "manager": {
     "Aishwarya": {
       "designnation: ": "User tester",
-      "emp_ids": 52,
+      "emp_id": 52,
+      "hours_attended": 19,
       "password": "Mishra",
       "role": "manager",
       "salary": "10000"
     },
     "Hritvik": {
       "designnation: ": "User tester",
-      "emp_ids": 53,
+      "emp_id": 53,
+      "hours_attended": 41,
       "password": "Sargaonkar",
       "role": "manager",
       "salary": "10000"
     },
     "Om": {
       "designnation: ": "User tester",
-      "emp_ids": 54,
+      "emp_id": 54,
+      "hours_attended": 34,
       "password": "Mujumdar",
       "role": "manager",
       "salary": "10000"
     },
     "Sushant": {
-      "bonus": "12500000",
+      "bonus": "1250",
       "comment_for_promotion": " akwbaawbrw",
-      "designation": "mess maker",
+      "designation": "Junior Manager",
       "emp_id": 2,
+      "hours_attended": 12,
       "password": "Navle",
       "performance_review": {
         "Quarterly Review": {
@@ -313,7 +327,7 @@
         }
       },
       "resignation_request": {
-        "resignation_reason": "I want to resign to test \nif this \nfeature works\n\n",
+        "resignation_reason": "I want to resign as this company has many power hungry employees",
         "resignation_status": "pending"
       },
       "role": "manager",

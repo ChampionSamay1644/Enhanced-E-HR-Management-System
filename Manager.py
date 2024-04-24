@@ -36,7 +36,7 @@ class Manager_class:
         elif role=="manager":
             manager_ref = db.reference("/manager")
             list=[]
-            list.append(manager_ref.child(username).child("manager_id").get())
+            list.append(manager_ref.child(username).child("emp_id").get())
             list.append(manager_ref.child(username).child("designation").get())
             list.append(manager_ref.child(username).child("salary").get())
             list.append(manager_ref.child(username).child("hours_attended").get())
@@ -48,7 +48,7 @@ class Manager_class:
         elif role=="HR":
             hr_ref = db.reference("/HR")
             list=[]
-            list.append(hr_ref.child(username).child("hr_id").get())
+            list.append(hr_ref.child(username).child("emp_id").get())
             list.append(hr_ref.child(username).child("designation").get())
             list.append(hr_ref.child(username).child("salary").get())
             list.append(hr_ref.child(username).child("hours_attended").get())

@@ -705,7 +705,7 @@ class HR_class:
                         "role": role,
                         "designnation: ": designation,
                         "salary": salary,
-                        "emp_ids": emp_uni + 1,
+                        "emp_id": emp_uni + 1,
                     }
                 )
                 emp_id_ref.child("emp_id").set(emp_uni + 1)
