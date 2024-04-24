@@ -193,10 +193,13 @@ class CreativeLoginApp:
 
         # You can customize the credits information as per your needs
         credits_text = (
-            "HR Management System\n\n"
-            "Developed by: \n -Samay Pandey, \n-Armaan Nakhuda, \n-Sushant Navle, \n-Peeyush Karnik\n\n"
-            "Date: 3rd March 2024\n"
-            "\nSpecial Thanks to:\n- Firebase\n- OpenAI\n- Friends who helped us find bugs\n"
+            "Enhanced E-HR Management System\n\n"
+            "Developed by: \n -Samay Pandey \n-Armaan Nakhuda \n-Sushant Navle \n\n"
+            "Documentation and PPT: \n -Samay Pandey \n-Armaan Nakhuda \n-Sushant Navle \n-Peeyush Karnik\n\n"
+            "Database:\n- Firebase\n\n"
+            "Language version and module:\n- Python 3.12.3 \n- Tkinter \n- Firebase_admin\n\n"
+            "Special Thanks to:\n- Friends who helped us find bugs\n\n"
+            "Date: 3rd May 2024"
         )
         
         # Create a label for credits information
