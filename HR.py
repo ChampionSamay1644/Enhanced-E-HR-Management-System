@@ -190,16 +190,21 @@ class HR_class:
             relx=0.9, rely=0.8, anchor="e", width=button_width, height=button_height
         )
 
-        # Profile button
-        profile_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profile.png")  # Change jpg to png for main background
-        profile_img = PhotoImage(file=profile_path)
-        resized_profile_img = profile_img.subsample(4, 4)
-        profile_btn = tk.Button(
-            self.hr_logo_canvas, image=resized_profile_img, command=lambda: self.profile(username, role), borderwidth=0, font=("Helvetica", 14)
+        profile_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profile.png")
+        profile_image = Image.open(profile_path)
+        profile_image = profile_image.resize((50, 50))
+        profile_image = ImageTk.PhotoImage(profile_image)
+        profile_button = tk.Button(
+            self.hr_logo_canvas,
+            image=profile_image,
+            command=lambda: self.profile(username,role),
+            bd=0,
+            bg="white",
+            activebackground="white",
         )
-        profile_btn.place(
-            relx=0.95, rely=0.05, anchor="center", width=50, height=50
-        )
+        profile_button.image = profile_image
+        profile_button.pack()
+        profile_button.place(relx=0.95, rely=0.05, anchor="ne")
 
         # Logout button
         logout_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "logout.png")

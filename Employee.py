@@ -115,22 +115,21 @@ class Employee_class:
     )
         exit_button.place(relx=0.5, rely=1.0, anchor="s")
 
-        profile_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "profile.png" #change jpg to png for main background
+        profile_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profile.png")
+        profile_image = Image.open(profile_path)
+        profile_image = profile_image.resize((50, 50))
+        profile_image = ImageTk.PhotoImage(profile_image)
+        profile_button = tk.Button(
+            self.employee_logo_canvas,
+            image=profile_image,
+            command=lambda: self.profile(username,role),
+            bd=0,
+            bg="white",
+            activebackground="white",
         )
-        profile_img = PhotoImage(file=profile_path)
-        
-        resized_profile_img = profile_img.subsample(4, 4)
-        
-        profile_btn = tk.Button(
-            self.employee_logo_canvas, image=resized_profile_img, command=lambda:self.profile(username,role),borderwidth=0, font=("Helvetica", 14)
-        )
-        profile_btn.pack(
-            pady=20
-        )
-        profile_btn.place(
-            relx=0.95, rely=0.05, anchor="center", width=50, height=50
-        )
+        profile_button.image = profile_image
+        profile_button.pack()
+        profile_button.place(relx=0.95, rely=0.05, anchor="ne")
         
         logout_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "logout.png")
         logout_image = Image.open(logout_path)
