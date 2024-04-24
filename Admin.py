@@ -172,7 +172,7 @@ class Admin_class():
         profile_button = tk.Button(
             self.admin_logo_canvas,
             image=profile_image,
-            command=lambda: self.profile(username),
+            command=lambda: self.profile(username,role),
             bd=0,
             bg="white",
             activebackground="white",
@@ -1306,9 +1306,7 @@ class Admin_class():
         self.profile_canvas.create_image(0, 0, image=self.profile_image, anchor="nw")
 
         list=self.getdata(username,role)
-        text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
-        if role=="employee":
-            text1+=f"\nSurvey: {list[7]}"
+        text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}"
         self.profile_canvas.create_text(
             10,  # X-coordinate (left)
             self.profile_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
@@ -1327,6 +1325,16 @@ class Admin_class():
         messagebox.showinfo("Logout", "You have been logged out successfully!")
         Main(True)
 
+    def getdata(self,username,role):
+        admin_ref = db.reference("/admins")
+        list=[]
+        list.append(admin_ref.child(username).child("emp_id").get())
+        list.append(admin_ref.child(username).child("designation").get())
+        list.append(admin_ref.child(username).child("salary").get())
+        list.append(admin_ref.child(username).child("hours_attended").get())
+
+        return list
+        
 def main(role, username):
     admin = Admin_class()
     admin.open_admin_window(role, username)

@@ -52,7 +52,7 @@ class HR_class:
         elif role=="manager":
             manager_ref = db.reference("/manager")
             list=[]
-            list.append(manager_ref.child(username).child("manager_id").get())
+            list.append(manager_ref.child(username).child("emp_id").get())
             list.append(manager_ref.child(username).child("designation").get())
             list.append(manager_ref.child(username).child("salary").get())
             list.append(manager_ref.child(username).child("hours_attended").get())
@@ -64,7 +64,7 @@ class HR_class:
         elif role=="HR":
             hr_ref = db.reference("/HR")
             list=[]
-            list.append(hr_ref.child(username).child("hr_id").get())
+            list.append(hr_ref.child(username).child("emp_id").get())
             list.append(hr_ref.child(username).child("designation").get())
             list.append(hr_ref.child(username).child("salary").get())
             list.append(hr_ref.child(username).child("hours_attended").get())
@@ -427,12 +427,15 @@ class HR_class:
         
         if role == "HR":
             employees = list(( db.reference("/HR").get()).keys())
+            self.role_details = "HR"
         elif role == "manager":
             employees = list(( db.reference("/manager").get()).keys())
+            self.role_details = "manager"
         elif role == "None":
             return
         else:
             employees = list(( db.reference("/employee").get()).keys())
+            self.role_details = "employee"
 
         # Populate the Treeview with employee names
         for employee in employees:
@@ -876,15 +879,36 @@ class HR_class:
         )
         
         #create text with employee name, role, salary, hours attended, bonus
-        employee_details_text="Employee Name: "+str(employee_name)+"\nRole: "+str(db.reference("/employee").child(employee_name).child("role").get())+"\nSalary: "+str(db.reference("/employee").child(employee_name).child("salary").get())+"\nHours Attended: "+str(db.reference("/employee").child(employee_name).child("hours_attended").get())+"\nBonus: "+str(db.reference("/employee").child(employee_name).child("bonus").get())
-        self.employee_details_canvas.create_text(
-            window_width / 2,
-            window_height / 2,
-            text=employee_details_text,
-            font=("Helvetica", 14, "bold"),
-            fill="white",
-            tag="employee_details_text"
-        )
+        if self.role_details == "employee":
+            employee_details_text="Employee Name: "+str(employee_name)+"\nRole: "+str(db.reference("/employee").child(employee_name).child("role").get())+"\nSalary: "+str(db.reference("/employee").child(employee_name).child("salary").get())+"\nHours Attended: "+str(db.reference("/employee").child(employee_name).child("hours_attended").get())+"\nBonus: "+str(db.reference("/employee").child(employee_name).child("bonus").get())
+            self.employee_details_canvas.create_text(
+                window_width / 2,
+                window_height / 2,
+                text=employee_details_text,
+                font=("Helvetica", 14, "bold"),
+                fill="white",
+                tag="employee_details_text"
+            )
+        elif self.role_details == "manager":
+            employee_details_text="Manager Name: "+str(employee_name)+"\nRole: "+str(db.reference("/manager").child(employee_name).child("role").get())+"\nSalary: "+str(db.reference("/manager").child(employee_name).child("salary").get())+"\nHours Attended: "+str(db.reference("/manager").child(employee_name).child("hours_attended").get())+"\nBonus: "+str(db.reference("/manager").child(employee_name).child("bonus").get())
+            self.employee_details_canvas.create_text(
+                window_width / 2,
+                window_height / 2,
+                text=employee_details_text,
+                font=("Helvetica", 14, "bold"),
+                fill="white",
+                tag="employee_details_text"
+            )
+        elif self.role_details == "HR":
+            employee_details_text="HR Name: "+str(employee_name)+"\nRole: "+str(db.reference("/HR").child(employee_name).child("role").get())+"\nSalary: "+str(db.reference("/HR").child(employee_name).child("salary").get())+"\nHours Attended: "+str(db.reference("/HR").child(employee_name).child("hours_attended").get())+"\nBonus: "+str(db.reference("/HR").child(employee_name).child("bonus").get())
+            self.employee_details_canvas.create_text(
+                window_width / 2,
+                window_height / 2,
+                text=employee_details_text,
+                font=("Helvetica", 14, "bold"),
+                fill="white",
+                tag="employee_details_text"
+            )
 
     def on_window_resize_employee_details_new(self,employee_name, event):
         # Handle window resize event
