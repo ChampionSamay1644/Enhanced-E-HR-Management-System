@@ -1,0 +1,325 @@
+{
+  "HR": {
+    "Aarya": {
+      "designation": "User tester",
+      "emp_ids": 51,
+      "password": "Walve",
+      "role": "HR",
+      "salary": "15000"
+    },
+    "Armaan": {
+      "apply_for_vacation": 1,
+      "bonus": 2000,
+      "designation": "Manager",
+      "emp_id": 1,
+      "feedback": 2,
+      "hours_attended": 55,
+      "password": "Nakhuda",
+      "progress_on_task": 50,
+      "role": "HR",
+      "salary": 50000,
+      "sick_days": "9",
+      "survey": 14,
+      "vacation_days": 50
+    },
+    "Mith": {
+      "designation": "User Tester",
+      "emp_ids": 49,
+      "password": "Utekar",
+      "role": "HR",
+      "salary": "10000"
+    },
+    "Nishal": {
+      "designation": "User tester",
+      "emp_ids": 50,
+      "password": "Poojary",
+      "role": "HR",
+      "salary": "15000"
+    }
+  },
+  "Survey_Qs": {
+    "questions": [
+      "How satisfied are you with the current work environment and culture?",
+      "How would you rate the effectiveness of communication within the organization, from leadership down to individual teams?",
+      "How would you rate the opportunities for career growth and development provided by the organization?",
+      "Do you feel adequately recognized and appreciated for your contributions within the company?",
+      "How would you rate the overall level of employee engagement and morale within the organization?"
+    ],
+    "total_questions": 5
+  },
+  "admins": {
+    "Ninad": {
+      "emp_id": 46,
+      "password": "Walke",
+      "role": "admin"
+    },
+    "Samay": {
+      "emp_id": 0,
+      "password": "Pandey",
+      "role": "admin"
+    },
+    "Yash": {
+      "emp_id": 47,
+      "password": "Patil",
+      "role": "admin"
+    }
+  },
+  "emp_id": 61,
+  "employee": {
+    "Jaspreet": {
+      "apply_for_vacation": 0,
+      "bonus": 0,
+      "bonus_reason": "Diwali bonus",
+      "bonus_req": 5000,
+      "complaint": {
+        "complaint_by": "Peeyush",
+        "problem": "Disturbance",
+        "status": "pending"
+      },
+      "designation": "User testing",
+      "emp_id": 59,
+      "feedback": "",
+      "hours_attended": 0,
+      "password": "Narula",
+      "progress_on_task": 0,
+      "role": "employee",
+      "salary": "7000",
+      "sick_approved": 0,
+      "sick_approved_denied": "",
+      "sick_days": 0,
+      "sick_reason": "",
+      "survey": {
+        "available": "Yes"
+      },
+      "vacation_approved": 0,
+      "vacation_approved_denied": "",
+      "vacation_days": 0,
+      "vacation_reason": ""
+    },
+    "Peeyush": {
+      "apply_for_resignation": "29/02/2024",
+      "apply_for_vacation": 1,
+      "bonus": 2000,
+      "bonus_deny_reason": "He has done no work",
+      "bonus_reason": "task completed",
+      "bonus_req": 1230,
+      "designation": "Team Junior",
+      "emp_id": 3,
+      "feedback": 2,
+      "hours_attended": 0,
+      "password": "Karnik",
+      "performance_review": {
+        "Annual Review": {
+          "constructed_feedback": "The office must have better hygiene",
+          "goals_for_future": "Reach a higher position within the company",
+          "performance_review": "I have achieved all my goals i set for this year",
+          "status": "filled"
+        },
+        "Quarterly Review": {
+          "constructed_feedback": "Washrooms need more hygine",
+          "filled": "Yes",
+          "goals_for_future": "Be more efficient in task",
+          "performance_review": "Tasks completed on time during this work year",
+          "status": "filled"
+        }
+      },
+      "progress_on_task": -12,
+      "project": {
+        "deadline": "28/2/2024",
+        "description": "Project progress",
+        "id": 12,
+        "members": {
+          "armaan": "Leader",
+          "samay": "Bug_fixer"
+        },
+        "name": "abc",
+        "progress": 30,
+        "task": {
+          "description": "complete buttons and Db",
+          "status": "In Progress"
+        }
+      },
+      "reason_for_sick_days": "I do not workk",
+      "reason_for_vacation_days": "Outstation",
+      "resignation_reason": "I want to quit",
+      "resignation_request": {
+        "resignation_reason": "I want to resign as I am moving to a new city in a few weeks",
+        "resignation_status": "pending"
+      },
+      "role": "employee",
+      "salary": "0",
+      "sick_approved": "4",
+      "sick_approved_denied": "pending",
+      "sick_days": 4,
+      "sick_reason": "Cannot come due to jaundice",
+      "survey": {
+        "available": "Yes"
+      },
+      "vacation_approved": "4",
+      "vacation_approved_denied": "pending",
+      "vacation_days": 8,
+      "vacation_reason": "Outstation",
+      "warning": "None"
+    },
+    "Prathamesh": {
+      "apply_for_vacation": 0,
+      "bonus": 0,
+      "designation": "User tester",
+      "emp_id": 56,
+      "feedback": "",
+      "hours_attended": 0,
+      "password": "Rane",
+      "progress_on_task": 0,
+      "role": "employee",
+      "salary": "7000",
+      "sick_approved": 0,
+      "sick_approved_denied": "",
+      "sick_days": 0,
+      "sick_reason": "",
+      "survey": {
+        "available": "Yes"
+      },
+      "vacation_approved": 0,
+      "vacation_approved_denied": "",
+      "vacation_days": 0,
+      "vacation_reason": ""
+    },
+    "Sairaj": {
+      "apply_for_vacation": 0,
+      "bonus": 0,
+      "complaint": {
+        "complaint_by": "Peeyush",
+        "problem": "I want to complain\nto test\nthis feature\n",
+        "status": "pending"
+      },
+      "designation": "User tester",
+      "emp_id": 58,
+      "feedback": "",
+      "hours_attended": 0,
+      "password": "Pai",
+      "progress_on_task": 0,
+      "role": "employee",
+      "salary": "7000",
+      "sick_approved": 0,
+      "sick_approved_denied": "",
+      "sick_days": 0,
+      "sick_reason": "",
+      "survey": {
+        "available": "Yes"
+      },
+      "vacation_approved": 0,
+      "vacation_approved_denied": "",
+      "vacation_days": 0,
+      "vacation_reason": ""
+    },
+    "Somil": {
+      "apply_for_vacation": 0,
+      "bonus": 0,
+      "complaint": {
+        "complaint_by": "Peeyush",
+        "problem": "This employee does no work and disturbs the whole office",
+        "status": "pending"
+      },
+      "designation": "User tester",
+      "emp_id": 55,
+      "feedback": "",
+      "hours_attended": 0,
+      "password": "Bakshi",
+      "performance_review": {
+        "Quarterly Review": {
+          "constructed_feedback": "No other feedback",
+          "goals_for_future": "Participate in a project from a respected company",
+          "performance_review": "I feel I have achieved what i set in the last few months",
+          "status": "filled"
+        }
+      },
+      "progress_on_task": 0,
+      "resignation_request": {
+        "resignation_reason": "I want to resign\nto\ntest\nthis \nfeature",
+        "resignation_status": "pending"
+      },
+      "role": "employee",
+      "salary": "7000",
+      "sick_approved": 0,
+      "sick_approved_denied": "",
+      "sick_days": 0,
+      "sick_reason": "",
+      "survey": {
+        "available": "Yes"
+      },
+      "vacation_approved": 0,
+      "vacation_approved_denied": "pending",
+      "vacation_days": 9,
+      "vacation_reason": "I am getting married in the next week"
+    },
+    "Swaroop": {
+      "apply_for_vacation": 0,
+      "bonus": 0,
+      "designation": "Web Developer",
+      "emp_id": 60,
+      "feedback": "",
+      "hours_attended": 0,
+      "password": "Morajkar",
+      "progress_on_task": 0,
+      "role": "employee",
+      "salary": "25000",
+      "sick_approved": 0,
+      "sick_approved_denied": "",
+      "sick_days": 0,
+      "sick_reason": "",
+      "survey": {
+        "available": "Yes"
+      },
+      "vacation_approved": 0,
+      "vacation_approved_denied": "",
+      "vacation_days": 0,
+      "vacation_reason": ""
+    }
+  },
+  "manager": {
+    "Aishwarya": {
+      "designnation: ": "User tester",
+      "emp_ids": 52,
+      "password": "Mishra",
+      "role": "manager",
+      "salary": "10000"
+    },
+    "Hritvik": {
+      "designnation: ": "User tester",
+      "emp_ids": 53,
+      "password": "Sargaonkar",
+      "role": "manager",
+      "salary": "10000"
+    },
+    "Om": {
+      "designnation: ": "User tester",
+      "emp_ids": 54,
+      "password": "Mujumdar",
+      "role": "manager",
+      "salary": "10000"
+    },
+    "Sushant": {
+      "bonus": "12500000",
+      "comment_for_promotion": " akwbaawbrw",
+      "designation": "mess maker",
+      "emp_id": 2,
+      "password": "Navle",
+      "performance_review": {
+        "Quarterly Review": {
+          "constructed_feedback": "More overtime should be allowed",
+          "goals_for_future": "Get an increment within the company along with a possible promotion in designation",
+          "performance_review": "I have fallen a bit behind on work",
+          "status": "filled"
+        }
+      },
+      "resignation_request": {
+        "resignation_reason": "I want to resign to test \nif this \nfeature works\n\n",
+        "resignation_status": "pending"
+      },
+      "role": "manager",
+      "salary": "30"
+    }
+  },
+  "sick_days_uni": 10,
+  "vacation_uni": 10
+}
