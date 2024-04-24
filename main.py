@@ -196,7 +196,7 @@ class CreativeLoginApp:
             "Developed by: \n -Samay Pandey \n-Armaan Nakhuda \n-Sushant Navle \n\n"
             "Documentation and PPT: \n -Samay Pandey \n-Armaan Nakhuda \n-Sushant Navle \n-Peeyush Karnik\n\n"
             "Database:\n- Firebase\n\n"
-            "Language version and module:\n- Python 3.12.3 \n- PyQt5 \n- Firebase_admin\n\n"
+            "Language version and module:\n- Python 3.12.3 \n- Tkinter \n- Firebase_admin\n\n"
             "Special Thanks to:\n- Friends who helped us find bugs\n\n"
             "Date: 3rd May 2024"
         )
