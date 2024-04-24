@@ -1716,18 +1716,25 @@ class HR_class:
     def warn_employee(self):
         if self.uni_role == "admin":
             messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
+            self.check_hours_attended_window.destroy()
             return
         #Get the selected employee
         selected_employee = self.treeview_check_hours_attended.item(self.treeview_check_hours_attended.selection())["values"][0]
         #Check if the employee has already been warned
         if self.treeview_check_hours_attended.item(self.treeview_check_hours_attended.selection())["values"][2] == "Warning issued by HR":
             messagebox.showinfo("Warn Employee", "Employee has already been warned.")
+            self.check_hours_attended_window.focus_force()
             return
         #Ask for confirmation
         if messagebox.askyesno("Warn Employee", f"Are you sure you want to warn {selected_employee}?"):
-            #Warn the employee in the database
-            db.reference("/employee").child(selected_employee).child("warning").set("Warning issued by HR")
-            messagebox.showinfo("Warn Employee", "Employee warned successfully.")
+            if self.role_entry_check_hours_attended.get() == "Employee":
+                #Warn the employee in the database
+                db.reference("/employee").child(selected_employee).child("warning").set("Warning issued by HR")
+                messagebox.showinfo("Warn Employee", "Employee warned successfully.")
+            elif self.role_entry_check_hours_attended.get() == "Manager":
+                #Warn the manager in the database
+                db.reference("/manager").child(selected_employee).child("warning").set("Warning issued by HR")
+                messagebox.showinfo("Warn Employee", "Manager warned successfully.")
             #Refresh the list
             self.populate_employee_list_check_hours_attended(self.role_entry_check_hours_attended.get())
             self.warn_employee_button["state"] = "disabled"
