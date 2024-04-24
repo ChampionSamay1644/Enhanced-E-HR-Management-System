@@ -186,16 +186,6 @@ class Employee_class:
             relx=0.75, rely=0.3, anchor="center", width=300, height=50
         )
 
-        # self.check_progress_on_tasks_button = tk.Button(
-        #     self.employee_logo_canvas, text="Check and update Progress on Tasks", command=lambda:self.check_progress_on_tasks(username), font=("Helvetica", 14)
-        # )
-        # self.check_progress_on_tasks_button.pack(
-        #     pady=20
-        # )
-        # self.check_progress_on_tasks_button.place(
-        #     relx=0.25, rely=0.5, anchor="center", width=350, height=50
-        # )
-
         self.submit_survey_button = tk.Button(
             self.employee_logo_canvas, text="View and Submit Survey", command=lambda:self.submit_survey(username), font=("Helvetica", 14)
         )
@@ -277,35 +267,6 @@ class Employee_class:
             font=("Helvetica", 28, "bold"),
             fill="white",
         )
-
-    # def redraw_employee_details(self, username):
-    #     window_height = self.employee_logo_canvas.winfo_height()
-    #     employee_ref = db.reference("/employee")
-    #     emp_id = employee_ref.child(username).child("emp_id").get()
-    #     designation = employee_ref.child(username).child("designation").get()
-    #     salary = employee_ref.child(username).child("salary").get()
-    #     sick_approved = employee_ref.child(username).child("sick_approved").get()
-    #     vacation_approved = employee_ref.child(username).child("vacation_approved").get()
-    #     bonus = employee_ref.child(username).child("bonus").get()
-    #     hours_attended = employee_ref.child(username).child("hours_attended").get()
-    #     survey = employee_ref.child(username).child("survey").child("available").get()
-    #     vacation_a_d = employee_ref.child(username).child("vacation_approved_denied").get()
-    #     sick_a_d = employee_ref.child(username).child("sick_approved_denied").get()
-
-    #     # Check if the employee details text already exists and delete it
-    #     if hasattr(self, "employee_details_text"):
-    #         self.employee_logo_canvas.delete(self.employee_details_text)
-
-    #     # Create and place the employee details text
-    #     self.employee_details_text = self.employee_logo_canvas.create_text(
-    #         # Place it on the leftmost of the window
-    #         10,
-    #         window_height - 10,
-    #         text=f"Employee ID: {emp_id}\nDesignation: {designation}\nSalary: {salary}\nSick Days: {sick_approved}\nVacation Days: {vacation_approved}\nBonus: {bonus}\nHours Attended: {hours_attended}\nSurvey Available: {survey}\nVacation Approved/Denied: {vacation_a_d}\nSick Approved/Denied: {sick_a_d}\n\n\n\n\n",
-    #         font=("Helvetica", 18, "bold"),
-    #         fill="white",
-    #         anchor="sw",
-    #     )
 
     def on_window_resize_employee(self, event,username):
         # Handle window resize event
@@ -473,20 +434,6 @@ class Employee_class:
         self.reason_entry.bind("<FocusIn>", lambda event: self.reason_entry_del_resignation())  # Delete the default value when the user clicks on the entry widget
         self.reason_entry.place(relx=0.5, rely=0.5, anchor="center")
 
-        # # Create a DateEntry widget for the resignation date (bigger size)
-        # self.date_entry = DateEntry(
-        # self.apply_for_resignation_canvas,
-        # width=15,
-        # background="darkblue",
-        # foreground="white",
-        # borderwidth=2,
-        # year=2024,
-        # font=("Helvetica", 14),
-        # date_pattern='dd/mm/yyyy'  # Set the date format here
-        # )
-        # self.date_entry.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
-        # self.date_entry.bind("<FocusIn>", lambda event: self.date_entry_del())  # Delete the default value when the user clicks on the entry widget
-
         # Create a button to submit the resignation request
         submit_button = tk.Button(self.apply_for_resignation_canvas, text="Submit", command=lambda: self.submit_resignation_request(apply_for_resignation_window, username))
         submit_button.pack(pady=20, side=tk.TOP, anchor=tk.CENTER)
@@ -555,17 +502,6 @@ class Employee_class:
         elif db.reference("/employee").child(username).child("resignation_request").child("resignation_status").get() == "pending":
             messagebox.showinfo("Employee Window", "You have already applied for resignation.")
         else:
-            # Convert date string to datetime object
-            # date_format = "%d/%m/%Y"
-            # date_obj = datetime.datetime.strptime(date, date_format)
-
-            # # Convert datetime object back to string in the desired format
-            # date_str_formatted = date_obj.strftime("%d/%m/%Y")
-
-            # # Check if the date is at least 2 weeks from now
-            # if date_obj < datetime.datetime.now() + datetime.timedelta(weeks=2):
-            #     messagebox.showinfo("Employee Window", "Please enter a date at least 2 weeks from now.")
-            #else:
                 # Add the resignation request to the database
                 #db.reference("/employee").child(username).child("resignation_request").child("apply_for_resignation").set(date_str_formatted)
                 db.reference("/employee").child(username).child("resignation_request").child("resignation_reason").set(reason)
@@ -1107,14 +1043,6 @@ class Employee_class:
         entry_labels = ["Self Review", "Other Feedback", "Goals for the Future"]
         entry_variables = [tk.StringVar() for _ in range(3)]
         entry_widgets = []
-
-        # for i in range(3):
-        #     entry_widget = tk.Entry(self.submit_performance_review_canvas, width=50, font=("Helvetica", 14), textvariable=entry_variables[i])
-        #     entry_widget.pack(pady=40, side=tk.TOP, anchor=tk.CENTER)
-        #     entry_widget.insert(0, entry_labels[i])
-        #     entry_widget.bind("<FocusIn>", lambda event, i=i: self.entry_del(entry_widget, entry_labels[i]))
-
-        #     entry_widgets.append(entry_widget)
 
         for i in range(3):
             entry_widget = tk.Entry(self.submit_performance_review_canvas, width=50, font=("Helvetica", 14), textvariable=entry_variables[i])

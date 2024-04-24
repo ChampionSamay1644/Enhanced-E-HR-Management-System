@@ -1187,15 +1187,6 @@ class Manager_class:
         # Center the window with function center_window_test
         self.center_window_all(self.resignation_window)
         
-        # #Create a new entry widget for the reason for resignation
-        # self.reason_for_resignation_entry = tk.Entry(
-        #     self.resignation_window, font=("Helvetica", 12, "bold")
-        # )
-        # self.reason_for_resignation_entry.pack(pady=20)
-        # self.reason_for_resignation_entry.place(relx=0.5, rely=0.5, anchor="center", width=400, height=30)
-        # self.reason_for_resignation_entry.insert(0, "Enter reason for resignation")
-        # self.reason_for_resignation_entry.bind("<FocusIn>", lambda event: self.reason_for_resignation_entry.delete(0, tk.END))
-
         # Create an entry widget for the reason and align it to the center and make it multiple line entry with height 5 and scrollbar
         self.reason_for_resignation_entry = scrolledtext.ScrolledText(self.resignation_window, wrap=tk.WORD, width=40, height=5, font=("Helvetica", 12, "bold"))
         self.reason_for_resignation_entry.pack(pady=20)
@@ -1452,18 +1443,6 @@ class Manager_class:
         )
         self.current_role_label.pack(pady=20)
         self.current_role_label.place(relx=0.5, rely=0.25, anchor="center")
-
-        # # Create a checkbutton to select if the employee should be promoted to manager
-        # self.promote_to_manager = tk.IntVar()
-        # self.promote_to_manager_checkbutton = tk.Checkbutton(
-        #     self.promote_employee_logo_canvas,
-        #     text="Promote to Manager",
-        #     variable=self.promote_to_manager,
-        #     font=("Helvetica", 12, "bold"),
-        #     bg="white",
-        # )
-        # self.promote_to_manager_checkbutton.pack(pady=20)
-        # self.promote_to_manager_checkbutton.place(relx=0.5, rely=0.35, anchor="center")
 
         # Create a new entry for new salary and designation
         self.new_salary_entry = tk.Entry(

@@ -476,22 +476,7 @@ class HR_class:
             activebackground="black",
         )
         edit_salary_button.place(relx=0.5, rely=0.9, anchor="s")
-        
-        # #create an remove login button to remove the login of the employee
-        # remove_login_button = tk.Button(
-        #     self.employee_details_canvas,
-        #     text="Remove Login",
-        #     command=lambda:self.remove_login(employee_name, employee_details_window),
-        #     font=("Helvetica", 14),
-        #     width=15,
-        #     height=2,
-        #     bd=0,
-        #     fg="white",
-        #     bg="black",
-        #     activebackground="black",
-        # )
-        # remove_login_button.place(relx=0.5, rely=0.9, anchor="s")
-        
+                
         #create an exit button in canvas and place at bottom middle
         exit_button = tk.Button(
         self.employee_details_canvas,
@@ -1137,17 +1122,7 @@ class HR_class:
             return
         else:
             employees= self.get_employee_data_with_non_zero_bonus()
-        #   #Get only the keys of the employees that have a non zero bonus
-        #     employees = list(( db.reference("/employee").get()).keys())
-        #     employees_with_bonus = []
-        #     for employee in employees:
-        #         if db.reference("/employee").child(employee).child("bonus").get() != 0 and db.reference("/employee").child(employee).child("bonus").get() != "":
-        #             employees_with_bonus.append(employee)
-        #     employees = employees_with_bonus
 
-
-        #employees = employees_with_bonus
-        #print(employees)
         # Populate the Treeview with employee names
         for employee in employees:
             # Add the employee name, bonus amount, reason, hours attended with tag selectable
@@ -1929,31 +1904,6 @@ class HR_class:
         else:
             self.previous_button.config(state="normal")
 
-    # def survey_feedback_request(self, username):
-    #     if self.uni_role == "admin":
-    #         messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to database.")
-    #         return
-    #     # Store the answer for the current question
-    #     answer = self.survey_question_entry.get()
-    #     #skip answers that are blank
-    #     if answer == " " or answer == "":
-    #         return
-    #     self.answers[self.current_question_index] = answer
-
-    #     db.reference("Survey_Qs").delete()
-
-    #     for question_index, answer in self.answers.items():
-    #         if answer == " " or answer == "":
-    #             continue
-    #         db.reference("Survey_Qs").child(f"{question_index}").set(answer)
-    #     self.update_total_questions()
-    #     db.reference("survey_uni").child("available").set("Yes")
-    #     self.buttons_created = False
-    #     self.buttons_created_down = False
-    #     self.survey_feedback_window.destroy()
-    #     messagebox.showinfo("Survey Feedback", "Survey feedback submitted successfully.")
-    #     return
-
     def survey_feedback_request(self, username):
         if self.uni_role == "admin":
             messagebox.showerror("Error", "You are logged in as Admin.\nYou cannot make changes to the database.")
@@ -2203,23 +2153,6 @@ class HR_class:
                 self.populate_employee_list_promotion(selected_role)
                 self.approve_promotion_button["state"] = "disabled"
                 self.deny_promotion_button["state"] = "disabled"
-            # #Ask for confirmation
-            # if messagebox.askyesno("Approve Promotion", f"Are you sure you want to approve the promotion of {selected_employee}?"):
-            #     #Approve the promotion in the database by deleting the employee details from employee and adding to manager
-            #     db.reference("/manager").child(selected_employee).set(db.reference("/employee").child(selected_employee).get())
-            #     db.reference("/employee").child(selected_employee).delete()
-            #     new_role = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_role").get()
-            #     new_designation = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_designation").get()
-            #     new_salary = db.reference("/manager").child(selected_employee).child("promotion_request").child("new_salary").get()
-            #     db.reference("/manager").child(selected_employee).child("role").set(new_role)
-            #     db.reference("/manager").child(selected_employee).child("designation").set(new_designation)
-            #     db.reference("/manager").child(selected_employee).child("salary").set(new_salary)
-            #     db.reference("/manager").child(selected_employee).child("promotion_request").delete()
-            #     db.reference("/manager").child(selected_employee).child("promotion_request").child("Request").set("Approved")
-            #     messagebox.showinfo("Approve Promotion", "Promotion approved successfully.")
-            #     #Refresh the list
-            #     self.populate_employee_list_promotion()
-            #     self.approve_promotion_button["state"] = "disabled"
         elif selected_role == "Promote Manager":
             self.promote_manager(selected_employee) 
         elif selected_role == "Promote to Manager":
@@ -2602,12 +2535,6 @@ class HR_class:
         #Center the window
         self.center_window_all(self.apply_for_resignation_window)
         
-        # # Create an entry for the reason for resignation
-        # self.reason_entry = tk.Entry(self.apply_for_resignation_canvas, font=("Helvetica", 12), width=50, xscrollcommand=1)
-        # self.reason_entry.place(relx=0.5, rely=0.5,height=100, anchor="center")
-        # self.reason_entry.insert(0, "Reason for resignation")
-        # self.reason_entry.bind("<FocusIn>", lambda event: self.entry_del(self.reason_entry, "Reason for resignation"))
-
         self.reason_entry = tk.Text(self.apply_for_resignation_canvas, font=("Helvetica", 12), width=50, height=5)
         self.reason_entry.place(relx=0.5, rely=0.5, anchor="center")
         self.reason_entry.insert(tk.END, "Reason for resignation")
@@ -3588,261 +3515,9 @@ class HR_class:
                 y_position = 10  # Reset y_position for the next column
 
 
-
     def on_window_resize_survey_results(self, event):
         self.resize_canvas_and_image_survey_results()
 
-        
-    # def create_all_hr(self):
-    #     # create a new window
-    #     create_remove_hr_window = tk.Toplevel()
-    #     create_remove_hr_window.geometry("800x600")  # Set the window size
-    #     create_remove_hr_window.title("Create manager/Employee Login")
-
-    #     #create a canvas that resizes with the window
-    #     self.create_be_logo_canvas = tk.Canvas(create_remove_hr_window, bg="white", highlightthickness=0)
-    #     self.create_be_logo_canvas.pack(fill=tk.BOTH, expand=True)
-
-    #     # bind window resize event to function
-    #     create_remove_hr_window.bind("<Configure>", lambda event: self.on_window_resize_create_be(event))
-
-    #     # import the image as the background on the canvas
-    #     self.load_image_create_be()
-
-    #     #create a new entry for username on canvas
-    #     username_label = tk.Label(
-    #         self.create_be_logo_canvas,
-    #         text="Username",
-    #         font=("Helvetica", 12, "bold"),
-    #         bg="white",
-    #     )
-    #     username_label.pack(
-    #         pady=20
-    #     )
-    #     username_label.place(relx=0.5, rely=0.35, anchor="center")
-    #     self.username_entry = tk.Entry(
-    #         self.create_be_logo_canvas, font=("Helvetica", 12, "bold")
-    #     )
-    #     self.username_entry.pack(
-    #         pady=20
-    #     )
-    #     self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
-    #     self.username_entry.insert(0, "")
-    #     # create a new entry for password on canvas
-    #     password_label = tk.Label(
-    #         self.create_be_logo_canvas,
-    #         text="Password",
-    #         font=("Helvetica", 12, "bold"),
-    #         bg="white",
-    #     )
-    #     password_label.pack(
-    #         pady=20
-    #     )
-    #     password_label.place(relx=0.5, rely=0.5, anchor="center")
-    #     self.password_entry = tk.Entry(
-
-    #         self.create_be_logo_canvas, show="", font=("Helvetica", 12, "bold")
-    #     )
-    #     self.password_entry.pack(
-    #         pady=20
-    #     )
-    #     self.password_entry.place(relx=0.5, rely=0.55, anchor="center")
-    #     self.password_entry.insert(0, "")
-    #     # create a checkbox for role with options- HR, manager, employee on canvas
-    #     role_label = tk.Label(
-    #         self.create_be_logo_canvas,
-    #         text="Role",
-    #         font=("Helvetica", 12, "bold"),
-    #         bg="white",
-    #     )
-    #     role_label.pack(
-    #         pady=20
-    #     )
-    #     role_label.place(relx=0.5, rely=0.65, anchor="center")
-    #     self.role_entry = ttk.Combobox(
-    #         self.create_be_logo_canvas, font=("Helvetica", 12, "bold")
-    #     )
-    #     self.role_entry["values"] = ("manager", "employee")
-    #     self.role_entry.pack(
-    #         pady=20
-    #     )
-    #     self.role_entry.place(relx=0.5, rely=0.7, anchor="center")
-    #     self.role_entry.current(0)
-    #     # create a new button for adding the new login on canvas
-    #     add_button = tk.Button(
-    #         self.create_be_logo_canvas,
-    #         text="Add",
-    #         command=self.add_login_to_database,
-    #         font=("Helvetica", 14),
-    #     )
-    #     add_button.pack(
-    #         pady=20
-    #     )
-    #     add_button.place(relx=0.5, rely=0.8, anchor="center", width=100, height=30)
-    #     # store the values in 3 variables when the button is pressed
-    #     add_button.bind(
-    #         "<Button-1>",
-    #         lambda event: self.add_login_to_database(create_remove_hr_window),
-    #     )
-    #     # Bind the Escape key to the exit function
-    #     create_remove_hr_window.bind(
-    #         "<Escape>", lambda event: create_remove_hr_window.destroy()
-    #     )
-    #     # focus on window
-    #     create_remove_hr_window.focus_force()
-    #     # Center the window with function center_window_test
-    #     self.center_window_all(create_remove_hr_window)
-    #     # Run the main loop for the create_remove_hr_window
-    #     create_remove_hr_window.mainloop()
-
-    # def load_image_create_be(self):
-    #     # Construct the full path to the image file based on role and username
-    #     img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-
-    #     # Load image and adjust canvas size
-    #     self.original_create_be_logo_image = Image.open(img_path)
-    #     self.resize_canvas_and_image_create_be()
-
-    # def resize_canvas_and_image_create_be(self):
-    #     # Get the create_be window size
-    #     window_width = self.create_be_logo_canvas.winfo_width()
-    #     window_height = self.create_be_logo_canvas.winfo_height()
-
-    #     # Resize the canvas to the current window size
-    #     self.create_be_logo_canvas.config(width=window_width, height=window_height)
-
-    #     # Resize the image if needed
-    #     resized_image = self.original_create_be_logo_image.resize(
-    #         (window_width, window_height)
-    #     )
-    #     self.create_be_logo_image = ImageTk.PhotoImage(resized_image)
-
-    #     # Update the image on the canvas
-    #     self.create_be_logo_canvas.delete("all")
-    #     self.create_be_logo_canvas.create_image(
-    #         0, 0, image=self.create_be_logo_image, anchor="nw"
-    #     )
-
-    # def on_window_resize_create_be(self, event):
-    #     # Handle window resize event
-    #     self.resize_canvas_and_image_create_be()
-
-    # def remove_all_hr(self):
-    #     # create a new window
-    #     create_remove_hr_window = tk.Toplevel()
-    #     create_remove_hr_window.geometry("800x600")  # Set the window size
-    #     create_remove_hr_window.title("Remove manager/Employee Login")
-        
-    #     #create a canvas that resizes with the window
-    #     self.remove_be_logo_canvas = tk.Canvas(create_remove_hr_window, bg="white", highlightthickness=0)
-    #     self.remove_be_logo_canvas.pack(fill=tk.BOTH, expand=True)
-
-    #     # bind window resize event to function
-    #     create_remove_hr_window.bind("<Configure>", lambda event: self.on_window_resize_remove_be(event))
-
-    #     # import the image as the background on the canvas
-    #     self.load_image_remove_be()
-
-    #     #create a new entry for username on canvas
-    #     username_label = tk.Label(
-    #         self.remove_be_logo_canvas,
-    #         text="Username",
-    #         font=("Helvetica", 12, "bold"),
-    #         bg="white",
-    #     )
-    #     username_label.pack(
-    #         pady=20
-    #     )
-    #     username_label.place(relx=0.5, rely=0.35, anchor="center")
-
-    #     self.username_entry = tk.Entry(
-
-    #         self.remove_be_logo_canvas, font=("Helvetica", 12, "bold")
-    #     )
-    #     self.username_entry.pack(
-    #         pady=20
-    #     )
-    #     self.username_entry.place(relx=0.5, rely=0.4, anchor="center")
-    #     self.username_entry.insert(0, "")
-    #     # create a checkbox for role with options- HR, manager, employee on canvas
-    #     role_label = tk.Label(
-    #         self.remove_be_logo_canvas,
-    #         text="Role",
-    #         font=("Helvetica", 12, "bold"),
-    #         bg="white",
-    #     )
-    #     role_label.pack(
-    #         pady=20
-    #     )
-    #     role_label.place(relx=0.5, rely=0.5, anchor="center")
-    #     self.role_entry = ttk.Combobox(
-    #         self.remove_be_logo_canvas, font=("Helvetica", 12, "bold")
-    #     )
-    #     self.role_entry["values"] = ("manager", "employee")
-    #     self.role_entry.pack(
-    #         pady=20
-    #     )
-    #     self.role_entry.place(relx=0.5, rely=0.55, anchor="center")
-    #     self.role_entry.current(0)
-    #     # create a new button for removing the login on canvas
-    #     remove_button = tk.Button(
-    #         self.remove_be_logo_canvas,
-    #         text="Remove",
-    #         command=self.remove_login_from_database,
-    #         font=("Helvetica", 14),
-    #     )
-    #     remove_button.pack(
-    #         pady=20
-    #     )
-    #     remove_button.place(relx=0.5, rely=0.65, anchor="center", width=100, height=30)
-    #     # store the values in 2 variables when the button is pressed
-    #     remove_button.bind(
-
-    #         "<Button-1>",
-    #         lambda event: self.remove_login_from_database(create_remove_hr_window),
-    #     )
-    #     # Bind the Escape key to the exit function
-    #     create_remove_hr_window.bind(
-    #         "<Escape>", lambda event: create_remove_hr_window.destroy()
-    #     )
-    #     # focus on window
-    #     create_remove_hr_window.focus_force()
-    #     # Center the window with function center_window_test
-    #     self.center_window_all(create_remove_hr_window)
-    #     # Run the main loop for the create_remove_hr_window
-    #     create_remove_hr_window.mainloop()
-
-    # def load_image_remove_be(self):
-    #     # Construct the full path to the image file based on role and username
-    #     img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "HR_background.png")
-
-    #     # Load image and adjust canvas size
-    #     self.original_remove_be_logo_image = Image.open(img_path)
-    #     self.resize_canvas_and_image_remove_be()
-
-    # def resize_canvas_and_image_remove_be(self):
-    #     # Get the remove_be window size
-    #     window_width = self.remove_be_logo_canvas.winfo_width()
-    #     window_height = self.remove_be_logo_canvas.winfo_height()
-
-    #     # Resize the canvas to the current window size
-    #     self.remove_be_logo_canvas.config(width=window_width, height=window_height)
-
-    #     # Resize the image if needed
-    #     resized_image = self.original_remove_be_logo_image.resize(
-    #         (window_width, window_height)
-    #     )
-    #     self.remove_be_logo_image = ImageTk.PhotoImage(resized_image)
-
-    #     # Update the image on the canvas
-    #     self.remove_be_logo_canvas.delete("all")
-    #     self.remove_be_logo_canvas.create_image(
-    #         0, 0, image=self.remove_be_logo_image, anchor="nw"
-    #     )
-
-    # def on_window_resize_remove_be(self, event):
-    #     # Handle window resize event
-    #     self.resize_canvas_and_image_remove_be()
     
 def main(role,username):
     # Create a new window
