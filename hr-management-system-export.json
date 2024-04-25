@@ -16,7 +16,6 @@
       "feedback": 2,
       "hours_attended": 55,
       "password": "Nakhuda",
-      "progress_on_task": 50,
       "role": "HR",
       "salary": 50000,
       "sick_days": "9",
@@ -133,7 +132,6 @@
           "status": "filled"
         }
       },
-      "progress_on_task": -12,
       "reason_for_sick_days": "I do not workk",
       "reason_for_vacation_days": "Outstation",
       "resignation_reason": "I want to quit",
@@ -153,7 +151,8 @@
       "vacation_approved": "4",
       "vacation_approved_denied": "pending",
       "vacation_days": 8,
-      "vacation_reason": "Outstation"
+      "vacation_reason": "Outstation",
+      "warning": "Warning issued by HR"
     },
     "Prathamesh": {
       "apply_for_vacation": 0,
@@ -268,7 +267,8 @@
       "vacation_approved": 0,
       "vacation_approved_denied": "",
       "vacation_days": 0,
-      "vacation_reason": ""
+      "vacation_reason": "",
+      "warning": "Warning issued by HR"
     }
   },
   "manager": {
@@ -278,7 +278,8 @@
       "hours_attended": 19,
       "password": "Mishra",
       "role": "manager",
-      "salary": "10000"
+      "salary": "10000",
+      "warning": "Warning issued by HR"
     },
     "Hritvik": {
       "designnation: ": "User tester",
