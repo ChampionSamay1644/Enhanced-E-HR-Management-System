@@ -931,6 +931,22 @@ class HR_class:
             0, 0, image=self.salary_management_image, anchor="nw"
         )
 
+        # #Add 2 notes saying "Double click on the employee to view details" and "Click on employee in order to remove login" at the bottom of the canvas
+        # self.salary_management_canvas.create_text(
+        #     window_width / 2,
+        #     window_height - 50,
+        #     text="*Double click on the employee to view details",
+        #     font=("Helvetica", 14, "bold"),
+        #     fill="white",
+        # )
+        # self.salary_management_canvas.create_text(
+        #     window_width / 2,
+        #     window_height - 30,
+        #     text="*Click on employee in order to remove login",
+        #     font=("Helvetica", 14, "bold"),
+        #     fill="white",
+        # )
+
     def on_window_resize_salary_management(self, event):
         # Handle window resize event
         self.resize_canvas_and_image_salary_management()
@@ -1467,11 +1483,11 @@ class HR_class:
         # Check if employees or managers have applied for resignation
         for employee in employees:
             resignation_status = db.reference("/employee").child(employee).child("resignation_request").child("resignation_status").get()
-            if resignation_status == "Approved by Manager":
+            if resignation_status == "Approved by Manager" and resignation_status != None:
                 employees_with_resignation.append(employee)
         for manager in managers:
-            resignation_request = db.reference("/manager").child(manager).child("resignation_request").get()
-            if resignation_request is not None:
+            resignation_request = db.reference("/manager").child(manager).child("resignation_request").child("resignation_status").get()
+            if resignation_request != "Approved by HR" and resignation_request != None:
                 managers_with_resignation.append(manager)
         
         # Combine employees and managers who have applied for resignation
@@ -1484,16 +1500,39 @@ class HR_class:
             if person in employees_with_resignation:
                 reason = db.reference("/employee").child(person).child("resignation_request").child("resignation_reason").get()
                 #Replace \n with space
-                reason = reason.replace("\n", " ")
+                if reason is not None:
+                    reason = reason.replace("\n", " ")
                 role = "Employee"
             elif person in managers_with_resignation:
                 reason = db.reference("/manager").child(person).child("resignation_request").child("resignation_reason").get()
-                #Replace \n with space
-                reason = reason.replace("\n", " ")
+                if reason is not None:
+                    #Replace \n with space
+                    reason = reason.replace("\n", " ")
                 role = "Manager"
 
             # Add the employee name, reason, and role with tag selectable
             self.treeview_resignation.insert("", "end", values=(person, role, reason), tags=("clickable",))
+
+        # #Populate the Treeview with employee names, reasons, and roles
+        # for person in people_with_resignation:
+        #     reason = ""
+        #     role = ""
+        #     if person in employees_with_resignation and db.reference("/employee").child(person).child("resignation_request").child("resignation_status").get() == "Approved by Manager":
+        #         reason = db.reference("/employee").child(person).child("resignation_request").child("resignation_reason").get()
+        #         #Replace \n with space
+        #         if reason is not None:
+        #             reason = reason.replace("\n", " ")
+        #         role = "Employee"
+        #     elif person in managers_with_resignation and db.reference("/manager").child(person).child("resignation_request").child("resignation_status").get() != "Approved by HR":
+        #         print (db.reference("/manager").child(person).child("resignation_request").get())
+        #         reason = db.reference("/manager").child(person).child("resignation_request").child("resignation_reason").get()
+        #         if reason is not None:
+        #             #Replace \n with space
+        #             reason = reason.replace("\n", " ")
+        #         role = "Manager"
+
+        #     # Add the employee name, reason, and role with tag selectable
+        #     self.treeview_resignation.insert("", "end", values=(person, role, reason), tags=("clickable",))
 
     def approve_resignation_btn(self):
         if self.uni_role == "admin":
@@ -1516,7 +1555,7 @@ class HR_class:
                 #Refresh the list
                 self.populate_employee_list_resignation()
                 self.approve_resignation_button["state"] = "disabled"
-            if role=="Manager" and db.reference("/manager").child(selected_employee).child("resignation_request").get() != None:
+            if role=="Manager" and db.reference("/manager").child(selected_employee).child("resignation_request").get() != "Approved by HR":
                 db.reference("/manager").child(selected_employee).child("resignation_request").child("resignation_status").set("Approved by HR")
                 #Set the resigning date to 4 weeks from the current date
                 current_datetime = datetime.datetime.now()
@@ -1989,7 +2028,7 @@ class HR_class:
             self.treeview_promotion.heading("New Designation", text="Designation")
             self.treeview_promotion.heading("New salary", text="Salary")
             self.treeview_promotion.heading("Comment", text="Comment")
-            self.treevoew_promotion.column("Comment", width=600)
+            self.treeview_promotion.column("Comment", width=600)
             self.treeview_promotion.heading("Request by", text="Request by")
             self.treeview_promotion.tag_configure("selectable", foreground="blue", font=("Helvetica", 12, "underline"))
             #self.treeview_promotion.bind("<Double-1>", lambda event: self.open_employee_details_window(self.treeview_promotion.item(self.treeview_promotion.selection())["values"][0]))
@@ -2682,7 +2721,7 @@ class HR_class:
        
     def on_review_type_selected(self,event):
         if self.review_type.get() == "None":
-            self.treeview_approve_review.delete(*self.review_treeview.get_children())
+            self.treeview_approve_review.delete(*self.treeview_approve_review.get_children())
         elif self.review_type.get() == "Quarterly Review":
             self.populate_employee_list_review("Quarterly Review")
         elif self.review_type.get() == "Annual Review":
@@ -2721,9 +2760,9 @@ class HR_class:
             if db.reference("/manager").child(selected_employee).child("performance_review").child(selected_review).child("status").get() == "Approved by HR":
                 messagebox.showinfo("Approve Review", "This review has already been approved by HR.")
                 return
-            if db.reference("/employee").child(selected_employee).child("performance_review").child(selected_review).child("status").get() == "Approved by Manager":
-                messagebox.showinfo("Approve Review", "This review has already been approved by Manager.")
-                return
+            # if db.reference("/employee").child(selected_employee).child("performance_review").child(selected_review).child("status").get() == "Approved by Manager":
+            #     messagebox.showinfo("Approve Review", "This review has already been approved by Manager.")
+            #     return
             self.open_review(selected_employee,selected_role,selected_review)
         except:
             pass
@@ -2760,24 +2799,21 @@ class HR_class:
             bg="white",
         )
         performance_review_label.pack(pady=20)
-        performance_review_label.place(relx=0.5, rely=0.2, anchor="center")
+        performance_review_label.place(relx=0.5, rely=0.15, anchor="center")
         
-        self.performance_review_entry = tk.Entry(
-            self.open_review_canvas, font=("Helvetica", 12, "bold")
-        )
+        self.performance_review_entry = tk.Text(self.open_review_canvas, font=("Helvetica", 12, "bold"),height=5)
         self.performance_review_entry.pack(pady=20)
         self.performance_review_entry.place(width=500, relx=0.5, rely=0.25, anchor="center")
-        self.performance_review_entry.configure(state="readonly", justify="center")
         
         if selected_role == "Employee":
             performance_review = db.reference("/employee").child(selected_employee).child("performance_review").child(selected_review).child(
                 "performance_review").get()
-            self.performance_review_entry.insert(0, performance_review)
+            self.performance_review_entry.insert(tk.END, performance_review)
         elif selected_role == "Manager":
             performance_review = db.reference("/manager").child(selected_employee).child("performance_review").child(selected_review).child(
                 "performance_review").get()
-            self.performance_review_entry.insert(0, performance_review)
-        self.performance_review_entry.configure(state="readonly", justify="center")
+            self.performance_review_entry.insert(tk.END, performance_review)
+        self.performance_review_entry.configure(state="disabled")
         
         feedback_label = tk.Label(
             self.open_review_canvas,
@@ -2788,21 +2824,19 @@ class HR_class:
         feedback_label.pack(pady=20)
         feedback_label.place(relx=0.5, rely=0.35, anchor="center")
         
-        self.feedback_entry = tk.Entry(
-            self.open_review_canvas, font=("Helvetica", 12, "bold")
-        )
+        self.feedback_entry = tk.Text(self.open_review_canvas, font=("Helvetica", 12, "bold"),height=5)
         self.feedback_entry.pack(pady=20)
-        self.feedback_entry.place(width=500, relx=0.5, rely=0.4, anchor="center")
+        self.feedback_entry.place(width=500, relx=0.5, rely=0.45, anchor="center")
         
         if selected_role == "Employee":
             feedback = db.reference("/employee").child(selected_employee).child("performance_review").child(selected_review).child(
                 "constructed_feedback").get()
-            self.feedback_entry.insert(0, feedback)
+            self.feedback_entry.insert(tk.END, feedback)
         elif selected_role == "Manager":
             feedback = db.reference("/manager").child(selected_employee).child("performance_review").child(selected_review).child(
                 "constructed_feedback").get()
-            self.feedback_entry.insert(0, feedback)
-        self.feedback_entry.configure(state="readonly", justify="center")
+            self.feedback_entry.insert(tk.END, feedback)
+        self.feedback_entry.configure(state="disabled")
         
         future_goals_label = tk.Label(
             self.open_review_canvas,
@@ -2811,24 +2845,24 @@ class HR_class:
             bg="white",
         )
         future_goals_label.pack(pady=20)
-        future_goals_label.place(relx=0.5, rely=0.5, anchor="center")
+        future_goals_label.place(relx=0.5, rely=0.55, anchor="center")
         
-        self.future_goals_entry = tk.Entry(
-            self.open_review_canvas, font=("Helvetica", 12, "bold")
+        self.future_goals_entry = tk.Text(
+            self.open_review_canvas, font=("Helvetica", 12, "bold"), height=5
         )
         self.future_goals_entry.pack(pady=20)
-        self.future_goals_entry.place(width=500, relx=0.5, rely=0.55, anchor="center")
+        self.future_goals_entry.place(width=500, relx=0.5, rely=0.65, anchor="center")
         
         if selected_role == "Employee":
             future_goals = db.reference("/employee").child(selected_employee).child("performance_review").child(selected_review).child(
-                "future_goals").get()
-            self.future_goals_entry.insert(0, future_goals)
+                "goals_for_future").get()
+            self.future_goals_entry.insert(tk.END, future_goals)
         elif selected_role == "Manager":
             future_goals = db.reference("/manager").child(selected_employee).child("performance_review").child(selected_review).child(
-                "future_goals").get()
-            self.future_goals_entry.insert(0, future_goals)
-        self.future_goals_entry.configure(state="readonly", justify="center")
-        
+                "goals_for_future").get()
+            self.future_goals_entry.insert(tk.END, future_goals)
+        self.future_goals_entry.configure(state="disabled")
+
         # Create 2 buttons to approve or deny the performance review
         self.approve_button = tk.Button(
             self.open_review_window,

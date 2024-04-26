@@ -119,20 +119,20 @@ class Manager_class:
         )
         self.submit_performance_review_button.place(relx=0.5, rely=0.8, anchor="center", width=300, height=50)
 
-        # Exit button using place manager
-        exit_button = tk.Button(
-            self.manager_logo_canvas,
-            text="Exit",
-            command=self.manager_window.destroy,
-            font=("Helvetica", 14),
-            width=15,
-            height=2,
-            bd=0,
-            fg="white",
-            bg="#FF4500",
-            activebackground="#FF6347",
-        )
-        exit_button.place(relx=0.5, rely=0.95, anchor="s")
+        # # Exit button using place manager
+        # exit_button = tk.Button(
+        #     self.manager_logo_canvas,
+        #     text="Exit",
+        #     command=self.manager_window.destroy,
+        #     font=("Helvetica", 14),
+        #     width=15,
+        #     height=2,
+        #     bd=0,
+        #     fg="white",
+        #     bg="#FF4500",
+        #     activebackground="#FF6347",
+        # )
+        # exit_button.place(relx=0.5, rely=0.95, anchor="s")
 
         profile_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profile.png")
         profile_image = Image.open(profile_path)
