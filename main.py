@@ -193,7 +193,7 @@ class CreativeLoginApp:
         # You can customize the credits information as per your needs
         credits_text = (
             "Enhanced E-HR Management System\n\n"
-            "Developed by: \n -Samay Pandey \n-Armaan Nakhuda \n-Sushant Navle \n\n"
+            "Developed by: \n -Samay Pandey \n-Armaan Nakhuda \n\n"
             "Documentation and PPT: \n -Samay Pandey \n-Armaan Nakhuda \n-Sushant Navle \n-Peeyush Karnik\n\n"
             "Database:\n- Firebase\n\n"
             "Language version and module:\n- Python 3.12.3 \n- Tkinter \n- Firebase_admin\n\n"
