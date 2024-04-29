@@ -16,6 +16,10 @@
       "feedback": 2,
       "hours_attended": 55,
       "password": "Nakhuda",
+      "resignation_request": {
+        "resignation_reason": "Seeking new opportunities for professional growth and development\n",
+        "resignation_status": "pending"
+      },
       "role": "HR",
       "salary": 50000,
       "sick_days": "9",
@@ -80,7 +84,6 @@
       },
       "designation": "User testing",
       "emp_id": 21,
-      "feedback": "",
       "hours_attended": 18,
       "password": "Narula",
       "progress_on_task": 0,
@@ -106,7 +109,6 @@
       "vacation_reason": ""
     },
     "Peeyush": {
-      "apply_for_resignation": "29/02/2024",
       "apply_for_vacation": 1,
       "bonus": 2000,
       "bonus_deny_reason": "He has done no work",
@@ -114,7 +116,6 @@
       "bonus_req": 1230,
       "designation": "Team Junior",
       "emp_id": 4,
-      "feedback": 2,
       "hours_attended": 31,
       "password": "Karnik",
       "performance_review": {
@@ -132,9 +133,6 @@
           "status": "filled"
         }
       },
-      "reason_for_sick_days": "I do not workk",
-      "reason_for_vacation_days": "Outstation",
-      "resignation_reason": "I want to quit",
       "resignation_request": {
         "resignation_reason": "I want to resign as I am moving to a new city in a few weeks",
         "resignation_status": "pending"
@@ -146,13 +144,20 @@
       "sick_days": 4,
       "sick_reason": "Cannot come due to jaundice",
       "survey": {
-        "available": "Yes"
+        "answers": [
+          "Good",
+          "Average",
+          "Very Good",
+          "Poor",
+          "Average"
+        ],
+        "available": "No"
       },
       "vacation_approved": "4",
       "vacation_approved_denied": "pending",
       "vacation_days": 8,
       "vacation_reason": "Outstation",
-      "warning": "Warning issued by HR"
+      "warning": "None"
     },
     "Prathamesh": {
       "apply_for_vacation": 0,
@@ -299,7 +304,7 @@
     },
     "Sushant": {
       "bonus": "1250",
-      "comment_for_promotion": " akwbaawbrw",
+      "comment_for_promotion": "Deserves this due to the overtime",
       "designation": "Junior Manager",
       "emp_id": 3,
       "hours_attended": 12,
