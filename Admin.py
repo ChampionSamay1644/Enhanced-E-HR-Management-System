@@ -880,7 +880,6 @@ class Admin_class():
                         "hours_attended": 0,
                         "apply_for_vacation": 0,
                         "survey": db.reference("survey_uni").child("available").get(),
-                        "feedback": "",
                         "vacation_reason": "",
                         "vacation_approved": 0,
                         "sick_approved": 0,
