@@ -166,21 +166,6 @@ class Admin_class():
         logout_button.pack()
         logout_button.place(relx=0.95, rely=0.95, anchor="se")
 
-        #create an exit button in canvas and place at bottom middle
-        exit_button = tk.Button(
-        self.admin_logo_canvas,
-        text="Exit",
-        command=admin_window.destroy,
-        font=("Helvetica", 14),
-        width=15,
-        height=2,
-        bd=0,
-        fg="white",
-        bg="#FF4500",
-        activebackground="#FF6347",
-        )
-        exit_button.place(relx=0.5, rely=1.0, anchor="s")
-
         # focus on window
         admin_window.focus_force()
 
