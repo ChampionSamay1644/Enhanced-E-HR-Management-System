@@ -1,0 +1,35 @@
+1] What is our project about
+2] What technologies have we used in our project
+3] Basic Github related questions  
+        Push,pull,merge,revert etc
+4] How is our data in the database secure
+5] Does the user need to have all the technologies/packages present in his laptop
+6] What is the hierarchy of our project
+7] What are the limits of your project
+8] What are the advantages/disadvantages of your project
+9] Are you retrieving and storing the data and if yes, How
+
+- How does your app handle large scale data 
+- What are the security measure in the app ( password and salary and sensitive information )
+- Is our data consistent
+- Explain how ACID is related to our project ( atomicity, consistency, isolation, durability )
+- Explain ways how our current project can be improved 
+- Is implementing new features gonna be easy
+- What are different errors that can occur and how are they dealt with
+- What is the process of creating the exe file 
+- How is the app going to be monetized ( Python is open source but firebase is not )
+	- Is python open source
+	- Is Firebase open source
+- Name and explain the different prebuilt and userbuilt modules that are used in the app
+- Are the modules necessary for a user to run the exe
+- Name and explain the different widgets used in the app
+- What is/are the most important module in the app ( tkinter and firebase_admin )
+- What if the device the app is being run on has no internet connection
+- What is the use of credentials file
+- Can you explain the algorithms or strategies used for optimizing database queries and ensuring efficient data retrieval in your app
+- What strategies are in place for disaster recovery and business continuity planning, particularly regarding data backups, redundancy, and failover mechanisms
+- What happens to the previous database when a new version of the application is released
+- How efficient is our app in regards to memory management and data retrieving
+- How do you manage the user feedbacks
+- What are some third party integrations that can be made in the app ( email services, payment gateway )
+- How is our cross platform compatibility
