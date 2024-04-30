@@ -52,68 +52,8 @@ class Employee_class:
         # Center the window with function center_window_test
         self.center_window_all(employee_window)
         
-        #Check if Sick/Vacation Days are approved
-        emp_ref = db.reference("/employee")
-        vacation_approved = emp_ref.child(username).child("vacation_approved_denied").get()
-        sick_approved = emp_ref.child(username).child("sick_approved_denied").get()
-        if sick_approved != None and sick_approved == "Approved":
-            messagebox.showinfo("Sick Days Approved", "Your Sick Days have been approved")
-            emp_ref.child(username).update({"sick_approved_denied": "None"})
-        if vacation_approved != None and vacation_approved == "Approved":
-            messagebox.showinfo("Vacation Days Approved", "Your Vacation Days have been approved")
-            emp_ref.child(username).update({"vacation_approved_denied": "None"})
-        if sick_approved != None and sick_approved == "Denied":
-            messagebox.showinfo("Sick Days Denied", "Your Sick Days have been denied")
-            emp_ref.child(username).update({"sick_approved_denied": "None"})
-        if vacation_approved != None and vacation_approved == "Denied":
-            messagebox.showinfo("Vacation Days Denied", "Your Vacation Days have been denied")
-            emp_ref.child(username).update({"vacation_approved_denied": "None"})
-        if emp_ref.child(username).child("resignation_request").child("resignation_status").get() == "Approved by HR":
-            date=emp_ref.child(username).child("resignation_request").child("resignation_date").get()
-            messagebox.showinfo(f"Resignation Request", "Resignation request has been approved by Admin.\nYou will be logged out on "+date)
-            
-            #Check if the date is today or past
-            #If yes, then logout the user
-            if datetime.datetime.now().date() >= datetime.datetime.strptime(date, "%Y-%m-%d").date():
-                messagebox.showinfo("Resignation Request", "You have been logged out as per your resignation request and cannot login again.")
-                employee_window.destroy()
-                return
-        if emp_ref.child(username).child("resignation_request").child("resignation_status").get() == "Denied by HR":
-            messagebox.showinfo(f"Resignation Request", "Resignation request has been denied by Admin for the following reason:\n"+emp_ref.child(username).child("resignation_request").child("resignation_reason").get())
-            emp_ref.child(username).child("resignation_request").child("resignation_status").set("None")
-            emp_ref.child(username).child("resignation_request").child("resignation_reason").set("None")
-        if emp_ref.child(username).child("resignation_request").child("resignation_status").get() == "Denied by Manager":
-            messagebox.showinfo(f"Resignation Request", "Resignation request has been denied by Manager for the following reason:\n"+emp_ref.child(username).child("resignation_request").child("resignation_reason").get())
-            emp_ref.child(username).child("resignation_request").child("resignation_status").set("None")
-            emp_ref.child(username).child("resignation_request").child("resignation_reason").set("None")
-        if emp_ref.child(username).child("warning").get() == "Warning issued by HR":
-            messagebox.showinfo(f"Warning", "Your attended hours are less than 80% of the total hours.\nYou have been issued a warning by HR.")
-            emp_ref.child(username).update({"warning": "None"})
-        if emp_ref.child(username).child("complaint").child("complaint_status").get() == "warned":
-            messagebox.showinfo(f"Complaint", "You have been warned by HR because of a submitted complaint.")
-            emp_ref.child(username).child("complaint").child("complaint_status").set("None")
-        #Check if survey is available
-        if emp_ref.child(username).child("survey").child("available").get() == "Yes":
-            messagebox.showinfo(f"Survey", "A survey is available for you to fill.")
-            #emp_ref.child(username).child("survey").child("available").set("No")
-        
         #add buttons and use a function to place them in the canvas
         self.add_buttons_to_canvas_employee(username)
-
-        #create an exit button in canvas and place at bottom middle
-        exit_button = tk.Button(
-        self.employee_logo_canvas,
-        text="Exit",
-        command=employee_window.destroy,
-        font=("Helvetica", 14),
-        width=15,
-        height=2,
-        bd=0,
-        fg="white",
-        bg="#FF4500",
-        activebackground="#FF6347",
-    )
-        exit_button.place(relx=0.5, rely=1.0, anchor="s")
 
         profile_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profile.png")
         profile_image = Image.open(profile_path)
@@ -160,6 +100,51 @@ class Employee_class:
                 messagebox.showinfo("Resignation Request", "You have been logged out as per your resignation request and cannot login again.")
                 employee_window.destroy()
                 return
+            
+        #Check if Sick/Vacation Days are approved
+        emp_ref = db.reference("/employee")
+        vacation_approved = emp_ref.child(username).child("vacation_approved_denied").get()
+        sick_approved = emp_ref.child(username).child("sick_approved_denied").get()
+        if sick_approved != None and sick_approved == "Approved":
+            messagebox.showinfo("Sick Days Approved", "Your Sick Days have been approved")
+            emp_ref.child(username).update({"sick_approved_denied": "None"})
+        if vacation_approved != None and vacation_approved == "Approved":
+            messagebox.showinfo("Vacation Days Approved", "Your Vacation Days have been approved")
+            emp_ref.child(username).update({"vacation_approved_denied": "None"})
+        if sick_approved != None and sick_approved == "Denied":
+            messagebox.showinfo("Sick Days Denied", "Your Sick Days have been denied")
+            emp_ref.child(username).update({"sick_approved_denied": "None"})
+        if vacation_approved != None and vacation_approved == "Denied":
+            messagebox.showinfo("Vacation Days Denied", "Your Vacation Days have been denied")
+            emp_ref.child(username).update({"vacation_approved_denied": "None"})
+        if emp_ref.child(username).child("resignation_request").child("resignation_status").get() == "Approved by HR":
+            date=emp_ref.child(username).child("resignation_request").child("resignation_date").get()
+            messagebox.showinfo(f"Resignation Request", "Resignation request has been approved by Admin.\nYou will be logged out on "+date)
+            
+            #Check if the date is today or past
+            #If yes, then logout the user
+            if datetime.datetime.now().date() >= datetime.datetime.strptime(date, "%Y-%m-%d").date():
+                messagebox.showinfo("Resignation Request", "You have been logged out as per your resignation request and cannot login again.")
+                employee_window.destroy()
+                return
+        if emp_ref.child(username).child("resignation_request").child("resignation_status").get() == "Denied by HR":
+            messagebox.showinfo(f"Resignation Request", "Resignation request has been denied by Admin for the following reason:\n"+emp_ref.child(username).child("resignation_request").child("resignation_reason").get())
+            emp_ref.child(username).child("resignation_request").child("resignation_status").set("None")
+            emp_ref.child(username).child("resignation_request").child("resignation_reason").set("None")
+        if emp_ref.child(username).child("resignation_request").child("resignation_status").get() == "Denied by Manager":
+            messagebox.showinfo(f"Resignation Request", "Resignation request has been denied by Manager for the following reason:\n"+emp_ref.child(username).child("resignation_request").child("resignation_reason").get())
+            emp_ref.child(username).child("resignation_request").child("resignation_status").set("None")
+            emp_ref.child(username).child("resignation_request").child("resignation_reason").set("None")
+        if emp_ref.child(username).child("warning").get() == "Warning issued by HR":
+            messagebox.showinfo(f"Warning", "Your attended hours are less than 80% of the total hours.\nYou have been issued a warning by HR.")
+            emp_ref.child(username).update({"warning": "None"})
+        if emp_ref.child(username).child("complaint").child("complaint_status").get() == "warned":
+            messagebox.showinfo(f"Complaint", "You have been warned by HR because of a submitted complaint.")
+            emp_ref.child(username).child("complaint").child("complaint_status").set("None")
+        #Check if survey is available
+        if emp_ref.child(username).child("survey").child("available").get() == "Yes":
+            messagebox.showinfo(f"Survey", "A survey is available for you to fill.")
+            #emp_ref.child(username).child("survey").child("available").set("No")
             
         # Run the main loop for the employee window
         employee_window.mainloop()
@@ -1109,6 +1094,19 @@ class Employee_class:
             self.date_entry.delete(0, tk.END)
 
     def getdata(self,username,role):
+        if role=="admin":
+            admin_ref = db.reference("/admins")
+            list=[]
+            list.append(admin_ref.child(username).child("emp_id").get())
+            list.append(admin_ref.child(username).child("designation").get())
+            list.append(admin_ref.child(username).child("salary").get())
+            list.append(admin_ref.child(username).child("hours_attended").get())
+            list.append(admin_ref.child(username).child("bonus").get())
+            list.append(admin_ref.child(username).child("sick_days").get())
+            list.append(admin_ref.child(username).child("vacation_days").get())
+            list.append(admin_ref.child(username).child("survey").child("available").get())
+
+            return list
         if role=="employee":
             emp_ref = db.reference("/employee")
             list=[]
@@ -1335,12 +1333,12 @@ class Employee_class:
         self.profile_canvas.delete("all")
         self.profile_canvas.create_image(0, 0, image=self.profile_image, anchor="nw")
 
-        list=self.getdata(username,role)
-        resigning_date=db.reference("/employee").child(username).child("resigning_date").get()
-        text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
-        if resigning_date is not None:
-            text1+=f"\nResigning Date: {resigning_date}"
+        list=self.getdata(username,self.uni_role)
+        text1=f"EID: {list[0]}\nName: {username}\nRole: {self.uni_role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
         if role=="employee":
+            resigning_date=db.reference("/employee").child(username).child("resigning_date").get()
+            if resigning_date is not None:
+                text1+=f"\nResigning Date: {resigning_date}"
             text1+=f"\nSurvey: {list[7]}"
         self.profile_canvas.create_text(
             10,  # X-coordinate (left)

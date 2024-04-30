@@ -850,7 +850,7 @@ class Admin_class():
                         "password": password,
                         "role": role,
                         "designation": designation,
-                        "salary": salary,
+                        "salary": int(salary),
                         "emp_id": emp_uni + 1,
                     }
                 )
@@ -861,7 +861,7 @@ class Admin_class():
                         "password": password,
                         "role": role,
                         "designnation: ": designation,
-                        "salary": salary,
+                        "salary": int(salary),
                         "emp_id": emp_uni + 1,
                     }
                 )
@@ -873,7 +873,7 @@ class Admin_class():
                         "role": role,
                         "designation": designation,
                         "emp_id": emp_uni + 1,
-                        "salary": salary,
+                        "salary": int(salary),
                         "sick_days": 0,
                         "vacation_days": 0,
                         "bonus": 0,

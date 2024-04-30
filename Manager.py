@@ -20,6 +20,19 @@ class Manager_class:
         self.root.title("Manager Window")
         
     def getdata(self,username,role):
+        if role=="admin":
+            admin_ref = db.reference("/admins")
+            list=[]
+            list.append(admin_ref.child(username).child("emp_id").get())
+            list.append(admin_ref.child(username).child("designation").get())
+            list.append(admin_ref.child(username).child("salary").get())
+            list.append(admin_ref.child(username).child("hours_attended").get())
+            list.append(admin_ref.child(username).child("bonus").get())
+            list.append(admin_ref.child(username).child("sick_days").get())
+            list.append(admin_ref.child(username).child("vacation_days").get())
+            list.append(admin_ref.child(username).child("survey").child("available").get())
+
+            return list
         if role=="employee":
             emp_ref = db.reference("/employee")
             list=[]
@@ -118,21 +131,6 @@ class Manager_class:
             self.manager_logo_canvas, text="Submit Performance Review", command=lambda:self.submit_performance_review(username), font=("Helvetica", 14)
         )
         self.submit_performance_review_button.place(relx=0.5, rely=0.8, anchor="center", width=300, height=50)
-
-        # # Exit button using place manager
-        # exit_button = tk.Button(
-        #     self.manager_logo_canvas,
-        #     text="Exit",
-        #     command=self.manager_window.destroy,
-        #     font=("Helvetica", 14),
-        #     width=15,
-        #     height=2,
-        #     bd=0,
-        #     fg="white",
-        #     bg="#FF4500",
-        #     activebackground="#FF6347",
-        # )
-        # exit_button.place(relx=0.5, rely=0.95, anchor="s")
 
         profile_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profile.png")
         profile_image = Image.open(profile_path)
@@ -1897,7 +1895,7 @@ class Manager_class:
         else:
             # Update the database with the bonus request
             emp_ref = db.reference("/employee")
-            emp_ref.child(employee_name).update({"bonus_req": amount_bonus})
+            emp_ref.child(employee_name).update({"bonus_req": int(amount_bonus)})
             emp_ref.child(employee_name).update({"bonus_reason": reason_bonus})
             # Close the employee details window
             self.employee_details_canvas.destroy()
@@ -2172,11 +2170,12 @@ class Manager_class:
         self.profile_canvas.delete("all")
         self.profile_canvas.create_image(0, 0, image=self.profile_image, anchor="nw")
 
-        list=self.getdata(username,role)
-        resigning_date=db.reference("/employee").child(username).child("resignation_request").child("resignation_date").get()
+        list=self.getdata(username,self.uni_role)
         text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
-        if resigning_date != None:
-            text1=text1+f"\nResignation Date: {resigning_date}"
+        if self.uni_role == "manager":
+            resigning_date=db.reference("/manager").child(username).child("resignation_request").child("resignation_date").get()
+            if resigning_date != None:
+                text1=text1+f"\nResignation Date: {resigning_date}"
         self.profile_canvas.create_text(
             # Place the text in the bottom left corner
             10,

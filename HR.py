@@ -36,6 +36,19 @@ class HR_class:
         window.geometry("%dx%d+%d+%d" % (1400,700, x, y))
        
     def getdata(self,username,role):
+        if role=="admin":
+            admin_ref = db.reference("/admins")
+            list=[]
+            list.append(admin_ref.child(username).child("emp_id").get())
+            list.append(admin_ref.child(username).child("designation").get())
+            list.append(admin_ref.child(username).child("salary").get())
+            list.append(admin_ref.child(username).child("hours_attended").get())
+            list.append(admin_ref.child(username).child("bonus").get())
+            list.append(admin_ref.child(username).child("sick_days").get())
+            list.append(admin_ref.child(username).child("vacation_days").get())
+            list.append(admin_ref.child(username).child("survey").child("available").get())
+
+            return list
         if role=="employee":
             emp_ref = db.reference("/employee")
             list=[]
@@ -689,7 +702,7 @@ class HR_class:
                         "password": password,
                         "role": role,
                         "designnation: ": designation,
-                        "salary": salary,
+                        "salary": int(salary),
                         "emp_id": emp_uni + 1,
                     }
                 )
@@ -701,7 +714,7 @@ class HR_class:
                         "role": role,
                         "designation": designation,
                         "emp_id": emp_uni + 1,
-                        "salary": salary,
+                        "salary": int(salary),
                         "sick_days": 0,
                         "vacation_days": 0,
                         "bonus": 0,
@@ -832,7 +845,8 @@ class HR_class:
         #Ask for confirmation 
         if messagebox.askyesno("Confirm", f"Are you sure you want to change the salary of {employee_name} to {new_salary}?"):
             #Change the salary in the database
-            db.reference("/employee").child(employee_name).child("salary").set(new_salary)
+            db.reference("/employee").child(employee_name).child("salary").set(int(new_salary))
+            messagebox.showinfo("Success", "Salary changed successfully.")
         #Close the window
         edit_salary_window.destroy()
         #focus on the salary management window
@@ -1237,9 +1251,11 @@ class HR_class:
         #Ask for confirmation
         if bonus_amount == "":
             messagebox.showinfo("Grant Bonus", "Please enter the bonus amount.")
+        elif not bonus_amount.isdigit():
+            messagebox.showinfo("Grant Bonus", "Bonus amount should be a number.")
         elif messagebox.askyesno("Confirm", f"Are you sure you want to grant a bonus of {bonus_amount} to the manager?"):
             #Grant the bonus in the database
-            db.reference("/manager").child(self.treeview_bonus.item(self.treeview_bonus.selection())["values"][0]).child("bonus").set(bonus_amount)
+            db.reference("/manager").child(self.treeview_bonus.item(self.treeview_bonus.selection())["values"][0]).child("bonus").set(int(bonus_amount))
             messagebox.showinfo("Grant Bonus", "Bonus granted successfully.")
         #Close the window
         grant_bonus_window.destroy()
@@ -1290,7 +1306,7 @@ class HR_class:
         #Ask for confirmation
         if messagebox.askyesno("Approve Bonus", f"Are you sure you want to approve the bonus of {selected_employee} for {bonus_amount}?"):
             #Approve the bonus in the database
-            db.reference("/employee").child(selected_employee).child("bonus").set(bonus_amount)
+            db.reference("/employee").child(selected_employee).child("bonus").set(int(bonus_amount))
             db.reference("/employee").child(selected_employee).child("bonus_req").set(0)
             db.reference("/employee").child(selected_employee).child("bonus_reason").set("")
             messagebox.showinfo("Approve Bonus", "Bonus approved successfully.")
@@ -3206,13 +3222,12 @@ class HR_class:
         self.profile_canvas.delete("all")
         self.profile_canvas.create_image(0, 0, image=self.profile_image, anchor="nw")
 
-        list=self.getdata(username,role)
-        resigning_date=db.reference("/HR").child(username).child("resignation_request").child("resignation_date").get()
-        text1=f"EID: {list[0]}\nName: {username}\nRole: {role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHours Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
-        if resigning_date is not None:
-            text1+=f"\nResignation Date: {resigning_date}"
-        if role=="employee":
-            text1+=f"\nSurvey: {list[7]}"
+        list=self.getdata(username,self.uni_role)
+        text1=f"EID: {list[0]}\nName: {username}\nRole: {self.uni_role}\nDesignation: {list[1]}\nSalary: {list[2]}\nHors Attended: {list[3]}\nBonus: {list[4]}\nSick Days: {list[5]}\nVacation Days: {list[6]}"
+        if role=="HR":
+            resigning_date=db.reference("/HR").child(username).child("resignation_request").child("resignation_date").get()
+            if resigning_date is not None:
+                text1+=f"\nResignation Date: {resigning_date}"
         self.profile_canvas.create_text(
             10,  # X-coordinate (left)
             self.profile_canvas.winfo_height() - 10,  # Y-coordinate (bottom)
