@@ -45,6 +45,37 @@ We have used Python 3.12 with pil for better optimizations and tkinter to provid
 
 We have used Firebase for storing and accessing the database into our system.
 
+## Setup Instructions for Specific Database
+
+To run our project using your specific database, follow these steps:
+
+1. **Install Python and Required Modules:**
+   - Install Python 3.12 or higher on your system.
+   - Install the necessary Python modules:
+     - `firebase_admin`: Use `pip install firebase_admin` to install this module.
+     - `tkinter`: This module is typically included in standard Python installations.
+     - `pillow`: Use `pip install pillow` to install this module.
+
+2. **Create Your Database in Firebase:**
+   - Sign in to your Firebase account or create a new one at [Firebase Console](https://console.firebase.google.com/).
+   - Create a new project and set up a Firebase Realtime Database for storing data.
+   - Obtain your Firebase project credentials (API key, database URL, etc.) from the Firebase Console.
+
+3. **Replace Links in the Main File:**
+   - Open the main Python file (`main.py` or similar) in your project.
+   - Replace the Firebase configuration details in the file with your own Firebase project credentials. Example:
+     ```python
+     # Initialize Firebase with your credentials
+     cred = credentials.Certificate('path/to/your/serviceAccountKey.json')
+     firebase_admin.initialize_app(cred, {
+         'databaseURL': 'https://your-firebase-project.firebaseio.com/'
+     })
+     ```
+
+4. **Run the Main File:**
+   - Once you have installed Python, set up the modules, created your Firebase database, and updated the main file with your credentials, you can run the main Python file.
+   - Use the command `python main.py` (replace `main.py` with your actual main file name) to execute the HR Management System application.
+
 ## System Requirements
 
 ### Hardware:
@@ -85,7 +116,9 @@ We have used Firebase for storing and accessing the database into our system.
    - Exit and Credits button on the login screen
    - Resizing, centering, and focusing of all windows
    - Manager Window
-   - 50% of Employee window
+   - 50% of
+
+ Employee window
    - Documentation and ppt (error checking)
    - Research Paper
 
