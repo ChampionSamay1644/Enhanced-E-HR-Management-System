@@ -47,11 +47,40 @@ So we have added all the features into our system and yu can use it accordingly.
 We have used Python 3.12 with pil for better optimizations and tkinter to provide smooth functioning of interface to our system. Tkinter is been used to create widgets like buttons, combo box, tables, labels, etc.
 
 We have used firebase for storing and accessing the database into our system.
-## Tech Stack
+Certainly! Here's the section with an appropriate heading added:
 
+---
 
+## Setup Instructions for Specific Database
 
-To run our project you must install Python 3.12 and set the path to system and install modules like firebase_admin, tkinter and pillow in Python. You need initiate connection between firebase Server with our system to smoothly run and operate it.
+To run our project using your specific database, follow these steps:
+
+1. **Install Python and Required Modules:**
+   - Install Python 3.12 or higher on your system.
+   - Install the necessary Python modules:
+     - `firebase_admin`: Use `pip install firebase_admin` to install this module.
+     - `tkinter`: This module is typically included in standard Python installations.
+     - `pillow`: Use `pip install pillow` to install this module.
+
+2. **Create Your Database in Firebase:**
+   - Sign in to your Firebase account or create a new one at [Firebase Console](https://console.firebase.google.com/).
+   - Create a new project and set up a Firebase Realtime Database for storing data.
+   - Obtain your Firebase project credentials (API key, database URL, etc.) from the Firebase Console.
+
+3. **Replace Links in the Main File:**
+   - Open the main Python file (`main.py` or similar) in your project.
+   - Replace the Firebase configuration details in the file with your own Firebase project credentials. Example:
+     ```python
+     # Initialize Firebase with your credentials
+     cred = credentials.Certificate('path/to/your/serviceAccountKey.json')
+     firebase_admin.initialize_app(cred, {
+         'databaseURL': 'https://your-firebase-project.firebaseio.com/'
+     })
+     ```
+
+4. **Run the Main File:**
+   - Once you have installed Python, set up the modules, created your Firebase database, and updated the main file with your credentials, you can run the main Python file.
+   - Use the command `python main.py` (replace `main.py` with your actual main file name) to execute the HR Management System application.
 
 ## System Requirements
 Hardware: -
