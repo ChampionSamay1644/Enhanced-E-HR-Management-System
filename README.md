@@ -76,6 +76,16 @@ b)	Python: Version 3.11 with pil, firebase, firebase_admin and tkcalendar module
 a)	OS: Windows 11 22H2
 b)	Python: Version 3.12 with pil, firebase, firebase_admin and tkcalendar modules installed
 
+## Download and Installation
+1.	Go to the [Releases](https://github.com/ChampionSamay1644/Sem_4_Mini_Project/releases) section of this repository.
+2.	Download the latest executable file (Enhanced.E-HR.Management.System.exe).
+3.	Double-click the downloaded file to launch the application.
+
+## Usage
+1.	Log in with appropriate credentials based on user role.
+2.	Explore the functionalities tailored for Admin, HR, Manager, and Employee users.
+3.	Report any issues or bugs on the GitHub repository.
+
 ## Contributing
 
 1.	Armaan Nakhuda: Exit and Credits button on login screen
