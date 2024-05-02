@@ -50,7 +50,8 @@ To run our project using your specific database, follow these steps:
 
 4. **Set Up Firebase Realtime Database:**
    - Create a Realtime Database in your Firebase project.
-   - You can use the `example.json` to import into your realtime database for a basic start of an admin login.
+   - You can use the `example.json` to import into your realtime database for a basic start of an admin login. The initial username is "Admin" and initial password is "Admin123"
+   - Note - You can change the "vacations_uni" and "sick_uni" variables inorder to set the maximum amount of sick/vacation days an employee can apply for. Also if you want to add admins you have to hardcode that in the database as no user can create an admin login through the application.
 
 5. **Update Main File with Database Link:**
    - Open `main.py` in your preferred code editor.

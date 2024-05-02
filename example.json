@@ -1,0 +1,21 @@
+{
+  "HR": {
+  },
+
+  "admins": { 
+    "Admin": {
+      "emp_id": 0,
+      "password": "Admin123",
+      "role": "admin"
+    }
+  },
+  "emp_id": 1,
+  "employee": {
+    
+  },
+  "manager": {
+   
+  },
+  "sick_days_uni": 10,
+  "vacation_uni": 10
+}
