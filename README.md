@@ -29,123 +29,88 @@ We have 4 hierarchies in our project:
    - Apply for vacation & resignations
    - Submit Survey/feedbacks/complaints
 
-## Roadmap
-
-1. **Initialization:** Login screen helps to identify if the user is Admin, HR, Manager, or Employee.
-2. **Database:** The user is then given the features with respect to its login details.
-3. **Features:** These are differentiated between Admin, HR, Manager, and Employee respectively.
-4. **Admin:** This user can remove or add login details of HR/Manager/Employee, sign in as per what permission level is desired, and approve resignation.
-5. **HR:** This user can Add or remove manager/employee, manage salary and approve feedbacks, etc.
-6. **Manager:** This user can View performance, approve for vacation/sick leaves or resignations, bonus or promotions, etc.
-7. **Employee:** This user can check progress, apply for leaves, submit survey, or apply for vacations, etc.
-
-## Optimizations
-
-We have used Python 3.12 with pil for better optimizations and tkinter to provide smooth functioning of the interface to our system. Tkinter is used to create widgets like buttons, combo box, tables, labels, etc.
-
-We have used Firebase for storing and accessing the database into our system.
-
 ## Setup Instructions for Specific Database
 
 To run our project using your specific database, follow these steps:
 
-1. **Install Python and Required Modules:**
-   - Install Python 3.12 or higher on your system.
-   - Install the necessary Python modules:
-     - `firebase_admin`: Use `pip install firebase_admin` to install this module.
-     - `tkinter`: This module is typically included in standard Python installations.
-     - `pillow`: Use `pip install pillow` to install this module.
-
-2. **Create Your Database in Firebase:**
-   - Sign in to your Firebase account or create a new one at [Firebase Console](https://console.firebase.google.com/).
-   - Create a new project and set up a Firebase Realtime Database for storing data.
-   - Obtain your Firebase project credentials (API key, database URL, etc.) from the Firebase Console.
-
-3. **Replace Links in the Main File:**
-   - Open the main Python file (`main.py` or similar) in your project.
-   - Replace the Firebase configuration details in the file with your own Firebase project credentials. Example:
-     ```python
-     # Initialize Firebase with your credentials
-     cred = credentials.Certificate('path/to/your/serviceAccountKey.json')
-     firebase_admin.initialize_app(cred, {
-         'databaseURL': 'https://your-firebase-project.firebaseio.com/'
-     })
+1. **Clone the Project:**
+   - Clone the project repository into your local directory using Git:
+     ```
+     git clone https://github.com/ChampionSamay1644/Sem_4_Mini_Project.git
      ```
 
-4. **Run the Main File:**
-   - Once you have installed Python, set up the modules, created your Firebase database, and updated the main file with your credentials, you can run the main Python file.
-   - Use the command `python main.py` (replace `main.py` with your actual main file name) to execute the HR Management System application.
+2. **Create a Firebase Account and Project:**
+   - Sign up for a Firebase account or log in if you already have one.
+   - Create a new project in Firebase.
 
-## System Requirements
+3. **Download Firebase Credentials:**
+   - In your Firebase project settings, download the security key file.
+   - Rename the downloaded file to `credentials.json` and copy it to the root directory of the cloned project.
 
-### Hardware:
-- **Minimum Requirements:**
-  - Processor: Dual-core processor @2.4Ghz
-  - RAM: 4GB RAM
-  - Storage: 2GB free space
-  - Internet Speed: 3mbps
+4. **Set Up Firebase Realtime Database:**
+   - Create a Realtime Database in your Firebase project.
+   - Add at least basic data for an admin to the database.
 
-- **Recommended Requirements:**
-  - Processor: Quad-core processor @2.8Ghz
-  - RAM: 8GB RAM
-  - Storage: 4GB free space
-  - Internet Speed: 6mbps
+5. **Update Main File with Database Link:**
+   - Open `main.py` in your preferred code editor.
+   - Replace `"############"` in the `initialize_firebase` function with your Firebase Realtime Database URL.
+     ```python
+     def initialize_firebase():
+       global firebase_initialized
+       if not firebase_initialized:
+           # Initialize Firebase Admin SDK
+           cred = credentials.Certificate(resource_path("credentials.json"))  # Path: credentials.json
+           firebase_admin.initialize_app(
+               cred,
+               {
+                   "databaseURL": "############" ## Your database link goes here,also below 
+               },
+           )
+           firebase_initialized = True
+           # Check if there is a connection to the Firebase Realtime Database and time out after 10 seconds
+           try:
+               response = requests.get("############", timeout=10) ## Your database link goes here
+               if response.status_code == 200:
+                   print("Connected to Firebase Realtime Database")
+           except requests.exceptions.RequestException:
+               # Show an error message if there is no connection to the Firebase Realtime Database
+               messagebox.showerror("Connection Error", "Failed to connect to Firebase Realtime Database. Please check your internet connection.")
+               sys.exit(1)
+     ```
 
-### Software:
-- **Minimum Requirements:**
-  - OS: Windows 10 22H2
-  - Python: Version 3.11 with pil, firebase, firebase_admin, and tkcalendar modules installed
+6. **Install Required Modules:**
+   - Ensure that Python 3.12 and pip are installed on your system, and their paths are properly defined.
+   - Open a terminal in the project directory.
+   - Install all the required modules listed in `requirements.txt` using pip:
+     ```
+     pip install -r requirements.txt
+     ```
 
-- **Recommended Requirements:**
-  - OS: Windows 11 22H2
-  - Python: Version 3.12 with pil, firebase, firebase_admin, and tkcalendar modules installed
+8. **Run the Project:**
+   - Run the main Python file to start the application:
+     ```
+     python main.py
+     ```
 
-## Download and Installation
-1. Go to the [Releases](https://github.com/ChampionSamay1644/Sem_4_Mini_Project/releases) section of this repository.
-2. Download the latest executable file (Enhanced.E-HR.Management.System.exe).
-3. Double-click the downloaded file to launch the application.
+### Creating Executable (Optional)
 
-## Usage
-1. Log in with appropriate credentials based on user role.
-2. Explore the functionalities tailored for Admin, HR, Manager, and Employee users.
-3. Report any issues or bugs on the GitHub repository.
+For ease of use, you can create an executable file for your specific database by following these steps:
 
-## Contributing
+1. Install the `auto-py-to-exe` module.
+2. Run the module; a web page should open.
+3. Browse to your `main.py` file.
+4. Choose the "onefile" option and then choose "window-based" to create a usable executable.
+5. Browse to your icon of the file (optional).
+6. Add the following files to the executable:
+   - `credentials.json`
+   - `HR_Background.png`
+   - `logout.png`
+   - `profile.png`
+   (You can change the images if you want but make sure to keep the extension of files the same to avoid errors.)
+7. Give your executable a name in the advanced settings.
+8. Convert and wait for it to finish.
+9. Your created executable should now be in the output folder.
 
-1. **Armaan Nakhuda:**
-   - Exit and Credits button on the login screen
-   - Resizing, centering, and focusing of all windows
-   - Manager Window
-   - 50% of
+## Conclusion
 
- Employee window
-   - Documentation and ppt (error checking)
-   - Research Paper
-
-2. **Sushant Navle:**
-   - Basic Login page and admin login screen (no buttons)
-   - Documentation
-   - PPT
-   - Research Paper
-
-3. **Samay Pandey:**
-   - Implementation and connection of DB
-   - Dynamic name on every window
-   - Admin window
-   - HR window
-   - 50% of Employee window
-   - Documentation and ppt (flowcharts error checking)
-   - Research Paper
-
-4. **Peeyush Karnik:**
-   - Documentation
-   - PPT
-
-## 🔗 Links
-Individual Profile Links:
-- [Armaan Nakhuda](https://github.com/Armaan4477)
-- [Sushant Navle](https://github.com/Sushant305)
-- [Samay Pandey](https://github.com/ChampionSamay1644)
-
-## Appendix
-The motivation behind the development of the Enhanced E-HR system stems from the growing need for organizations to optimize and modernize their human resource management processes. As businesses evolve in today's dynamic environment, efficient HR management becomes crucial for organizational success. Traditional manual methods are often time-consuming, prone to errors, and lack scalability. The Enhanced E-HR system aims to address these challenges by providing a comprehensive, user-friendly, and technologically advanced solution.
+The Enhanced E-HR Management System offers a comprehensive solution for managing HR tasks efficiently. Follow the setup instructions and usage guidelines to get started with the system seamlessly.
