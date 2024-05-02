@@ -37,13 +37,13 @@ def initialize_firebase():
         firebase_admin.initialize_app(
             cred,
             {
-                "databaseURL": "############" ## Your database link goes here,also below 
+                "databaseURL": "https://hangman-python-game.asia-southeast1.firebasedatabase.app/" ## Your database link goes here,also below 
             },
         )
         firebase_initialized = True
         # Check if there is a connection to the Firebase Realtime Database and time out after 10 seconds
         try:
-            response = requests.get("############", timeout=10) ## Your database link goes here
+            response = requests.get("https://hangman-python-game.asia-southeast1.firebasedatabase.app/", timeout=10) ## Your database link goes here
             if response.status_code == 200:
                 print("Connected to Firebase Realtime Database")
         except requests.exceptions.RequestException:
