@@ -8,15 +8,16 @@ The Enhanced E-HR system is a user-friendly HR software made with Python. It hel
 We have 4 hierarchies in our project:
 
 1. **Admin:**
-   - Create & Remove HR logins
+   - Create & Remove all logins
+   - Approve Resignation
    - Admin can log in as HR/Manager/Employee
 
 2. **HR:**
-   - Salary Management
+   - Employee Management
    - Employee Add/Remove
    - Approve bonus/promotion/resignations
    - Employee hours attended
-   - Survey/feedbacks/complaints checking
+   - Survey/complaints checking
 
 3. **Manager:**
    - Performance review
@@ -25,9 +26,9 @@ We have 4 hierarchies in our project:
    - Request for bonus
 
 4. **Employee:**
-   - Sick/Personal Leave
-   - Apply for vacation & resignations
-   - Submit Survey/feedbacks/complaints
+   - Sick/Vacation Leave
+   - Apply for resignations
+   - Submit Survey/complaints
 
 ## Setup Instructions for Specific Database
 
@@ -49,7 +50,7 @@ To run our project using your specific database, follow these steps:
 
 4. **Set Up Firebase Realtime Database:**
    - Create a Realtime Database in your Firebase project.
-   - Add at least basic data for an admin to the database.
+   - You can use the `example.json` to import into your realtime database for a basic start of an admin login.
 
 5. **Update Main File with Database Link:**
    - Open `main.py` in your preferred code editor.
