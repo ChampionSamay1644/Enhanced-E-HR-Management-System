@@ -37,13 +37,13 @@ def initialize_firebase():
         firebase_admin.initialize_app(
             cred,
             {
-                "databaseURL": "https://ehr-management-system.asia-southeast1.firebasedatabase.app/" ## Your database link goes here,also below 
+                "databaseURL": "############" ## Replace ############ with your database URL also below
             },
         )
         firebase_initialized = True
         # Check if there is a connection to the Firebase Realtime Database and time out after 10 seconds
         try:
-            response = requests.get("https://ehr-management-system.asia-southeast1.firebasedatabase.app/", timeout=10) ## Your database link goes here
+            response = requests.get("############", timeout=10) ## Replace ############ with your database URL
             if response.status_code == 200:
                 print("Connected to Firebase Realtime Database")
         except requests.exceptions.RequestException:
